@@ -1,2 +1,10 @@
+# Build artifacts
 .DS_Store
 *.log
+
+# IDE / editor
+.idea/
+.vscode/
+
+# SDD scratch (build journal — must never reach the public repo)
+.superpowers/
