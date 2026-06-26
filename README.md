@@ -44,21 +44,6 @@ This plugin stands on the shoulders of:
 
 We study, we don't copy. Where design converges with existing work, we give credit. The catalog structure and composition patterns are original synthesis; the individual lenses draw from established engineering discipline.
 
-## Roadmap
-
-**Current (v0.1):** The spine is review — classify the change, apply the right lenses.
-
-**Future catalogs:**
-
-- **Ceremony router** — interception at the start: how much process does this task call for?
-- **Planning** — matching planning tactics to problem structure
-- **Debugging** — systematic fault isolation and hypothesis testing
-- **Design** — architecture review and simplification
-- **Verification / dynamic testing** — interception *after* the system is runnable, distinct from static review: pentest/DAST, load & stress, chaos, fuzzing, and end-to-end checks against a real deploy
-- **Environment/setup audit** — sanity checks for local dev, CI, and production configs
-
-These catalogs share the same architecture: classify, select from a curated menu, compose, close with fresh eyes.
-
 ## License
 
 MIT
