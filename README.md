@@ -25,9 +25,11 @@ The initial release includes:
 - **51-strategy review catalog** — read on demand; organized into five groups covering process/meta-review (11 strategies), verification/evidence (7), failure & contradiction reasoning (6), engineering-quality lenses (12), and reviews beyond back-end (15)
 - **`verification-strategy-selector` skill** — for establishing that something is *actually* true, with evidence from running systems — not just plausible on paper. Classifies what you're verifying and how irreversible being wrong is, then selects the right strategies. Distinct from review: review asks "does this look correct?"; verification asks "is it correct, and what's my evidence?"
 - **21-strategy verification catalog** — read on demand; organized into five groups: evidence & ground truth (5), local & pre-merge verification (5), staged promotion & rollout (5), post-deploy production verification (4), and operational data-mutation verification (2)
-- **`/deliberate-engineering:review` and `/deliberate-engineering:verify` commands** — invoke the selectors for the current change
+- **`planning-strategy-selector` skill** — for *before* code exists: deciding what work is worth doing and how much process it calls for. Classifies the work by clarity, risk, reversibility, and reach, then selects planning lenses: scope to the real requirement (decide what *not* to build), ground the plan in the actual codebase, calibrate ceremony to risk, decompose and sequence safely, and capture the plan well. Judgment applied to planning — it delegates the *how-to-plan* discipline to your workflow engine.
+- **15-strategy planning catalog** — read on demand; organized into five groups: scope / anti-over-engineering (4), ground the plan in reality (4), calibrate ceremony to risk (2), slice & sequence (2), and capture the plan (3)
+- **`/deliberate-engineering:plan`, `:review`, and `:verify` commands** — invoke the selectors for the current work
 
-The selectors use risk, reversibility, and blast radius — not line count — to pick the right depth and lenses. Review reasons about the artifact; verification confronts reality with a run, a query, a production metric, or a captured payload, stating each expected result before observing the actual one.
+The selectors use risk, reversibility, clarity, and reach — not line count — to pick the right depth and lenses, one mental model across the lifecycle. Planning decides what to build; review reasons about the artifact; verification confronts reality with a run, a query, a production metric, or a captured payload, stating each expected result before observing the actual one.
 
 ### Make the rules always-on (optional)
 
