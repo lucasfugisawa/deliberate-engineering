@@ -23,9 +23,11 @@ The initial release includes:
 - **`deliberate-engineering-rules` skill** — the standing rules of deliberate practice, applied across every phase of engineering work: keep the human's hand on irreversible and outward-facing actions, stay read-only on systems you don't own, verify claims against primary evidence before endorsing, recommend with a reasoned pick rather than a bare menu, and keep comments load-bearing. Scoped to software work; it stays quiet on research, prose, and ad-hoc analysis.
 - **`review-strategy-selector` skill** — classifies your change by risk, reversibility, requirement clarity, and size, then selects the appropriate review lenses from the catalog
 - **51-strategy review catalog** — read on demand; organized into five groups covering process/meta-review (11 strategies), verification/evidence (7), failure & contradiction reasoning (6), engineering-quality lenses (12), and reviews beyond back-end (15)
-- **`/deliberate-engineering:review` command** — invoke the selector for the current change
+- **`verification-strategy-selector` skill** — for establishing that something is *actually* true, with evidence from running systems — not just plausible on paper. Classifies what you're verifying and how irreversible being wrong is, then selects the right strategies. Distinct from review: review asks "does this look correct?"; verification asks "is it correct, and what's my evidence?"
+- **21-strategy verification catalog** — read on demand; organized into five groups: evidence & ground truth (5), local & pre-merge verification (5), staged promotion & rollout (5), post-deploy production verification (4), and operational data-mutation verification (2)
+- **`/deliberate-engineering:review` and `/deliberate-engineering:verify` commands** — invoke the selectors for the current change
 
-The selector analyzes whether your change touches money, data, security, or production behavior; whether it's reversible; whether requirements are unambiguous; and its blast radius. It uses these axes — not line count — to pick the right depth and lenses.
+The selectors use risk, reversibility, and blast radius — not line count — to pick the right depth and lenses. Review reasons about the artifact; verification confronts reality with a run, a query, a production metric, or a captured payload, stating each expected result before observing the actual one.
 
 ### Make the rules always-on (optional)
 
