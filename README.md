@@ -20,11 +20,31 @@ Then enable it via `/plugin`. Note: this plugin requires `superpowers` (the disc
 
 The initial release includes:
 
+- **`deliberate-engineering-rules` skill** — the standing rules of deliberate practice, applied across every phase of engineering work: keep the human's hand on irreversible and outward-facing actions, stay read-only on systems you don't own, verify claims against primary evidence before endorsing, recommend with a reasoned pick rather than a bare menu, and keep comments load-bearing. Scoped to software work; it stays quiet on research, prose, and ad-hoc analysis.
 - **`review-strategy-selector` skill** — classifies your change by risk, reversibility, requirement clarity, and size, then selects the appropriate review lenses from the catalog
 - **51-strategy review catalog** — read on demand; organized into five groups covering process/meta-review (11 strategies), verification/evidence (7), failure & contradiction reasoning (6), engineering-quality lenses (12), and reviews beyond back-end (15)
 - **`/deliberate-engineering:review` command** — invoke the selector for the current change
 
 The selector analyzes whether your change touches money, data, security, or production behavior; whether it's reversible; whether requirements are unambiguous; and its blast radius. It uses these axes — not line count — to pick the right depth and lenses.
+
+### Make the rules always-on (optional)
+
+Skills load when the model judges them relevant to the task. If you want the
+deliberate-engineering rules enforced on *every* engineering session — the way
+the author runs them — add a short block to your personal `~/.claude/CLAUDE.md`:
+
+```markdown
+## Deliberate-engineering (always-on for engineering work)
+On software-engineering tasks — writing, reviewing, debugging, planning,
+migrating, shipping, or operating code with real consumers, risk, or
+irreversibility — apply the deliberate-engineering-rules skill, not just on
+description match. Skip it for research, prose, ad-hoc analysis, disposable
+no-consumer scripting, and non-technical work.
+```
+
+This is your machine's choice, never a requirement of the plugin. The rules
+themselves live entirely in the skill above; this block only changes *when* they
+fire on your machine.
 
 ## Works alongside
 
