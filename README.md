@@ -54,6 +54,7 @@ We study, we don't copy. Where design converges with existing work, we give cred
 - **Planning** — matching planning tactics to problem structure
 - **Debugging** — systematic fault isolation and hypothesis testing
 - **Design** — architecture review and simplification
+- **Verification / dynamic testing** — interception *after* the system is runnable, distinct from static review: pentest/DAST, load & stress, chaos, fuzzing, and end-to-end checks against a real deploy
 - **Environment/setup audit** — sanity checks for local dev, CI, and production configs
 
 These catalogs share the same architecture: classify, select from a curated menu, compose, close with fresh eyes.
