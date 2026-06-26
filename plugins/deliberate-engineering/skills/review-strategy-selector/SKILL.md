@@ -11,7 +11,7 @@ calls for* — and applies them — so review is tuned to the change, not a gene
 checklist run on autopilot.
 
 The reference for every strategy cited below is `catalog.md` in this directory
-(57 strategies in five groups + composition patterns). Read **only** the
+(51 strategies in five groups + composition patterns). Read **only** the
 sections you select — progressive disclosure, not the whole file.
 
 ## When to use
@@ -61,23 +61,28 @@ an isolated, well-tested helper is not.
 Open the catalog **groups** matching your non-trivial axes and pick lenses.
 Read only those sections.
 
-- **Money / data / production (Risk)** → 23 security, 24 performance,
-  25 data integrity, 27 observability; add 2 adversarial, 19 pre-mortem.
-- **Migrations / backfills / destructive (Reversibility)** → 21 concurrency,
-  22 reversibility/rollback, 25 data integrity, 28 operability/rollout,
-  15 coverage analysis.
-- **Ambiguous intent (Requirement clarity)** → 14 assumption/invariant audit,
-  29 cross-document consistency, 12 validation against real data, 56 spec
+- **Always, first (Requirement)** → 25 functional correctness / requirement
+  conformance — does it do what was actually asked? The most important lens.
+- **Money / data / production (Risk)** → 26 security, 27 performance,
+  28 data integrity, 30 observability; add 2 adversarial, 20 pre-mortem.
+- **Migrations / backfills / destructive (Reversibility)** → 23 concurrency,
+  24 reversibility/rollback, 28 data integrity, 31 operability/rollout,
+  16 coverage analysis.
+- **Ambiguous intent (Requirement clarity)** → 15 assumption/invariant audit,
+  32 cross-document consistency, 13 validation against real data, 50 spec
   self-review.
-- **Wide blast radius (Size/scope)** → 26 contract/API, 29 cross-service
-  consistency, 17 test-quality, 32 readability.
-- **Frontend / mobile / infra / data-ML / security-specialist** → the matching
-  Part-D/Part-E groups (35–57); open only the relevant subsection.
+- **Wide blast radius (Size/scope)** → 29 contract/API, 32 cross-service
+  consistency, 18 test-quality, 34 readability.
+- **External-dependency / error paths** → 21 silent-failure hunting,
+  22 error-handling adequacy.
+- **Frontend / mobile / infra / data / experiments** → the matching
+  Part-D/Part-E groups (37–51); open only the relevant subsection.
 
 **Worked example — change writes production data via a backfill:**
 Non-trivial on Risk + Reversibility + Size. Selected lenses:
-**21** (concurrency — backfill contends with live writes), **22**
-(reversibility — is there a bounded way back?), **25** (data integrity —
+**25** (functional correctness — does it backfill what the requirement meant?),
+**23** (concurrency — backfill contends with live writes), **24**
+(reversibility — is there a bounded way back?), **28** (data integrity —
 invariants/transactions hold?), **2** (adversarial — try to break it), closed
 with **3** (fresh eyes). Skipped frontend/i18n groups — logged as not
 applicable.

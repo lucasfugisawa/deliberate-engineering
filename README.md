@@ -21,7 +21,7 @@ Then enable it via `/plugin`. Note: this plugin requires `superpowers` (the disc
 The initial release includes:
 
 - **`review-strategy-selector` skill** — classifies your change by risk, reversibility, requirement clarity, and size, then selects the appropriate review lenses from the catalog
-- **57-strategy review catalog** — read on demand; organized into five groups covering process/meta-review (10 strategies), verification/evidence (7), failure & contradiction reasoning (5), back-end-focused reviews (12), and reviews beyond back-end (23)
+- **51-strategy review catalog** — read on demand; organized into five groups covering process/meta-review (11 strategies), verification/evidence (7), failure & contradiction reasoning (6), engineering-quality lenses (12), and reviews beyond back-end (15)
 - **`/deliberate-engineering:review` command** — invoke the selector for the current change
 
 The selector analyzes whether your change touches money, data, security, or production behavior; whether it's reversible; whether requirements are unambiguous; and its blast radius. It uses these axes — not line count — to pick the right depth and lenses.
