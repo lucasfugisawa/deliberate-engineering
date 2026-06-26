@@ -1,0 +1,20 @@
+{
+  "name": "deliberate-engineering",
+  "description": "Engineering discipline for AI-assisted development. Less vibe coding, more deliberate craft.",
+  "owner": {
+    "name": "Lucas Fugisawa",
+    "url": "https://github.com/lucasfugisawa"
+  },
+  "plugins": [
+    {
+      "name": "deliberate-engineering",
+      "description": "A thin layer of deliberate engineering judgment on top of your workflow: intercept each step and apply the right review tactics for the case.",
+      "version": "0.1.0",
+      "source": "./plugins/deliberate-engineering",
+      "author": {
+        "name": "Lucas Fugisawa",
+        "url": "https://github.com/lucasfugisawa"
+      }
+    }
+  ]
+}

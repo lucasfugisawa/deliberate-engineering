@@ -1,0 +1,21 @@
+{
+  "name": "deliberate-engineering",
+  "version": "0.1.0",
+  "description": "A thin layer of deliberate engineering judgment on top of your workflow: intercept each step and apply the right review tactics for the case.",
+  "author": {
+    "name": "Lucas Fugisawa",
+    "url": "https://github.com/lucasfugisawa"
+  },
+  "homepage": "https://github.com/lucasfugisawa/deliberate-engineering",
+  "license": "MIT",
+  "keywords": [
+    "code-review",
+    "engineering-discipline",
+    "deliberate-practice",
+    "skills",
+    "workflow",
+    "quality"
+  ],
+  "skills": "./skills/",
+  "commands": "./commands/"
+}
