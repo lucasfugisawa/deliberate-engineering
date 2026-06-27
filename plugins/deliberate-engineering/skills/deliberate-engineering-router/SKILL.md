@@ -25,7 +25,7 @@ It is triggered three ways: `/deliberate-engineering:start` at the start of a ta
 
 ## The honesty ruler
 
-The router names only the phases that have a catalog — **plan, review, verify, debug-operate** — plus the standing rules. It never invents a phase. When work touches release, rollout, infrastructure, or dependencies — phases that were never built as catalogs — it points at the *existing* lenses that already cover that ground: planning #12 (sequence so no intermediate state breaks), planning #13 (migration backward-compatibility per deploy), the verification staged-promotion / rollout lenses, and Rule 1 (the human gate on the irreversible, outward-facing action). It does **not** fake a "deploy" phase to look complete. Naming a phase that has no method behind it would be the dishonesty this plugin exists to prevent.
+The router names only the phases that have a catalog — **plan, review, verify, debug-operate** — plus the standing rules, and the one cross-cutting catalog that is *not* a phase: `communication-collaboration-selector` (consulted by nature, never sequenced). It never invents a phase. When work touches release, rollout, infrastructure, or dependencies — phases that were never built as catalogs — it points at the *existing* lenses that already cover that ground: planning #12 (sequence so no intermediate state breaks), planning #13 (migration backward-compatibility per deploy), the verification staged-promotion / rollout lenses, and Rule 1 (the human gate on the irreversible, outward-facing action). It does **not** fake a "deploy" phase to look complete. Naming a phase that has no method behind it would be the dishonesty this plugin exists to prevent.
 
 ## When NOT to route heavy
 

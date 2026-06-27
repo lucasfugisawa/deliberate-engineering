@@ -11,7 +11,7 @@ The deliberate layer of *your practice takes precedence*. Where the four selecto
 
 The harness and the rules skill already establish a precedence order: explicit user instruction beats a rule (CLAUDE.md > skills > system). That runtime precedence governs the **one-off** — an instruction in the current session overrides the default. This skill is the **declarative, addressable, persistent** form, for what the operator wants held across sessions. Rather than restating "ship it without stopping for approval" every time, the operator writes `Rule 1 — modify` once, with a `**Add:**` annotation scoping the loosening to a named environment, and this skill applies it on every relevant session. This makes the runtime precedence durable, not a replacement for it.
 
-## vs the feedback layer
+## vs the write side
 
 This skill is the **read side** of the override layer. It consults the file, honors the overrides, and declares them. Growing the file from observed practice — noticing that an operator routinely overrides planning #12, offering to persist that preference, and writing the entry — is the **write side**, a separate capability owned by the `deliberate-engineering-capture` skill (invoked on demand via `/deliberate-engineering:capture`). The boundary holds regardless: *this* skill only reads and applies overrides; it never writes them. The capture skill writes only on demand, only with approval, and only by appending — never by editing what is already there.
 
