@@ -39,7 +39,7 @@ What does **not** produce a candidate: a one-session tactic with no sign of reus
 
 ## Generalize at capture
 
-The central act and the hard anti-leak rule. Extract the employer-neutral principle and **DISCARD** the specifics before writing. No real employer name, service name, person name, ticket ID, vendor name, org structure, incident number, or real quantity ever reaches disk. A candidate that cannot be generalized without reintroducing the specific is **DROPPED** at capture — this skill writes NO "half-clean" candidate. State this as a hard DROP, NOT a "best-effort sanitize."
+The central act and the hard anti-leak rule. Extract the employer-neutral principle and **DISCARD** the specifics before writing. No real employer name, service name, person name, ticket ID, vendor name, org structure, incident number, or real quantity ever reaches disk. A candidate that cannot be generalized without reintroducing the specific is **DROPPED** at capture — this skill writes NO "half-clean" candidate. This is a hard DROP, never a best-effort sanitize.
 
 Worked transformation (use a neutral phrasing — do not name a real service): "in payments service X, migration Y broke because Z" becomes "when migrating a schema with legacy readers, verify each reader before repointing." The specific is gone; the principle survives.
 
@@ -98,7 +98,7 @@ A worked candidate presentation:
 
 For each approved candidate:
 
-1. Generate a slug from the principle heading — lowercase, hyphens for spaces, alphanumeric only.
+1. Generate a slug from the principle heading — lowercase, hyphens for spaces, otherwise alphanumeric.
 2. Write the candidate file to `candidates/<slug>.md` at the repo root (`~/Developer/deliberate-engineering/candidates/<slug>.md`). If the directory does not exist, create it and add a `README.md` with a brief explanation of the queue.
 3. On slug collision, differentiate the slug with a numeric suffix (e.g., `feature-flag-hygiene-2.md`) — never overwrite.
 4. **NEVER commit, NEVER open a PR, NEVER push.** This skill deposits candidates in the queue; it does not elevate them to the catalog. Promotion is a separate, gated step.
