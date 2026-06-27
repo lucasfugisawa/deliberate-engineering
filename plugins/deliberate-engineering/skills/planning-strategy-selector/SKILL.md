@@ -11,7 +11,7 @@ decides **what work is worth doing, and how much process it calls for**, so the
 plan builds the right thing instead of everything plausible.
 
 The reference for every strategy cited below is `catalog.md` in this directory
-(15 strategies in five groups + composition patterns). Read **only** the
+(16 strategies in five groups + composition patterns). Read **only** the
 sections you select — progressive disclosure, not the whole file.
 
 ## This is judgment, not a planning engine
@@ -62,20 +62,21 @@ with **clarity** because resolving ambiguity is planning's first job.
 - **Trivial-and-safe** → minimal: calibrate (10), confirm there's no hidden reach,
   do it, and state the light-ceremony decision. See "When NOT to over-plan."
 - **Standard** → scope to the real requirement (Part A), ground against the real
-  codebase (5), and capture the plan with recommendations (13) — a lightweight
+  codebase (5), and capture the plan with recommendations (14) — a lightweight
   pass over the axes that scored non-trivial.
 - **Ambiguous / risky / irreversible / wide reach** → full depth: resolve scope
   hard (Part A incl. the correctness counter-rule 3), spike any feasibility
   unknown (8), inventory and blast-radius the reach (6, 7), gate before code (9),
-  decompose and sequence (11, 12), and capture a self-contained dual-audience
-  artifact (14, 15).
+  decompose and sequence (11, 12), keep a multi-deploy schema/data change
+  backward-compatible (13), and capture a self-contained dual-audience
+  artifact (15, 16).
 
 ## Step 3 — Select lenses from the catalog
 
 Open only the parts matching your non-trivial axes:
 
 - **Always, standing** → 10 calibrate-ceremony-to-risk (it decides how much of
-  the rest applies) and 13 recommend-don't-enumerate (every fork carries a pick);
+  the rest applies) and 14 recommend-don't-enumerate (every fork carries a pick);
   plus the Part A scope lenses: 1 simplest-mechanism, 2 strip-speculative,
   **3 the correctness counter-rule** (so trimming doesn't become under-scoping).
 - **Touches existing code / rests on assumptions** → 5 verify-repo-reality.
@@ -88,8 +89,10 @@ Open only the parts matching your non-trivial axes:
 - **Large or multi-concern** → 11 decompose-for-reviewability.
 - **Multi-step / spans services / can't ship atomically** → 12 sequence-to-avoid-
   intermediate-states.
-- **Will be handed off or outlive the conversation** → 14 self-contained-dual-
-  audience, 15 document-altitude.
+- **Schema or data change to a live system / deploys separately from code** → 13
+  migration-backward-compatibility.
+- **Will be handed off or outlive the conversation** → 15 self-contained-dual-
+  audience, 16 document-altitude.
 
 **Worked example — plan a source-of-truth field migration:**
 Ambiguous-ish, high risk, hard to reverse, wide reach. Selected:
@@ -98,10 +101,11 @@ speculative, but keep every step the migration needs to be correct),
 **7** (enumerate every downstream reader before calling it small),
 **6** (a classified inventory of all affected sites as the first deliverable),
 **9** (approve the approach before any code), **12** (sequence so no
-intermediate state is half-migrated and broken), **14** (a self-contained spec
-for the human and the executing agent), each fork carrying **13** a
-recommendation. Skipped frontend/altitude-heavy lenses — logged as not
-applicable.
+intermediate state is half-migrated and broken), **13** (expand→adopt→contract
+so the old code still reads and writes valid rows at every deploy step),
+**15** (a self-contained spec for the human and the executing agent), each fork
+carrying **14** a recommendation. Skipped frontend/altitude-heavy lenses —
+logged as not applicable.
 
 ## Step 4 — Compose the plan
 
@@ -115,9 +119,10 @@ Apply the catalog's Appendix patterns:
 - **Inventory before estimate** — for unknown-size work, the classified
   inventory (6) precedes any plan or timeline commitment.
 - **Slice along the sequence** — decompose (11), then order the slices (12) so
-  every intermediate state is safe.
+  every intermediate state is safe; for a schema/data change, keep each deploy
+  step backward-compatible with the running code (13).
 - **Decisions carry recommendations** — every fork pairs options with a pick
-  (13); a plan of open menus has deferred the planning, not done it.
+  (14); a plan of open menus has deferred the planning, not done it.
 
 ## Step 5 — Coexistence and precedence
 

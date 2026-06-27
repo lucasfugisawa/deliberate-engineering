@@ -1,6 +1,6 @@
 # Planning Strategy Catalog
 
-This catalog contains 15 planning strategies organized into five groups plus
+This catalog contains 16 planning strategies organized into five groups plus
 composition patterns. Each strategy is a lens of *judgment applied to planning* —
 deciding what to build, how much process the work calls for, how to slice and
 sequence it, and how to capture it. The selector skill references these by number
@@ -126,6 +126,12 @@ not against the prose or a guess.*
 - **Objective:** Ensure every intermediate state of a multi-step change is itself safe — no window of brokenness between steps.
 - **When most valuable:** Multi-step migrations, changes spanning services/datastores, anything that can't ship atomically. (Overlaps verification-catalog strategy 13, *deploy ordering* — plan the order here; verify it there.)
 
+### 13. Migration backward-compatibility — the old code must survive
+
+- **How it works:** Treat any schema or data change as something the *currently-running* code must survive: in a non-atomic deploy the old version keeps serving while the change rolls out, so backward-compatibility is judged against that live old code — it must still both *read* what it expects **and** *write* semantically valid rows (passing only one is not safe). When a change can't be made compatible in a single deploy — a rename, a drop of something still referenced, a `NOT NULL` without default, a type change — don't ship it as one step; phase it across explicit deploy boundaries and do only the safe step now, never trading safety for fewer PRs. The judgment is choosing the right multi-step shape: **expand → adopt → contract** for a non-additive change, or **dual-write + backfill** for a large *online* data move — keeping a proven fallback and advancing one *deployed* phase at a time. When in doubt, add a deploy boundary rather than remove one.
+- **Objective:** Keep every step of a multi-deploy schema or data change compatible with the code running beside it, so a migration never becomes an outage even when the new code is correct.
+- **When most valuable:** Any schema change to a live system; renames, drops, constraint/type tightening; large online data migrations; anywhere schema and code deploy separately. (Sequencing analog: lens 12, *avoid hidden intermediate states* — that keeps each step internally safe; this keeps each step compatible with the *old code still running*. Evidence analogs in verification: strategy 13 *deploy ordering*, 14 *kill-switch/fallback*, 21 *reconcile before cutover*.)
+
 ---
 
 ## Part E — Capture the plan
@@ -133,19 +139,19 @@ not against the prose or a guess.*
 *The plan is itself an artifact; judge what altitude and self-containment it needs
 for its readers and decisions — not the templating mechanics of producing it.*
 
-### 13. Recommend, don't enumerate
+### 14. Recommend, don't enumerate
 
 - **How it works:** When the plan presents alternatives, also state which one you recommend and why, naming the axis that decides it (best outcome / least risk / fastest) and the trade-off. Surface options *with* an opinion, never a neutral menu that pushes the whole judgment back to the reader. If you genuinely can't recommend, say what information would decide it.
 - **Objective:** Make the planning judgment explicit and reviewable — the reader challenges your rationale, not just your list.
 - **When most valuable:** Every decision point in a plan. (This is also a cross-cutting standing rule.)
 
-### 14. Self-contained, dual-audience artifacts
+### 15. Self-contained, dual-audience artifacts
 
 - **How it works:** A spec or ticket carries a plain-language context/rationale section for humans *and* a detailed implementation/validation/deployment section for an autonomous agent — with no dangling references to external docs, internal IDs, or unexplained shorthand. A reader needs nothing else to understand it. Keep only work that will actually be done; a plan is not a wish list.
 - **Objective:** A planning artifact that stands alone and serves both the human who approves it and the agent who executes it.
 - **When most valuable:** Any spec/ticket that will outlive the conversation or be handed to someone (or an agent) without the original context.
 
-### 15. Calibrate document altitude to audience
+### 16. Calibrate document altitude to audience
 
 - **How it works:** Set the altitude of each planning/communication doc to its purpose. Aggressively cut implementation detail from an intent-communication artifact; present top-down, with detail living next to the item it concerns rather than in repeated passes at different altitudes; choose the representation (prose / table / diagram) that fits each point.
 - **Objective:** Match the document's level of detail to the decision it supports, so readers aren't drowned or starved.
@@ -162,5 +168,5 @@ for its readers and decisions — not the templating mechanics of producing it.*
 - **Spike before you plan the unknown:** If feasibility is the blocker, retire it with a timeboxed spike (8) *before* committing to a plan — don't plan a build on an unproven assumption.
 - **Inventory before estimate:** For unknown-size work, the classified inventory (6) precedes any commitment to a plan or timeline — don't estimate what you haven't surveyed.
 - **Slice along the sequence:** Decomposition (11) and sequencing (12) compose — split along concern boundaries, then order the splits so every intermediate state is safe.
-- **Decisions carry recommendations:** Every fork captured in the plan pairs options with a recommendation (13); a plan full of open menus has deferred the planning, not done it.
+- **Decisions carry recommendations:** Every fork captured in the plan pairs options with a recommendation (14); a plan full of open menus has deferred the planning, not done it.
 - **Don't over-plan the trivial:** Planning has a cost. When the work is trivial-and-safe, skip the spec, do it, and state that you judged it low-ceremony — the same calibration (10) applied to planning itself.
