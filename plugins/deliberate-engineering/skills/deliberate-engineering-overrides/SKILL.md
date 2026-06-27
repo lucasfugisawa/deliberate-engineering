@@ -1,11 +1,11 @@
 ---
 name: deliberate-engineering-overrides
-description: "Use when applying any deliberate-engineering lens or standing rule and the operator may have a personal override on file. Reads ~/.claude/deliberate-engineering-overrides.md, honors disable/modify/add overrides of named catalog lenses and standing rules, and declares the deviation. Stays silent when no override file exists."
+description: "Use when applying any deliberate-engineering lens or standing rule. Reads ~/.claude/deliberate-engineering-overrides.md before applying catalog lenses or standing rules, honors disable/modify/add overrides, and declares each deviation. Stays silent when no override file exists or no override matches."
 ---
 
 # Deliberate Engineering Overrides
 
-The deliberate layer of *your practice takes precedence*. Where the four selectors and the rules skill ship judgment, this skill lets an operator's own practice override that shipped content. It reads and honors overrides from a personal file — disabling lenses, appending to them, or injecting operator-authored strategies — and declares the deviation out loud. It does **not** write to the override file; growing that file from observed practice is the feedback layer, a separate capability, out of scope here.
+The deliberate layer of *your practice takes precedence*. Where the four selectors and the rules skill ship judgment, this skill lets an operator's own practice override that shipped content. It reads and honors overrides from a personal file — disabling lenses, appending to them, or injecting operator-authored strategies — and declares the deviation out loud.
 
 ## vs the runtime precedence that already exists
 
@@ -73,9 +73,9 @@ If the file does not exist, this skill is silent and does nothing. Override is o
 
 - **disable** — when a selected lens or rule is disabled, do not apply it. In the output, say it was skipped because the operator disabled it, quoting the operator's `**Why:**` if present. The lens is not evaluated; its text is not read. It is as if the selector never picked it.
 
-- **modify (append-only)** — the shipped lens or rule text stays intact; read the operator's `**Add:**` annotation alongside it and apply both. **modify never replaces the shipped text; it appends.** This is what keeps the override from rotting when the lens evolves in a future version of the plugin. The shipped lens remains the baseline; the operator's annotation refines or scopes it for their context. When applying a modified lens, read the shipped text first, then apply the `**Add:**` content as an additional constraint or loosening. The ability to cite stable identifiers like `review #35` or `Rule 1` depends on the plugin's append-only numbering policy — shipped content is never renumbered, only appended.
+- **modify (append-only)** — the shipped lens or rule text stays intact; read the operator's `**Add:**` annotation alongside it and apply both. **modify never replaces the shipped text; it appends.** This is what keeps the override from rotting when the lens evolves in a future version of the plugin. The shipped lens remains the baseline; the operator's annotation refines or scopes it for their context. When applying a modified lens, read the shipped text in full, then read the operator's `**Add:**` annotation alongside it and honor both — the shipped baseline plus the operator's refinement. Never replace the shipped text; always read both. The ability to cite stable identifiers like `review #35` or `Rule 1` depends on the plugin's append-only numbering policy — shipped content is never renumbered, only appended.
 
-- **add** — an operator-authored strategy or rule that maps to no shipped number. Treat it as one more available lens in the named catalog (or one more standing rule for `add — rules`), applying it where its `**When:**` condition matches. The selector's classification and selection logic runs as normal, considering the `add` entries as part of the catalog. If an `add` entry's `**When:**` matches the work, apply its `**Apply:**` content exactly as you would apply a shipped lens.
+- **add** — an operator-authored strategy or rule that maps to no shipped number. Treat it as one more available lens in the named catalog (or one more standing rule for `add — rules`). Read the `**When:**` text as human-readable guidance for when it applies, interpreted by you — not a formal condition to evaluate. The selector's classification and selection logic runs as normal, considering the `add` entries as part of the catalog. If an `add` entry's `**When:**` guidance fits the work, apply its `**Apply:**` content exactly as you would apply a shipped lens.
 
 ## The awareness step
 
@@ -83,10 +83,10 @@ The flow when this skill is invoked:
 
 1. The selector classifies the work and picks its lenses normally, using the shipped catalogs.
 2. The selector consults this skill. This skill reads `~/.claude/deliberate-engineering-overrides.md` if the file exists.
-3. For each selected lens with an override, this skill applies the operation instead of the shipped content. For `add` entries in the relevant catalog, this skill injects them as extra available lenses; the selector's classification determines whether they match.
+3. For each selected lens with an override, this skill applies the operation instead of the shipped content. For `add` entries in the relevant catalog, this skill reads them as additional operator-authored lenses available in that catalog, applied when their `**When:**` guidance fits the work.
 4. This skill declares the deviation in the visible output — **always, never silent.** Every override that fires is reported.
 
-This skill does not re-run the selector's classification logic; it honors the selector's choices and applies the overrides to those choices. For `add` entries, the selector's existing classification (the four axes, the picked lenses) governs whether the `add` entry's `**When:**` matches; this skill does not second-guess that classification.
+This skill does not re-run the selector's classification logic; it honors the selector's choices and applies the overrides to those choices. For `add` entries, the selector's existing classification (the four axes, the picked lenses) informs whether the `add` entry's `**When:**` guidance fits; this skill does not second-guess that classification.
 
 ## The declaration protocol
 
@@ -94,7 +94,7 @@ When an override fires, declare it in the visible output. The firmness of the de
 
 - **Common override** (disabling or modifying a catalog lens) — a one-line factual note. Example: *"Override active: review #35 disabled (your note: team runs a separate simplification pass). Skipping."* State what was overridden, which operation was applied, and if `**Why:**` is present, quote it.
 
-- **Safety-rule override (Rule 1 or Rule 2)** — an elevated-autonomy acknowledgement. Example: *"Override active: you've loosened Rule 1 for deploys to staging — I'll act without stopping at the human gate. Confirm this is intended."* State the override, the implication (what behavior changes), and ask for confirmation. This is not a refusal; it is a check-in. If the operator confirms, proceed. Rule 1 and Rule 2 are the plugin's safety rails, and loosening them is the operator's right, but it must be explicit and acknowledged, never silent.
+- **Safety-rule override (Rule 1 or Rule 2)** — an elevated-autonomy acknowledgement. Example: *"Override active: you've loosened Rule 1 for deploys to staging — I'm proceeding without the human gate as you've instructed. This is elevated autonomy; speak up if this is unintended."* State the override, the implication (what behavior changes), and proceed — this is acknowledgement with an explicit invitation to interrupt, not a request for permission. Rule 1 and Rule 2 are the plugin's safety rails, and loosening them is the operator's right, but it must be explicit and acknowledged, never silent.
 
 The no-silent stance mirrors the plugin's existing no-silent-truncation ethic: when the plugin's behavior deviates from the default — whether by compacting a context or by honoring an override — that deviation is declared, not hidden. Silence is not an option.
 
