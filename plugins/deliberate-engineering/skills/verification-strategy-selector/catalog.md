@@ -1,6 +1,6 @@
 # Verification Strategy Catalog
 
-This catalog contains 21 verification strategies organized into five groups plus composition patterns. Each strategy is a way to establish that something is *actually* true — by confronting it with reality (a run, a query, the live system) rather than by reading the artifact and judging it plausible. The selector skill references these by number to build a verification plan tuned to what is being verified and how irreversible the consequence of being wrong is.
+This catalog contains 22 verification strategies organized into five groups plus composition patterns. Each strategy is a way to establish that something is *actually* true — by confronting it with reality (a run, a query, the live system) rather than by reading the artifact and judging it plausible. The selector skill references these by number to build a verification plan tuned to what is being verified and how irreversible the consequence of being wrong is.
 
 ## What verification is — and how it differs from review
 
@@ -29,6 +29,12 @@ The review catalog's Part B (empirical validation, real-data validation, source-
 - **How it works:** Refuse to deduce or assume. For every claim — especially every number — demand a concrete source: a run link, a query and its result, a file and line. Re-derive quantities from authoritative queries rather than estimating.
 - **Objective:** Eliminate confident-but-unverified assertions, the dominant failure mode of fast work.
 - **When most valuable:** Quantitative claims, impact estimates, "this is safe" assertions, anything that will feed a decision.
+
+### 22. Match verification scope to the claim's scope
+
+- **How it works:** Before vouching, compare the *breadth* of what you verified against the *breadth* of what you are about to claim. A pass on one environment does not support a claim about another; one case passing does not support "all cases"; a sampled check does not support a statement about the whole population. If the claim is wider than the evidence, either narrow the claim to exactly what was verified, or widen the verification until it covers the claim.
+- **Objective:** Close the gap between calibrating verification *depth* (matching rigor to irreversibility, covered elsewhere in this catalog) and calibrating *breadth*: the scope of verification must be at least the scope of the claim.
+- **When most valuable:** Any "it works / it's safe / it's done" statement that generalizes beyond what was directly observed — especially local-vs-production and one-case-vs-all-cases.
 
 ### 3. Name the refuting observation, then go run it
 
