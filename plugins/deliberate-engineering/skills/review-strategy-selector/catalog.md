@@ -2,7 +2,7 @@
 
 This catalog contains 54 review strategies organized into five groups plus composition patterns. Each strategy is a lens through which to examine work. The selector skill references these by number to build custom review workflows. No lens is mandatory — apply only the ones the change's context, risk, and scope actually call for.
 
-Strategy **numbers are stable identifiers, not reading order**: a lens keeps its number for life, and a new lens is appended with the next free number and *placed* under the group it belongs to. So a group may run out of numeric sequence (Part A ends with 52–53). This is deliberate — it keeps every published number citable (e.g. by an override) without renumbering.
+Strategy **numbers are stable identifiers, not reading order**: a lens keeps its number for life, and a new lens is appended with the next free number and *placed* under the group it belongs to. So a group may run out of numeric sequence (Part A ends with 52–54). This is deliberate — it keeps every published number citable (e.g. by an override) without renumbering.
 
 ## Master Principle
 
