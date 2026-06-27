@@ -148,7 +148,7 @@ It sits *before* code exists. Where review judges an artifact and verification c
 
 - **How it works:** Faced with a vague, broad, or ill-defined problem, first exhaust what is already knowable — the code, the docs, the product docs, the discussion threads, the email trail (delegate the search to an agent where it scales) — not only to find the answer outright but to reach whoever *can* answer with grounded, context-loaded questions. Never arrive with a raw question you could have answered or sharpened yourself; help the people who help you by carrying the context to them.
 - **Objective:** Convert ambiguity into precise, directed questions, minimizing round-trips and the burden you place on others.
-- **When most valuable:** Any ill-defined problem before planning begins; any question you are about to address to a busy human. (Evidence analog: review-catalog lens 14 and verification strategy 1 gather facts from the canonical source; this lens uses that gathering to *disambiguate the requirement* before a plan exists, distinct from lens 5, which plans against the code once the requirement is clear.)
+- **When most valuable:** Any ill-defined problem before planning begins; any question you are about to address to a busy human. (Evidence analog: review-catalog lens 14 and verification-catalog strategy 1 gather facts from the canonical source; this lens uses that gathering to *disambiguate the requirement* before a plan exists, distinct from lens 5, which plans against the code once the requirement is clear.)
 
 ### 18. Decide early what's costly to reverse, late what's cheap to adjust
 
