@@ -37,6 +37,7 @@ Open the catalog and pick the lenses whose **Tags** (artifacts + audiences) matc
 - **Any reader who is not a same-context peer** → lens 4 (speak the reader's language) — the register modulator for everything else.
 - **Anything leaving the team/org boundary** → lens 5 (no internal IDs outward).
 - **Presenting options or a recommendation** → lens 6 (expose the reasoning), phrased per lens 4.
+- **Any other communication** (a commit message for humans, a design doc, an RFC, a stakeholder message, a handoff) → lens 4 is the floor; add lens 5 if it leaves the team boundary and lens 6 if it weighs alternatives.
 
 **Operator overrides.** Before applying the selected lenses, consult `deliberate-engineering-overrides`: if any selected lens has an operator override (disable / modify / add), honor it and declare the deviation in the Output.
 
