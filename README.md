@@ -1,7 +1,5 @@
 # deliberate-engineering
 
-> Don't go agentic as much as you can. Go agentic only as much as you should.
-
 *Engineering discipline for AI-assisted development. Less vibe coding, more deliberate craft.*
 
 ## Why this exists
