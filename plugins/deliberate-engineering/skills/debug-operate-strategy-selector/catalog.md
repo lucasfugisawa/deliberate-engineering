@@ -1,47 +1,22 @@
 # Debug/Operate Strategy Catalog
 
-This catalog contains 16 strategies organized into five Parts plus composition
-patterns. Each strategy is a lens for the moment a *live system* behaves
-unexpectedly and you must diagnose under uncertainty and respond — deciding
-which evidence to trust, which failure-mode you're looking at, and how to act
-while the system is degraded. The selector skill references these by number to
-build a response tuned to the quality of the evidence and to how irreversible
-the consequence of being wrong is.
+This catalog contains 16 strategies organized into five Parts plus composition patterns. Each strategy is a lens for the moment a *live system* behaves unexpectedly and you must diagnose under uncertainty and respond — deciding which evidence to trust, which failure-mode you're looking at, and how to act while the system is degraded. The selector skill references these by number to build a response tuned to the quality of the evidence and to how irreversible the consequence of being wrong is.
 
 ## What this catalog is — and is not
 
-This catalog is the *judgment* layer for diagnose-and-respond-under-failure. It
-does **not** teach the *method* of debugging — hypothesis, bisection, isolation,
-elimination. That belongs to `superpowers:systematic-debugging`, which this
-catalog delegates to and cross-references. What it adds is judgment: which
-signals are trustworthy, which failure-mode signature you're reading, and how to
-calibrate a response when the system is degraded and the clock is running.
+This catalog is the *judgment* layer for diagnose-and-respond-under-failure. It does **not** teach the *method* of debugging — hypothesis, bisection, isolation, elimination. That belongs to `superpowers:systematic-debugging`, which this catalog delegates to and cross-references. What it adds is judgment: which signals are trustworthy, which failure-mode signature you're reading, and how to calibrate a response when the system is degraded and the clock is running.
 
-It is also **distinct from verification.** Verification *confirms an
-expectation* you already hold, tied to a known change ("I shipped X; did it do
-X?"). Debug/Operate begins where there is **no reliable expectation** — the
-system is misbehaving and you don't yet know why, or an incident is live and you
-must act before you fully understand. The dividing axis is the epistemic mode,
-not the subject matter: verify is confirmation; this is discovery under failure.
-Where the seam shows — kill-switches, post-deploy confirmation, production-
-mutation protocols — the verify catalog owns that content, and this catalog
-cross-references it rather than restating it.
+It is also **distinct from verification.** Verification *confirms an expectation* you already hold, tied to a known change ("I shipped X; did it do X?"). Debug/Operate begins where there is **no reliable expectation** — the system is misbehaving and you don't yet know why, or an incident is live and you must act before you fully understand. The dividing axis is the epistemic mode, not the subject matter: verify is confirmation; this is discovery under failure. Where the seam shows — kill-switches, post-deploy confirmation, production-mutation protocols — the verify catalog owns that content, and this catalog cross-references it rather than restating it.
 
 ## Master Principle
 
-**When a live system behaves unexpectedly, establish what is true before you act
-— and calibrate the response to the cost of staying wrong, not to the size of
-the symptom.** Evidence from a production system is partial and misleading by
-default (sampled, lossy, derived), so the quality of the evidence governs your
-confidence; and when the service is degraded, restoring the shared baseline
-outranks diagnosing the cause.
+**When a live system behaves unexpectedly, establish what is true before you act — and calibrate the response to the cost of staying wrong, not to the size of the symptom.** Evidence from a production system is partial and misleading by default (sampled, lossy, derived), so the quality of the evidence governs your confidence; and when the service is degraded, restoring the shared baseline outranks diagnosing the cause.
 
 ---
 
 ## Part A — Trust the Evidence
 
-*The epistemics of diagnosis: which signals you can rely on when hunting a cause
-in a live system.*
+*The epistemics of diagnosis: which signals you can rely on when hunting a cause in a live system.*
 
 ### 1. Distinguish sampled from unsampled data
 
@@ -65,9 +40,7 @@ in a live system.*
 
 ## Part B — Diagnose Under Uncertainty
 
-*Deliberately thin. `superpowers:systematic-debugging` owns the method —
-hypothesis, bisection, isolation. This part adds only the judgment that sits on
-top of the method.*
+*Deliberately thin. `superpowers:systematic-debugging` owns the method — hypothesis, bisection, isolation. This part adds only the judgment that sits on top of the method.*
 
 ### 4. Read the failure-mode signature
 
@@ -85,8 +58,7 @@ top of the method.*
 
 ## Part C — Respond Under Pressure
 
-*The incident's one-way doors: decisions made while the system is degraded,
-where the ruler is the cost of staying wrong, not the size of the symptom.*
+*The incident's one-way doors: decisions made while the system is degraded, where the ruler is the cost of staying wrong, not the size of the symptom.*
 
 ### 6. Revert over roll-forward; don't wait for the author
 
@@ -110,10 +82,7 @@ where the ruler is the cost of staying wrong, not the size of the symptom.*
 
 ## Part D — Keep the Signal Healthy
 
-*The peacetime hygiene that makes Parts A–C possible next time. Review #30 judges
-the diff — "does this change add adequate instrumentation?"; this part judges the
-live system over time — "is this signal still trustworthy and actionable months
-on?" Cross-reference at that seam, don't restate it.*
+*The peacetime hygiene that makes Parts A–C possible next time. Review #30 judges the diff — "does this change add adequate instrumentation?"; this part judges the live system over time — "is this signal still trustworthy and actionable months on?" Cross-reference at that seam, don't restate it.*
 
 ### 9. Every alert resolves to fix, tune, or delete
 
@@ -149,9 +118,7 @@ on?" Cross-reference at that seam, don't restate it.*
 
 ## Part E — Learn from the Failure
 
-*The opposite posture to Part C: deliberate, blameless, no pressure. Kept
-separate on purpose, so the reflective stance isn't contaminated by the urgency
-of the response that preceded it.*
+*The opposite posture to Part C: deliberate, blameless, no pressure. Kept separate on purpose, so the reflective stance isn't contaminated by the urgency of the response that preceded it.*
 
 ### 14. Reconstruct the timeline while it's fresh
 

@@ -1,33 +1,16 @@
 # Planning Strategy Catalog
 
-This catalog contains 16 planning strategies organized into five groups plus
-composition patterns. Each strategy is a lens of *judgment applied to planning* —
-deciding what to build, how much process the work calls for, how to slice and
-sequence it, and how to capture it. The selector skill references these by number
-to build a planning approach tuned to the work's clarity, risk, and reach.
+This catalog contains 16 planning strategies organized into five groups plus composition patterns. Each strategy is a lens of *judgment applied to planning* — deciding what to build, how much process the work calls for, how to slice and sequence it, and how to capture it. The selector skill references these by number to build a planning approach tuned to the work's clarity, risk, and reach.
 
 ## What this catalog is — and is not
 
-This is **not** a planning *engine*. It does not teach how to brainstorm, how to
-write a plan document, or how to author acceptance criteria — a workflow engine
-such as `superpowers` owns that discipline, and this layer delegates to it. This
-catalog is the **deliberate judgment** exercised *while* planning: the decisions
-about scope, ceremony, decomposition, sequencing, and artifact shape that
-separate a plan that builds the right thing from a plan that builds everything
-plausible.
+This is **not** a planning *engine*. It does not teach how to brainstorm, how to write a plan document, or how to author acceptance criteria — a workflow engine such as `superpowers` owns that discipline, and this layer delegates to it. This catalog is the **deliberate judgment** exercised *while* planning: the decisions about scope, ceremony, decomposition, sequencing, and artifact shape that separate a plan that builds the right thing from a plan that builds everything plausible.
 
-It sits *before* code exists. Where review judges an artifact and verification
-confronts reality, planning decides **what work is worth doing at all** — and,
-just as importantly, what work is not.
+It sits *before* code exists. Where review judges an artifact and verification confronts reality, planning decides **what work is worth doing at all** — and, just as importantly, what work is not.
 
 ## Master Principle
 
-**Decide what *not* to build before deciding how to build.** The default failure
-of AI-assisted work is to produce everything plausibly useful; the deliberate
-move is to scope to the *real* requirement and the cost of being wrong, then plan
-in proportion to risk — not in proportion to how much the agent could generate.
-A plan's job is to make the right work obvious and the wrong work visible, before
-a line is written.
+**Decide what *not* to build before deciding how to build.** The default failure of AI-assisted work is to produce everything plausibly useful; the deliberate move is to scope to the *real* requirement and the cost of being wrong, then plan in proportion to risk — not in proportion to how much the agent could generate. A plan's job is to make the right work obvious and the wrong work visible, before a line is written.
 
 ---
 
@@ -63,8 +46,7 @@ a line is written.
 
 ## Part B — Ground the plan in reality
 
-*Plan against what is actually on disk, in production, and provably possible —
-not against the prose or a guess.*
+*Plan against what is actually on disk, in production, and provably possible — not against the prose or a guess.*
 
 ### 5. Verify repo reality before planning
 
@@ -136,8 +118,7 @@ not against the prose or a guess.*
 
 ## Part E — Capture the plan
 
-*The plan is itself an artifact; judge what altitude and self-containment it needs
-for its readers and decisions — not the templating mechanics of producing it.*
+*The plan is itself an artifact; judge what altitude and self-containment it needs for its readers and decisions — not the templating mechanics of producing it.*
 
 ### 14. Recommend, don't enumerate
 

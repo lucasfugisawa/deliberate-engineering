@@ -1,36 +1,16 @@
 # Verification Strategy Catalog
 
-This catalog contains 21 verification strategies organized into five groups plus
-composition patterns. Each strategy is a way to establish that something is
-*actually* true — by confronting it with reality (a run, a query, the live
-system) rather than by reading the artifact and judging it plausible. The
-selector skill references these by number to build a verification plan tuned to
-what is being verified and how irreversible the consequence of being wrong is.
+This catalog contains 21 verification strategies organized into five groups plus composition patterns. Each strategy is a way to establish that something is *actually* true — by confronting it with reality (a run, a query, the live system) rather than by reading the artifact and judging it plausible. The selector skill references these by number to build a verification plan tuned to what is being verified and how irreversible the consequence of being wrong is.
 
 ## What verification is — and how it differs from review
 
-**Review** examines a static artifact and asks *does this look correct?* —
-reading a diff, a spec, a design for logic errors and contradictions.
-**Verification** asks *is this correct in reality?* — and answers it with
-evidence from running the thing: an executed test, a query against real data, a
-production metric, a captured payload. Review reasons about the code;
-verification confronts the world.
+**Review** examines a static artifact and asks *does this look correct?* — reading a diff, a spec, a design for logic errors and contradictions. **Verification** asks *is this correct in reality?* — and answers it with evidence from running the thing: an executed test, a query against real data, a production metric, a captured payload. Review reasons about the code; verification confronts the world.
 
-The review catalog's Part B (empirical validation, real-data validation,
-source-of-truth) names the *seeds* of this discipline. This catalog is that
-discipline at full depth, pointed at running systems and post-deploy reality.
-Where a strategy here has a static analog in the review catalog, it is noted —
-use the review lens to judge the artifact, this strategy to gather the evidence.
+The review catalog's Part B (empirical validation, real-data validation, source-of-truth) names the *seeds* of this discipline. This catalog is that discipline at full depth, pointed at running systems and post-deploy reality. Where a strategy here has a static analog in the review catalog, it is noted — use the review lens to judge the artifact, this strategy to gather the evidence.
 
 ## Master Principle
 
-**State the expected result before you observe the actual one.** Every
-verification — a test, a query, a metric check — should carry its expected
-answer up front, so a deviation is an immediate, unmissable signal rather than a
-number you rationalize after the fact. Verification without a pre-stated
-expectation is just looking. And: **the cost of a wrong "it's fine" scales with
-irreversibility** — calibrate verification depth to how hard the consequence is
-to undo.
+**State the expected result before you observe the actual one.** Every verification — a test, a query, a metric check — should carry its expected answer up front, so a deviation is an immediate, unmissable signal rather than a number you rationalize after the fact. Verification without a pre-stated expectation is just looking. And: **the cost of a wrong "it's fine" scales with irreversibility** — calibrate verification depth to how hard the consequence is to undo.
 
 ---
 

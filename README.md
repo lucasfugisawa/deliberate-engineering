@@ -35,9 +35,7 @@ The selectors use risk, reversibility, clarity, and reach — not line count —
 
 ### Make the rules always-on (optional)
 
-Skills load when the model judges them relevant to the task. If you want the
-deliberate-engineering rules enforced on *every* engineering session — the way
-the author runs them — add a short block to your personal `~/.claude/CLAUDE.md`:
+Skills load when the model judges them relevant to the task. If you want the deliberate-engineering rules enforced on *every* engineering session — the way the author runs them — add a short block to your personal `~/.claude/CLAUDE.md`:
 
 ```markdown
 ## Deliberate-engineering (always-on for engineering work)
@@ -48,9 +46,7 @@ description match. Skip it for research, prose, ad-hoc analysis, disposable
 no-consumer scripting, and non-technical work.
 ```
 
-This is your machine's choice, never a requirement of the plugin. The rules
-themselves live entirely in the skill above; this block only changes *when* they
-fire on your machine.
+This is your machine's choice, never a requirement of the plugin. The rules themselves live entirely in the skill above; this block only changes *when* they fire on your machine.
 
 ## Works alongside
 
