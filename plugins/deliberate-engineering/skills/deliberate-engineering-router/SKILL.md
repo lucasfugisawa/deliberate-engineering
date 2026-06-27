@@ -39,6 +39,12 @@ Routing has a cost, and over-routing the trivial is the same misplaced ceremony 
 
 2. **The four canonical axes** (the shared vocabulary of the whole plugin, *ordinal* — each runs low→high): **requirement clarity, risk, reversibility, reach.** They set the **depth of each phase** and the **firmness of the sequence recommendation**, and they combine into one "how heavy is this" judgment. These are deliberately the *same* four axes the plan, review, and verify selectors use — the router adds **no fifth axis**, preserving one mental model across the lifecycle.
 
+### The nature split — engineering vs communication
+
+One mental model, applied honestly: *first the nature of the work, then the axes proper to that nature.* When the target artifact is an **engineering** artifact — code, a spec, a schema, a deploy — classify by the genre and the four canonical axes above; the genre→phase map below is unchanged. When the target artifact is a **communication** — a PR description, a review comment, a stakeholder message, an RFC, a writeup of alternatives — it does not classify by those four axes; what selects the method is **audience + artifact**. Route it to `communication-collaboration-selector`, which owns that classification. This adds no genre and no fifth axis: communication is a different *nature*, consulted cross-cutting, never a fifth phase.
+
+Most communication is **embedded** in engineering work — you implement, then write the PR description. In that case the communication selector is a **cross-cutting consultation that does not change the current phase**: you are still in (say) review; you consult `communication-collaboration-selector` for the artifact you are about to write, then continue.
+
 ## Step 2 — Map genre → phase sequence
 
 The router translates the genre into a recommended phase sequence. These are illustrations *inside* this skill, not a catalog:
@@ -58,7 +64,7 @@ The four axes from Step 1 decide *how much* of each phase to apply and *how firm
 
 ## Step 4 — Conduct
 
-Having decided the sequence, the router invokes the selector skill for the current phase in-session — `planning-strategy-selector`, `review-strategy-selector`, `verification-strategy-selector`, or `debug-operate-strategy-selector`. On completing a phase it returns, updates the live note (this phase done → next phase), and:
+Having decided the sequence, the router invokes the selector skill for the current phase in-session — `planning-strategy-selector`, `review-strategy-selector`, `verification-strategy-selector`, or `debug-operate-strategy-selector`. When the next artifact to produce is a communication rather than code, it also consults `communication-collaboration-selector` — the cross-cutting selector, not a phase — without leaving the current phase. On completing a phase it returns, updates the live note (this phase done → next phase), and:
 
 - if the transition does **not** involve an irreversible or outward-facing action → proceed to the next phase;
 - if it does — Rule 1 fires, before a deploy, merge, publish, or tag → **stop at the gate**, hand over the prepared artifact and the recommendation, and let the human trigger the action.
