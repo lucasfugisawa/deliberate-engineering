@@ -46,6 +46,10 @@ Planning decides what to build; review reasons about the artifact; verification 
 
 Then enable it via `/plugin`. Install `superpowers` first (or alongside) — it's a hard prerequisite.
 
+## Getting started
+
+Not sure where to begin? Run `/deliberate-engineering:start` and describe the work — it's the front door. It classifies the work, names the phases and the ceremony they earn, and routes you to the right deliberate phase. You can also call a phase directly (`:plan`, `:review`, `:verify`, `:debug`) when you already know where you are.
+
 ## Uninstall
 
 Both steps are independent, and undoing this never touches your code or your repos:
@@ -55,11 +59,12 @@ Both steps are independent, and undoing this never touches your code or your rep
 
 ## What's inside (v0.1)
 
-A standing-rules skill, four phase selectors backed by four read-on-demand catalogs, and four commands.
+A standing-rules skill, a front-door router, four phase selectors backed by four read-on-demand catalogs, and five commands.
 
 - **`deliberate-engineering-rules` skill** — six standing rules held across every phase: keep the human's hand on irreversible and outward-facing actions; stay read-only on systems you don't own; verify claims against primary evidence before endorsing; recommend with a reasoned pick, not a bare menu; keep comments load-bearing; and checkpoint durable state before compacting context. Scoped to software work — it stays quiet on research, prose, and ad-hoc analysis.
+- **`deliberate-engineering-router` skill** — the front door. It classifies the work, names the phase sequence and the ceremony it earns, and routes to the matching selector; where the rules set your posture, the router decides where you start. It recommends rather than forces — the only hard stop is the human gate on irreversible actions.
 - **Four selector skills + four catalogs** — each selector classifies the work, then pulls the matching lenses from its catalog (read on demand, never all at once).
-- **Four commands** — `/deliberate-engineering:plan`, `:review`, `:verify`, and `:debug` invoke the selector for the current work.
+- **Five commands** — `/deliberate-engineering:start` routes you to the right phase; `:plan`, `:review`, `:verify`, and `:debug` invoke a selector directly.
 
 <details>
 <summary><strong>The four catalogs in detail</strong> (106 strategies total)</summary>
