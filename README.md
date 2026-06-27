@@ -59,13 +59,14 @@ Both steps are independent, and undoing this never touches your code or your rep
 
 ## What's inside (v0.1)
 
-A standing-rules skill, a front-door router, four phase selectors backed by four read-on-demand catalogs, and five commands.
+A standing-rules skill, a front-door router, four phase selectors backed by four read-on-demand catalogs, an override layer (read + capture), and six commands.
 
 - **`deliberate-engineering-rules` skill** — six standing rules held across every phase: keep the human's hand on irreversible and outward-facing actions; stay read-only on systems you don't own; verify claims against primary evidence before endorsing; recommend with a reasoned pick, not a bare menu; keep comments load-bearing; and checkpoint durable state before compacting context. Scoped to software work — it stays quiet on research, prose, and ad-hoc analysis.
 - **`deliberate-engineering-router` skill** — the front door. It classifies the work, names the phase sequence and the ceremony it earns, and routes to the matching selector; where the rules set your posture, the router decides where you start. It recommends rather than forces — the only hard stop is the human gate on irreversible actions.
 - **`deliberate-engineering-overrides` skill** — lets you override any shipped lens or standing rule from a personal file, and makes the agent declare the deviation — your practice takes precedence over the plugin's defaults, never silently.
+- **`deliberate-engineering-feedback` skill** — on demand, turns what you did this session into durable overrides: it distills the lenses you skipped or adjusted and the patterns the catalog lacks, shows you the exact block, and (only on your approval) appends it to your own override file. Your practice grows your file — distinct from the contribution tools that propose lenses for the shared catalog.
 - **Four selector skills + four catalogs** — each selector classifies the work, then pulls the matching lenses from its catalog (read on demand, never all at once).
-- **Five commands** — `/deliberate-engineering:start` routes you to the right phase; `:plan`, `:review`, `:verify`, and `:debug` invoke a selector directly.
+- **Six commands** — `/deliberate-engineering:start` routes you to the right phase; `:plan`, `:review`, `:verify`, and `:debug` invoke a selector directly; `:capture` turns this session's practice into overrides.
 
 <details>
 <summary><strong>The four catalogs in detail</strong> (106 strategies total)</summary>
@@ -137,6 +138,12 @@ The override layer is opt-in: if the file does not exist, nothing changes.
 ```
 
 This is your machine's choice, never a requirement of the plugin.
+
+### Capture practice into overrides (optional)
+
+Writing the override file by hand is one way; letting the agent help is another. Run `/deliberate-engineering:capture` (or just ask in natural language) and it observes the session you just had: the lenses or rules you skipped, corrected, or contradicted (candidates to `disable` or `modify`), and the recurring practices the catalog lacks (candidates to `add`). For each one it shows you the exact block it would append and writes nothing until you approve. It is on demand only — it never runs on its own — and append-only: it adds to `~/.claude/deliberate-engineering-overrides.md`, never rewriting or reordering what is already there. If nothing is worth an override, it says so and writes nothing.
+
+This is the adopter's write side — it grows YOUR personal override file. It is not the author contribution tools (`contribute`/`promote`), which propose lenses for the shared catalog. Capture makes the plugin yours faster, without hand-editing the file.
 
 ## Prior art & influences
 
