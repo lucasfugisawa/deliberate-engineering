@@ -58,6 +58,8 @@ Open only the parts matching your classification:
 
 **Worked example — confirming a shipped backfill did what was intended:** Post-deploy + operated on real data; high irreversibility. Selected: **16** (query production for the actual post-state, capture real rows), **17** (each query annotated with its expected result — "should now be 0 remaining"), **18** (verify the intended rows changed AND nothing unrelated did, watching for named side effects), **19** (re-run as volume accumulates; absence of expected updates is itself a flag), and because it mutated data, confirm the **20** audit trail reconciles. Closed with **5** (independent second pass). Skipped Part B/C — already merged and promoted; logged as not applicable.
 
+**Operator overrides.** Before applying the selected lenses, consult `deliberate-engineering-overrides`: if any selected lens has an operator override (disable / modify / add), honor it and declare the deviation in the Output.
+
 ## Step 4 — Compose the verification
 
 Apply the catalog's Appendix patterns:

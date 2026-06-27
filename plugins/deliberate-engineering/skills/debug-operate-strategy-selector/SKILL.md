@@ -61,6 +61,8 @@ Open only the Parts matching your classification:
 
 **Worked example — mainline/shared baseline broken, cause unknown, error counts climbing:** Degraded now + no reliable expectation (axis 1 → this catalog; axis 3 → Part C fires first). Selected: **6** (revert to known-good immediately — don't wait for the original author; a broken baseline blocks everyone), then with the baseline restored, treat the evidence skeptically — **1** (the climbing count: is it from sampled traces? pull the unsampled aggregate before believing the magnitude), **2** (don't read the absence of an error log as "it didn't happen" — the pipeline is lossiest exactly under this load), **4** (read the failure signature to point the hypothesis). **Dispatched `superpowers:systematic-debugging`** for the elimination method itself. After restoration, closed the loop with **14** (timeline while fresh) → **15** (blameless retro) → **16** (one owned, tracked action item). Skipped Part D — it's peacetime hygiene, not a mid-incident task; logged as not-now, to revisit when deriving the follow-up.
 
+**Operator overrides.** Before applying the selected lenses, consult `deliberate-engineering-overrides`: if any selected lens has an operator override (disable / modify / add), honor it and declare the deviation in the Output.
+
 ## Step 4 — Compose the response
 
 Apply the catalog's Appendix patterns:

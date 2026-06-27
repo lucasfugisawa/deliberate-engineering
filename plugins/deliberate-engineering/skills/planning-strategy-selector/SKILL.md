@@ -59,6 +59,8 @@ Open only the parts matching your non-trivial axes:
 
 **Worked example — plan a source-of-truth field migration:** Ambiguous-ish, high risk, hard to reverse, wide reach. Selected: **10** (full ceremony — it's risky and irreversible), **2 + 3** (strip anything speculative, but keep every step the migration needs to be correct), **7** (enumerate every downstream reader before calling it small), **6** (a classified inventory of all affected sites as the first deliverable), **9** (approve the approach before any code), **12** (sequence so no intermediate state is half-migrated and broken), **13** (expand→adopt→contract so the old code still reads and writes valid rows at every deploy step), **15** (a self-contained spec for the human and the executing agent), each fork carrying **14** a recommendation. Skipped frontend/altitude-heavy lenses — logged as not applicable.
 
+**Operator overrides.** Before applying the selected lenses, consult `deliberate-engineering-overrides`: if any selected lens has an operator override (disable / modify / add), honor it and declare the deviation in the Output.
+
 ## Step 4 — Compose the plan
 
 Apply the catalog's Appendix patterns:

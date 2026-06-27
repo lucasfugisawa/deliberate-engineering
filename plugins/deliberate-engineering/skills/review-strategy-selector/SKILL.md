@@ -51,6 +51,8 @@ Open the catalog **groups** matching your non-trivial axes and pick lenses. Read
 
 **Worked example — change writes production data via a backfill:** Non-trivial on Risk + Reversibility + Size. Selected lenses: **25** (functional correctness — does it backfill what the requirement meant?), **23** (concurrency — backfill contends with live writes), **24** (reversibility — is there a bounded way back?), **28** (data integrity — invariants/transactions hold?), **2** (adversarial — try to break it), closed with **3** (fresh eyes). Skipped frontend/i18n groups — logged as not applicable.
 
+**Operator overrides.** Before applying the selected lenses, consult `deliberate-engineering-overrides`: if any selected lens has an operator override (disable / modify / add), honor it and declare the deviation in the Output.
+
 ## Step 4 — Compose the passes
 
 Apply the composition patterns from the catalog's Appendix:

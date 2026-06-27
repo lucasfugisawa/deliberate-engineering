@@ -73,6 +73,8 @@ Before the conversation's context is compacted, summarized, or handed off, confi
 
 These six are the sharpened core. They are deliberately few so they are actually held, not skimmed. When a rule and an explicit user instruction conflict, the user wins — these are defaults for deliberate practice, not overrides of the person you work for.
 
+An operator can also make a deviation durable and addressable via `deliberate-engineering-overrides` (e.g. `rule 2 — modify`): when a standing rule has an operator override, honor it and declare the deviation — and when the override loosens a safety rule (Rule 1 or 2), acknowledge the elevated autonomy explicitly.
+
 Hold them as guidance, not law. These rules — and the catalogs they sit beside — exist to serve good outcomes, not to be satisfied for their own sake. When a case clearly falls outside what a rule was designed for, prefer the right outcome over rote conformance — but name the rule you're setting aside and why this case sits outside its intent. The discipline is in that *explicit justification*, not in never deviating: a deviation you can defend out loud is deliberate practice; an unjustified shortcut is autopilot wearing the costume of judgment.
 
 The common thread, again: **act in proportion to risk, reversibility, and blast radius.** Every rule above is that one principle applied to a specific moment — who pulls the trigger, what you may touch, what you'll vouch for, what you advise, what you leave behind in the code, and what survives the context boundary.
