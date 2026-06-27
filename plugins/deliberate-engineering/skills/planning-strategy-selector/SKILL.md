@@ -7,7 +7,7 @@ description: "Use before building, when deciding what work to do and how to appr
 
 The deliberate layer of planning. Where review judges a finished artifact and verification confronts reality, this skill operates *before code exists* — it decides **what work is worth doing, and how much process it calls for**, so the plan builds the right thing instead of everything plausible.
 
-The reference for every strategy cited below is `catalog.md` in this directory (16 strategies in five groups + composition patterns). Read **only** the sections you select — progressive disclosure, not the whole file.
+The reference for every strategy cited below is `catalog.md` in this directory (19 strategies in six groups + composition patterns). Read **only** the sections you select — progressive disclosure, not the whole file.
 
 ## This is judgment, not a planning engine
 
@@ -39,7 +39,7 @@ These set how much of the catalog you apply — and in which direction.
 
 - **Trivial-and-safe** → minimal: calibrate (10), confirm there's no hidden reach, do it, and state the light-ceremony decision. See "When NOT to over-plan."
 - **Standard** → scope to the real requirement (Part A), ground against the real codebase (5), and capture the plan with recommendations (14) — a lightweight pass over the axes that scored non-trivial.
-- **Ambiguous / risky / irreversible / wide reach** → full depth: resolve scope hard (Part A incl. the correctness counter-rule 3), spike any feasibility unknown (8), inventory and blast-radius the reach (6, 7), gate before code (9), decompose and sequence (11, 12), keep a multi-deploy schema/data change backward-compatible (13), and capture a self-contained dual-audience artifact (15, 16).
+- **Ambiguous / risky / irreversible / wide reach** → full depth: clear the fog and triage the open questions first (17, 18) and gate readiness before committing (19), resolve scope hard (Part A incl. the correctness counter-rule 3), spike any feasibility unknown (8), inventory and blast-radius the reach (6, 7), gate before code (9), decompose and sequence (11, 12), keep a multi-deploy schema/data change backward-compatible (13), and capture a self-contained dual-audience artifact (15, 16).
 
 ## Step 3 — Select lenses from the catalog
 

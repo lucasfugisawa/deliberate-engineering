@@ -1,6 +1,6 @@
 # Planning Strategy Catalog
 
-This catalog contains 16 planning strategies organized into five groups plus composition patterns. Each strategy is a lens of *judgment applied to planning* — deciding what to build, how much process the work calls for, how to slice and sequence it, and how to capture it. The selector skill references these by number to build a planning approach tuned to the work's clarity, risk, and reach.
+This catalog contains 19 planning strategies organized into six groups plus composition patterns. Each strategy is a lens of *judgment applied to planning* — deciding what to build, how much process the work calls for, how to slice and sequence it, and how to capture it. The selector skill references these by number to build a planning approach tuned to the work's clarity, risk, and reach.
 
 ## What this catalog is — and is not
 
@@ -137,6 +137,30 @@ It sits *before* code exists. Where review judges an artifact and verification c
 - **How it works:** Set the altitude of each planning/communication doc to its purpose. Aggressively cut implementation detail from an intent-communication artifact; present top-down, with detail living next to the item it concerns rather than in repeated passes at different altitudes; choose the representation (prose / table / diagram) that fits each point.
 - **Objective:** Match the document's level of detail to the decision it supports, so readers aren't drowned or starved.
 - **When most valuable:** Design docs and proposals with mixed audiences (deciders vs implementers); any doc that keeps drifting between "why" and "how."
+
+---
+
+## Part F — Disambiguation: turn a vague problem into a ready task
+
+*Before any of the above can apply, the work has to be clear enough to plan. These lenses govern the front of planning: clearing the fog, deciding which open questions block, and judging when work is ready to become a task.*
+
+### 17. Clear the fog with evidence before asking
+
+- **How it works:** Faced with a vague, broad, or ill-defined problem, first exhaust what is already knowable — the code, the docs, the product docs, the discussion threads, the email trail (delegate the search to an agent where it scales) — not only to find the answer outright but to reach whoever *can* answer with grounded, context-loaded questions. Never arrive with a raw question you could have answered or sharpened yourself; help the people who help you by carrying the context to them.
+- **Objective:** Convert ambiguity into precise, directed questions, minimizing round-trips and the burden you place on others.
+- **When most valuable:** Any ill-defined problem before planning begins; any question you are about to address to a busy human. (Evidence analog: review-catalog lens 14 and verification strategy 1 gather facts from the canonical source; this lens uses that gathering to *disambiguate the requirement* before a plan exists, distinct from lens 5, which plans against the code once the requirement is clear.)
+
+### 18. Decide early what's costly to reverse, late what's cheap to adjust
+
+- **How it works:** Triage the open questions by reversibility. Anything that shapes architecture, design, or carries considerable risk is **blocking** — resolve it *before* proceeding, because a wrong call there is expensive to undo. Anything absorbable through incremental, low-commitment adjustment can stay open and resolve live as execution reveals the answer. Settle architecture and design deliberately up front; defer implementation micro-decisions that live execution may well change — a premature detail decision is waste waiting to happen.
+- **Objective:** Spend deliberation early where being wrong is costly to reverse, and avoid premature commitment where the cost of changing course is low.
+- **When most valuable:** The start of any ambiguous work; whenever a set of open questions has to be triaged into "block now" versus "answer later." (This is the plugin's reversibility thesis applied to *decision timing*; kin to lens 8, which retires feasibility risk with a spike, where this triages decision criticality.)
+
+### 19. Readiness-and-viability gate
+
+- **How it works:** Treat work as ready to become an executable task only when requirements, architecture, and design are clear and the critical open questions (lens 18) are resolved. Before that gate, survey complexity, effort, risk, and timeline to form a viable macro picture, and align that viability with the team, product, and stakeholders. A task should be as well-defined as it can be before execution begins; genuine implementation details may be left to resolve along the way.
+- **Objective:** Let work cross from planning into execution only when it is near-autonomously actionable and agreed to be viable — not before.
+- **When most valuable:** The gate between planning and executing; any work that will be sliced into tasks or handed to an agent or another engineer. (Kin to lens 10, calibrate ceremony to risk, and lens 11, decompose for reviewability — that sizes the slices; this decides the work is ready to be sliced at all.)
 
 ---
 
