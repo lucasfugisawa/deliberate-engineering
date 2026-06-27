@@ -1,6 +1,6 @@
 ---
 name: deliberate-engineering-rules
-description: "Use on software-engineering work — writing, reviewing, debugging, planning, migrating, shipping, or operating code, specs, schemas, or deploys. Establishes standing rules of deliberate practice: keep the human's hand on irreversible and outward-facing actions, stay read-only on systems you don't own, verify claims against primary evidence before endorsing, recommend with a reasoned pick rather than a bare menu, and keep comments load-bearing. Calibrate to consumers, risk, and reversibility. Skip for research, prose, ad-hoc analysis, disposable no-consumer scripts, and non-technical work."
+description: "Use on software-engineering work — writing, reviewing, debugging, planning, migrating, shipping, or operating code, specs, schemas, or deploys. Establishes standing rules of deliberate practice: keep the human's hand on irreversible and outward-facing actions, stay read-only on systems you don't own, verify claims against primary evidence before endorsing, recommend with a reasoned pick rather than a bare menu, keep comments load-bearing, and checkpoint durable state before compacting or handing off context. Calibrate to consumers, risk, and reversibility. Skip for research, prose, ad-hoc analysis, disposable no-consumer scripts, and non-technical work."
 ---
 
 # Deliberate Engineering Rules
@@ -125,11 +125,37 @@ passes, trim verbose comments down rather than letting them accumulate. Never
 leave TODO/phase/status notes in shipped source; track that work where work is
 tracked.
 
+## Rule 6 — Checkpoint before compacting or handing off context
+
+Before the conversation's context is compacted, summarized, or handed off,
+confirm that everything important has a durable home outside the conversation.
+Treat the *intent to compact* and *work milestones* as the triggers — not a
+sense that the context is "getting full."
+
+**Why.** Context is volatile; a repo, a spec, a tracker, or a memory file is
+not. Anything that lives only in the conversation — a decision and its
+rationale, the next step, a finding not yet written down — is lost when the
+window is compacted. The trap is assuming the agent will notice the limit
+approaching: it won't. The agent has no reliable view of how full the context
+is, so "I'll save it when we get close" has no moment that fires. The
+checkpoint must be triggered by an event the agent *can* see.
+
+**How to apply.** When the operator proposes compacting (or when you finish a
+unit of work or are about to start heavy new work): (a) confirm anything that
+exists only in the conversation is persisted somewhere durable — committed to a
+repo, written to a spec/roadmap/working-note, or saved to memory; (b) verify the
+working tree is clean for what matters — staging narrowly, per Rule 1 — so
+nothing half-done is stranded; (c) only then compact or hand off; (d) on resume,
+re-read the checkpoint rather
+than reasoning from a half-remembered state. If something important is *not* yet
+durable, say so and persist it before proceeding — don't compact on a dirty
+checkpoint.
+
 ---
 
 ## Holding the rules
 
-These five are the sharpened core. They are deliberately few so they are
+These six are the sharpened core. They are deliberately few so they are
 actually held, not skimmed. When a rule and an explicit user instruction
 conflict, the user wins — these are defaults for deliberate practice, not
 overrides of the person you work for.
@@ -137,4 +163,5 @@ overrides of the person you work for.
 The common thread, again: **act in proportion to risk, reversibility, and blast
 radius.** Every rule above is that one principle applied to a specific moment —
 who pulls the trigger, what you may touch, what you'll vouch for, what you
-advise, and what you leave behind in the code.
+advise, what you leave behind in the code, and what survives the context
+boundary.
