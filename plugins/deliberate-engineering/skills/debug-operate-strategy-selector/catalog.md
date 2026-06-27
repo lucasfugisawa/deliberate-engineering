@@ -1,6 +1,6 @@
 # Debug/Operate Strategy Catalog
 
-This catalog contains 16 strategies organized into five groups plus composition
+This catalog contains 16 strategies organized into five Parts plus composition
 patterns. Each strategy is a lens for the moment a *live system* behaves
 unexpectedly and you must diagnose under uncertainty and respond — deciding
 which evidence to trust, which failure-mode you're looking at, and how to act
@@ -47,7 +47,7 @@ in a live system.*
 
 - **How it works:** Before you read a number off a dashboard, know how it was produced. A count derived from sampled traces is not a count — it is an extrapolation that can be off by the sampling factor and skewed by which paths got sampled. Use unsampled aggregates when you need a magnitude ("how many requests failed?"); use traces to understand an individual path ("what did *this* request do?"). Don't let one stand in for the other.
 - **Objective:** Stop treating an estimate as a measurement, the error that turns a small problem into a phantom large one (or hides a real large one).
-- **When most valuable:** Any time a decision rests on "how much" or "how often" and the data behind it might be sampled; reconciling a trace-derived figure against a billed or logged total.
+- **When most valuable:** Any time a decision rests on "how much" or "how often" and the data behind it might be sampled; reconciling a trace-derived figure against an authoritative logged or transactional total.
 
 ### 2. Treat logs as lossy by default
 
@@ -57,7 +57,7 @@ in a live system.*
 
 ### 3. Validate a finding against the effective version
 
-- **How it works:** Before chasing a flagged vulnerability, regression, or suspicious dependency, confirm it actually affects the *resolved, effective* version your system runs — not the version a report names in the abstract. Resolution, transitive overrides, and pins frequently mean the flagged issue is already patched or never reachable in your build. Resolve the effective version first, then decide whether there's anything to chase.
+- **How it works:** When findings arrive faster than you can chase them, the first triage is reachability: does the flagged issue — a vulnerability, a regression, a suspicious dependency — actually affect the *resolved, effective* version your system runs, or only a version a report names in the abstract? Resolution, transitive overrides, and pins frequently mean it's already patched or never reachable in your build. Resolve the effective version first, and spend the bounded investigation budget only on findings that are real for *your* running system.
 - **Objective:** Spend investigation budget only on findings that are real for *your* running system, not on noise from a scanner reasoning about a version you don't ship.
 - **When most valuable:** Triaging a security or dependency alert under pressure; any finding stated against a declared version rather than the resolved one. (Review #36 finds the candidate in the static artifact and verify #2 grounds the provenance; this lens decides, under live-investigation pressure, whether the candidate is even reachable before you act on it.)
 
@@ -71,7 +71,7 @@ top of the method.*
 
 ### 4. Read the failure-mode signature
 
-- **How it works:** Some failures carry a tell that points to a cause faster than blind elimination. A resource climbing while incoming load stays flat is the signature of a feedback loop, not of demand — something is amplifying itself, not responding to traffic. Learn the recurring signatures and let them steer the hypothesis, and calibrate the *fix* to the signature too: a runaway loop is tamed by small, frequent increments and short cooldowns, not one large change, and that pattern generalizes to any warm-up-costly runtime where a big abrupt move overshoots. The method still belongs to superpowers; the signature just tells you where to point it.
+- **How it works:** Some failures carry a tell that points to a cause faster than blind elimination. A resource climbing while incoming load stays flat is the signature of a feedback loop, not of demand — something is amplifying itself, not responding to traffic. Learn the recurring signatures and let them steer the hypothesis, and calibrate the *fix* to the signature too: a self-amplifying failure rarely tolerates one large corrective move — the shape that produced it also bounds how aggressively it's safe to correct. The method still belongs to superpowers; the signature just tells you where to point it and how hard to push.
 - **Objective:** Use the shape of the failure to shorten the search and to size the response correctly, instead of treating every symptom as an undifferentiated mystery.
 - **When most valuable:** Recurring or self-amplifying failures (resource exhaustion, retry storms, thundering herds) where the symptom's shape is itself diagnostic.
 
@@ -79,7 +79,7 @@ top of the method.*
 
 - **How it works:** Under incident pressure the temptation is to rip out the thing that looks wrong. Resist it long enough to recover *why* the suspect code exists — its authors, the original design, the decision it encodes — so you don't remove a load-bearing constraint you don't yet understand and trade one incident for a worse one. This is Chesterton's fence at incident speed: understand the fence before you tear it down.
 - **Objective:** Avoid a "fix" that breaks a deliberate, non-obvious decision, the failure mode of confident edits to unfamiliar code under stress.
-- **When most valuable:** Editing code you didn't write, mid-incident, where the design rationale isn't obvious from the code alone. (Apply rule 3 — distrust derived docs, go to the primary source for the intent — and dispatch `superpowers:systematic-debugging` for the elimination method itself.)
+- **When most valuable:** Editing code you didn't write, mid-incident, where the design rationale isn't obvious from the code alone. (Distrust derived docs and stale checkouts — go to the primary source for the intent, per the standing verify-before-endorse rule — and dispatch `superpowers:systematic-debugging` for the elimination method itself.)
 
 ---
 
@@ -129,13 +129,13 @@ on?" Cross-reference at that seam, don't restate it.*
 
 ### 11. Tie alert thresholds to business recovery cadence
 
-- **How it works:** Set staleness and age thresholds from how the business actually recovers, not from a generic default. The right question is "how far behind can this get before recovery becomes impossible or expensive?" — and the threshold is derived from that answer, not from a round number someone copied from another system. A threshold untethered from real recovery dynamics either cries wolf or fires too late to matter.
+- **How it works:** Set staleness and age thresholds from how the system actually recovers, not from a generic default. The right question is "how far behind can this get before recovery becomes impossible or expensive?" — and the threshold is derived from that answer, not from a round number someone copied from another system. A threshold untethered from real recovery dynamics either cries wolf or fires too late to matter.
 - **Objective:** Make a threshold mean something — fire with enough lead time to still recover, without firing on conditions that are operationally fine.
 - **When most valuable:** Backlog/lag/age alerts; any threshold currently set to a generic default rather than derived from the cost of falling behind.
 
 ### 12. Own the observability of inputs you don't control
 
-- **How it works:** If someone else's change to your *inputs* — a configuration value, a pricing table, partner or content data you consume — can break your user experience, then monitoring that surfaces such a change is your responsibility, even though the data isn't yours to author. You can't prevent the upstream change, but you can refuse to discover it only when a user complains. Instrument the inputs at your boundary so a bad one is visible to you immediately.
+- **How it works:** If someone else's change to your *inputs* — a configuration value, a reference or lookup table, or third-party data you consume — can break your user experience, then monitoring that surfaces such a change is your responsibility, even though the data isn't yours to author. You can't prevent the upstream change, but you can refuse to discover it only when a user complains. Instrument the inputs at your boundary so a bad one is visible to you immediately.
 - **Objective:** Close the blind spot where your system breaks from an external input change you had no visibility into.
 - **When most valuable:** Systems whose behavior is driven by externally-owned config or data; anywhere "it wasn't our change" has masked an outage you still owned the UX for.
 
