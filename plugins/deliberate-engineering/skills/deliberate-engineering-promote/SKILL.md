@@ -53,7 +53,7 @@ Each axis has one catalog file at `plugins/deliberate-engineering/skills/<axis>-
 
 Lenses are `### N. Title` blocks followed by three bullets (How it works / Objective / When most valuable), grouped into Parts (lettered sections like "Part A — Process Strategies"). The operation in the candidate frontmatter determines what to do:
 
-**`operation: add`** — the candidate is a wholly new lens. Assign the NEXT FREE NUMBER (scan the catalog for the highest existing `### N.` number and add one). PLACE the new lens block under the Part (group) that matches its theme — do NOT append at the end of the file; insert it in the thematically correct Part, even if that Part's numbers are no longer sequential. This is deliberate: a Part may run out of numeric order (e.g., Part A ends 1–11, 52, 53) because append-only numbering is prioritized over reading-order. Write the new `### N. Title` block with the three bullets, formatted identically to existing lenses in the catalog.
+**`operation: add`** — the candidate is a wholly new lens. Before assigning a number, scan the catalog for an existing lens with the same title or a nearly identical principle; on a hit, do not add — see add-duplicate handling in "Error handling." Otherwise assign the NEXT FREE NUMBER (scan the catalog for the highest existing `### N.` number and add one). PLACE the new lens block under the Part (group) that matches its theme — do NOT append at the end of the file; insert it in the thematically correct Part, even if that Part's numbers are no longer sequential. This is deliberate: a Part may run out of numeric order (e.g., Part A ends 1–11, 52, 53) because append-only numbering is prioritized over reading-order. Write the new `### N. Title` block with the three bullets, formatted identically to existing lenses in the catalog.
 
 **`operation: modify` with `modifies: N`** — the candidate amends an existing lens. Locate the `### N.` block in the catalog (where N matches the `modifies` field) and edit it in place. Do NOT change the number, do NOT move it to a different Part. If the amendment changes the title, change the title on the `### N.` line; if it adjusts a bullet, edit that bullet; if it adds a bullet, add it. The lens stays where it is, under its original number and Part. If `### N.` does not exist in the catalog, STOP — this is a modify-nonexistent error (see "Error handling").
 
@@ -105,9 +105,11 @@ The promote skill degrades gracefully and reports failures explicitly. It never 
 
 **skill-reviewer rejection:** report the reviewer's findings, do NOT remove the candidate file, do NOT commit over the rejection. The catalog edit sits in the working tree (reversible). The author addresses the findings (edit the catalog in place or revise the candidate) and either re-invokes promotion or commits manually.
 
+**skill-reviewer unavailable (the `plugin-dev:skill-reviewer` agent is not installed or cannot be invoked):** treat it like a rejection — report that the review step could not run, leave the catalog edit in the working tree, and do NOT remove the candidate file. The review is not optional; never silently skip it and remove the candidate. The author installs the reviewer and re-invokes promotion, or reviews the edit by hand before committing.
+
 **Candidate removal failure (after a successful catalog edit):** flag the half-applied state explicitly — the catalog edit succeeded, the removal failed. Report both file paths. Do NOT fail silently. The author removes the candidate file manually and commits both changes together.
 
-**Malformed candidate (missing frontmatter, invalid `target`, unparseable):** report the malformation, do NOT guess, do NOT edit. Ask the author to fix the candidate file and re-invoke promotion.
+**Malformed candidate (missing frontmatter, invalid `target`, unparseable):** report the malformation, do NOT guess, do NOT edit. A valid `target` is one of `review`, `verify`, `planning`, or `debug`; anything else is malformed. Ask the author to fix the candidate file and re-invoke promotion.
 
 **Modify-nonexistent (`operation: modify` with `modifies: N` but `### N.` does not exist in the catalog):** stop, report the missing lens number, do NOT edit. The candidate likely cites the wrong number. Ask the author to correct the `modifies` field or change the operation to `add`.
 
