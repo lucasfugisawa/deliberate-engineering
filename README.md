@@ -56,6 +56,8 @@ Then enable it via `/plugin`. Install `superpowers` first (or alongside) — it'
 
 Not sure where to begin? Run `/deliberate-engineering:start` and describe the work — it's the front door. It classifies the work, names the phases and the ceremony they earn, and routes you to the right deliberate phase. You can also call a phase directly (`:plan`, `:review`, `:verify`, `:debug`) when you already know where you are.
 
+For the full picture — how the pieces fit together and how to drive each flow, including personalizing and contributing — see **[Architecture & usage](docs/architecture-and-usage.md)**.
+
 ## Uninstall
 
 Both steps are independent, and undoing this never touches your code or your repos:
@@ -149,17 +151,11 @@ This is your machine's choice, never a requirement of the plugin.
 
 ### Capture practice into overrides (optional)
 
-Writing the override file by hand is one way; letting the agent help is another. Run `/deliberate-engineering:capture` (or just ask in natural language) and it observes the session you just had: the lenses or rules you skipped, corrected, or contradicted (candidates to `disable` or `modify`), and the recurring practices the catalog lacks (candidates to `add`). For each one it shows you the exact block it would append and writes nothing until you approve. It is on demand only — it never runs on its own — and append-only: it adds to `~/.claude/deliberate-engineering-overrides.md`, never rewriting or reordering what is already there. If nothing is worth an override, it says so and writes nothing.
-
-This is the adopter's write side — it grows YOUR personal override file. It is not the author contribution tools (`contribute`/`promote`), which propose lenses for the shared catalog. Capture makes the plugin yours faster, without hand-editing the file.
+Run `/deliberate-engineering:capture` (or just ask) and the agent distills the session you just had into ready-to-paste override blocks — the lenses you skipped or corrected, the practices the catalog lacks. On demand only, append-only, written only on your approval. This grows YOUR personal override file, distinct from the author contribution tools. See the [Adapt journey](docs/architecture-and-usage.md#how-to-use-it) for the full flow.
 
 ### Contribute a lens to the catalog (optional)
 
-The override file is for your own practice; the shared catalog is for judgment worth shipping to everyone. When a session surfaces a tactic that generalizes — a review angle, a verification mode, a planning discipline — run `/deliberate-engineering:contribute` (or just ask) and it turns that judgment into a catalog candidate. The central act is **generalize at capture**: it extracts the employer-neutral principle and discards the specifics — the service, the incident, the names — before anything is written. Anything that can't be generalized without those specifics is dropped, not half-cleaned. It shows you each candidate, confirms the principle survived and the specifics are gone, and on your approval writes a `pending` file to the `candidates/` queue.
-
-Capture never commits, opens a PR, or pushes — it only fills the queue. The full flow is **capture → promote → human gate**. When you're ready to move a candidate into the catalog, run `/deliberate-engineering:promote`. It runs a blocking leak-audit first — on any surviving specific it stops and edits nothing — then classifies the candidate. An *isolated* candidate (a single new or amended lens) is applied to the matching catalog append-only: a new lens gets the next free number and existing lenses are never renumbered, so the override identifiers you've been citing stay stable. A *structural* candidate (a new catalog, a reorganization, a rule change) is not applied — promote explains why and recommends the full design cycle instead. On the isolated path it also runs a skill-reviewer pass and removes the promoted candidate from the queue. Throughout, it edits only the working tree and **always stops before commit, PR, or push** — publication stays your decision (Rule 1).
-
-This is the author/contributor write side — it proposes and prepares lenses for the shared catalog. It is distinct from the adopter feedback skill, which grows your own personal override file. The override layer is for *your* practice; this flow is for judgment worth shipping to everyone.
+Judgment worth shipping to everyone goes to the shared catalog in two gated steps: `/deliberate-engineering:contribute` generalizes a session's tactic into a `pending` candidate (extracting the employer-neutral principle, dropping anything that can't be said without the specifics), and `/deliberate-engineering:promote` runs a blocking leak-audit and edits the catalog append-only — never renumbering existing lenses, always stopping before commit, PR, or push (Rule 1). This is the author side, distinct from your personal override file. See the [Contribute journey](docs/architecture-and-usage.md#how-to-use-it) and [`CONTRIBUTING.md`](CONTRIBUTING.md) for the full flow.
 
 ## Prior art & influences
 
