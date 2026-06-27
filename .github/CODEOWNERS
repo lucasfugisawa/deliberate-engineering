@@ -1,0 +1,7 @@
+# Code owners for deliberate-engineering.
+# @lucasfugisawa is requested for review automatically on every pull request.
+# This is a review convention, not a merge gate — branch protection does not
+# require code-owner approval (the repo has a single maintainer, and GitHub
+# forbids self-approval, which would otherwise block all merges).
+
+* @lucasfugisawa
