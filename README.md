@@ -31,6 +31,12 @@ One mental model runs across the whole lifecycle — **risk, reversibility, requ
 
 Planning decides what to build; review reasons about the artifact; verification confronts reality; and debug/operate takes over when a live system misbehaves and no reliable expectation holds.
 
+## Scope & boundaries
+
+`deliberate-engineering` is a **horizontal** layer: the judgment that holds across every domain — how to classify risk, calibrate ceremony, verify claims, and decide deliberately. It deliberately stops where domain *depth* begins, and that boundary is the design, not a gap. Process judgment is the same whether you're shipping an API, a database schema, or a mobile screen — so this layer stays transferable across all of them, and folding in any one domain's depth would only make it less so.
+
+So it does not carry domain-specific knowledge — API design, data modeling, performance tuning, observability, security hardening, mobile, front-end, and the rest. At the edge where that depth matters, it does the honest thing: it names what it doesn't carry and points you to bring your own domain expertise, rather than fake a competence it doesn't have. That is the same discipline the rules ask of the agent (Rule 7 — name the edge of what you know), turned on the plugin itself.
+
 ## Requirements & compatibility
 
 - **Requires [`superpowers`](https://github.com/obra/superpowers)** (Jesse Vincent) as its discipline engine. `deliberate-engineering` orchestrates it — it owns the *judgment*, and delegates the *method* (TDD, systematic debugging, plan execution) to superpowers. It does not replace it.
@@ -160,7 +166,7 @@ This is the author/contributor write side — it proposes and prepares lenses fo
 This plugin stands on the shoulders of:
 
 - **[superpowers](https://github.com/obra/superpowers)** (Jesse Vincent) — the required discipline engine that makes deliberate interception possible.
-- **[addyosmani/agent-skills](https://github.com/addyosmani/agent-skills)** and **[mattpocock/skills](https://github.com/mattpocock/skills)** — pioneering work in curated skill catalogs for AI-assisted development.
+- **[addyosmani/agent-skills](https://github.com/addyosmani/agent-skills)** and **[mattpocock/skills](https://github.com/mattpocock/skills)** — pioneering work in curated skill catalogs for AI-assisted development. They also exemplify the vertical, domain-deep catalogs that complement this horizontal layer — the kind of depth the *Scope & boundaries* section points you to bring yourself.
 - **General engineering practice** — review strategies, threat modeling, FMEA, and deliberate practice.
 
 We study, we don't copy. Where design converges with existing work, we give credit. The catalog structure and composition patterns are original synthesis; the individual lenses draw from established engineering discipline.
