@@ -50,7 +50,7 @@ For each candidate, present:
 2. The target and operation — e.g., "review #35 — disable."
 3. The **exact markdown block** that would be appended to the override file, in the format the override read side expects.
 
-Example presentation:
+A `disable` candidate looks like this — it removes a lens entirely:
 
 > **Candidate:** review #35 — disable
 > 
@@ -61,6 +61,40 @@ Example presentation:
 > ## review #35 — disable
 > 
 > **Why:** We run a separate simplification pass after the deliberate review.
+> ```
+> 
+> Approve this candidate, edit it, or reject it?
+
+A `modify` candidate appends an annotation — the lens stays active, but you applied a recurring adjustment that you want read alongside the shipped content:
+
+> **Candidate:** verify #N — modify
+> 
+> **Signal:** You applied lens #N consistently, but each time added a check for [specific constraint the shipped lens omits].
+> 
+> **Block to append:**
+> ```markdown
+> ## verify #N — modify
+> 
+> **Add:** The recurring adjustment you applied — read alongside the shipped lens, never replacing it.
+> ```
+> 
+> Approve this candidate, edit it, or reject it?
+
+An `add` candidate is a full operator-authored lens — a recurring practice you brought that the catalog lacks, now formalized as a lens for future sessions:
+
+> **Candidate:** add — <catalog>
+> 
+> **Signal:** You consistently applied [strategy name] across [two or more contexts], with a clear when-to-apply condition and repeatable pattern.
+> 
+> **Block to append:**
+> ```markdown
+> ## add — <catalog>
+> 
+> **Name:** A short name for the strategy.
+> 
+> **When:** The situation in which this operator-authored lens applies.
+> 
+> **Apply:** What to do when it applies — the lens content itself.
 > ```
 > 
 > Approve this candidate, edit it, or reject it?
