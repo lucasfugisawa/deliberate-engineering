@@ -13,7 +13,7 @@ The harness and the rules skill already establish a precedence order: explicit u
 
 ## vs the feedback layer
 
-This skill is the **read side** of the override layer. It consults the file, honors the overrides, and declares them. Growing the file from observed practice — noticing that an operator routinely overrides planning #12, offering to persist that preference, and writing the entry — is the **write side**, a separate capability owned by the `deliberate-engineering-feedback` skill (invoked on demand via `/deliberate-engineering:capture`). The boundary holds regardless: *this* skill only reads and applies overrides; it never writes them. The feedback skill writes only on demand, only with approval, and only by appending — never by editing what is already there.
+This skill is the **read side** of the override layer. It consults the file, honors the overrides, and declares them. Growing the file from observed practice — noticing that an operator routinely overrides planning #12, offering to persist that preference, and writing the entry — is the **write side**, a separate capability owned by the `deliberate-engineering-capture` skill (invoked on demand via `/deliberate-engineering:capture`). The boundary holds regardless: *this* skill only reads and applies overrides; it never writes them. The capture skill writes only on demand, only with approval, and only by appending — never by editing what is already there.
 
 ## The router is not a target
 

@@ -1,19 +1,19 @@
 ---
 name: deliberate-engineering-promote
-description: "Use on demand to drive a pending candidate into the catalog systematically. Runs the leak-audit gate, classifies isolated vs structural, then (isolated) edits the catalog append-only + runs skill-reviewer or (structural) stops and recommends the proper design cycle. This is the promotion step of the author contribution flow — it drives a candidate into the shared catalog (working tree only, gated). It is not the contribute skill, which captures candidates, nor the adopter feedback skill, which writes your personal override file. Stays silent unless invoked."
+description: "Use on demand to drive a pending candidate into the catalog systematically. Runs the leak-audit gate, classifies isolated vs structural, then (isolated) edits the catalog append-only + runs skill-reviewer or (structural) stops and recommends the proper design cycle. This is the promotion step of the author contribution flow — it drives a candidate into the shared catalog (working tree only, gated). It is not the contribute skill, which captures candidates, nor the adopter capture skill, which writes your personal override file. Stays silent unless invoked."
 ---
 
 # Deliberate Engineering Promote
 
-The third vertex of the authoring trio. Where `deliberate-engineering-feedback` grows the adopter's personal override file, and `deliberate-engineering-contribute` captures generalizable judgment into clean candidate files in `candidates/`, this skill drives an approved candidate from the queue into the shipped catalog. It is the promotion half: systematically elevate a candidate through a blocking leak-audit gate, classify it as isolated or structural, route to the correct path, and stop at the human gate before commit. All catalog edits happen in the working tree only. The skill NEVER commits, opens a PR, or pushes — that irreversible, outward-facing act is the human's.
+The third vertex of the authoring trio. Where `deliberate-engineering-capture` grows the adopter's personal override file, and `deliberate-engineering-contribute` captures generalizable judgment into clean candidate files in `candidates/`, this skill drives an approved candidate from the queue into the shipped catalog. It is the promotion half: systematically elevate a candidate through a blocking leak-audit gate, classify it as isolated or structural, route to the correct path, and stop at the human gate before commit. All catalog edits happen in the working tree only. The skill NEVER commits, opens a PR, or pushes — that irreversible, outward-facing act is the human's.
 
 ## vs the contribute skill
 
 `deliberate-engineering-contribute` is the **capture** half — it turns generalizable engineering judgment from a session into a clean candidate file and deposits it in `candidates/`. This skill is the **promote** half — it takes a candidate from the queue, runs the gated promotion (leak audit, classification, catalog fit, review), and moves it into the shipped catalog or recommends the proper design cycle. Two skills, one gated pipeline. The differentiator: This is the promotion step of the author contribution flow — it drives a candidate into the shared catalog (working tree only, gated). It is not the contribute skill, which captures candidates.
 
-## vs the adopter feedback skill
+## vs the adopter capture skill
 
-`deliberate-engineering-feedback` grows the **adopter's personal override file** — `~/.claude/deliberate-engineering-overrides.md`, local and private. This skill edits the **shared catalog** — the shipped plugin content. Opposite write-targets. The differentiator: This is the promotion step of the author contribution flow — it drives a candidate into the shared catalog (working tree only, gated). It is not the adopter feedback skill, which writes your personal override file.
+`deliberate-engineering-capture` grows the **adopter's personal override file** — `~/.claude/deliberate-engineering-overrides.md`, local and private. This skill edits the **shared catalog** — the shipped plugin content. Opposite write-targets. The differentiator: This is the promotion step of the author contribution flow — it drives a candidate into the shared catalog (working tree only, gated). It is not the adopter capture skill, which writes your personal override file.
 
 ## On demand only
 

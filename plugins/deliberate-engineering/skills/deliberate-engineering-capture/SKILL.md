@@ -1,9 +1,9 @@
 ---
-name: deliberate-engineering-feedback
+name: deliberate-engineering-capture
 description: "Use on demand to capture what you did this session into durable overrides. Observes deviations (you corrected/skipped a catalog lens or rule) and patterns (recurring practice the catalog lacks), discusses candidates, and on approval appends disable/modify/add entries to ~/.claude/deliberate-engineering-overrides.md. This is the adopter's write side — it grows YOUR personal override file. It is not the author contribution tools (contribute/promote), which propose lenses for the shared catalog. Stays silent unless invoked."
 ---
 
-# Deliberate Engineering Feedback
+# Deliberate Engineering Capture
 
 The adopter write side of the override layer. Where `deliberate-engineering-overrides` reads the personal override file and honors it at runtime, this skill helps you grow that file from what you actually did. It watches for two signals — deviations from the catalog (you skipped or corrected a lens/rule) and patterns beyond it (you brought a recurring practice the catalog lacks) — proposes override entries, and on approval appends them to `~/.claude/deliberate-engineering-overrides.md`.
 
