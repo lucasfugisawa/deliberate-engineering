@@ -33,13 +33,11 @@ Routing has a cost, and over-routing the trivial is the same misplaced ceremony 
 
 ## Step 1 — Classify on two distinct dimensions
 
-These two dimensions are kept separate on purpose. Conflating them — treating genre as if it carried intensity — is a category error.
+**Genre selects the route; the axes set how deep to go on it.** They are orthogonal questions; answer both. These two dimensions are kept separate on purpose. Conflating them — treating genre as if it carried intensity — is a category error.
 
 1. **Genre of the work** (the router's own signal, *nominal* — a kind, not a degree). It selects the **entry phase and the sequence**. The five genres: G1 building something new; G2 changing something that already exists (including refactors); G3 a live system is failing and you must respond; G4 evaluating a finished artifact; G5 a design to discuss before any code. "New feature" is not *more* than "incident" — it is a different kind. Genre therefore carries no intensity and **never** enters the depth calculation. Genre is not an axis.
 
 2. **The four canonical axes** (the shared vocabulary of the whole plugin, *ordinal* — each runs low→high): **requirement clarity, risk, reversibility, reach.** They set the **depth of each phase** and the **firmness of the sequence recommendation**, and they combine into one "how heavy is this" judgment. These are deliberately the *same* four axes the plan, review, and verify selectors use — the router adds **no fifth axis**, preserving one mental model across the lifecycle.
-
-In one line: **genre selects the route; the axes set how deep to go on it.** They are orthogonal questions; answer both.
 
 ## Step 2 — Map genre → phase sequence
 
@@ -56,7 +54,7 @@ The router translates the genre into a recommended phase sequence. These are ill
 
 ## Step 3 — Calibrate the ceremony band
 
-The four axes from Step 1 decide *how much* of each phase to apply and *how firm* the sequence recommendation is. Trivial-and-safe → a single phase, a light recommendation. Risky / irreversible / wide reach → the full sequence, a firm recommendation, Rule 1 gates active at the irreversible step. The router **cites** the planning lens for the method rather than copying it: see `planning-strategy-selector` catalog #10 (calibrate-ceremony-to-risk) for the full treatment of matching ceremony to stakes.
+The four axes from Step 1 decide *how much* of each phase to apply and *how firm* the sequence recommendation is. Trivial-and-safe → a single phase, a light recommendation (see "When NOT to route heavy"). Risky / irreversible / wide reach → the full sequence, a firm recommendation, Rule 1 gates active at the irreversible step. The router **cites** the planning lens for the method rather than copying it: see `planning-strategy-selector` catalog #10 (calibrate-ceremony-to-risk) for the full treatment of matching ceremony to stakes.
 
 ## Step 4 — Conduct
 
@@ -73,7 +71,7 @@ After classifying and sequencing, before invoking the first phase, the router em
 
 **(a) Visible judgment.** Narrate *judgment*, not mechanics — "now I'll read the file" is noise, since the harness already shows tool calls. Report: the classification (genre + the four axes, one line); the recommended phase sequence and ceremony band; and **what was deliberately left out and why** — the most valuable part (e.g. "skipping verify: no observable-behavior change"). This is Rule 4's recommend-with-rationale posture, applied to routing itself.
 
-**(b) Execution shape per phase.** For each phase, say whether the work inside it parallelizes or sequences, and **delegate** the orchestration: "lenses 25/28/2 are independent → concurrent subagents via `superpowers`/Workflow"; "these phases depend on each other → sequential." This is *decide, don't execute*: the router chooses the shape; firing the subagents is `superpowers`/Workflow's job, never reimplemented here. The decision matters because agents routinely under-parallelize (serializing independent lenses) or over-parallelize (fanning out work that has real dependencies) — that judgment is exactly what this layer owns.
+**(b) Execution shape per phase.** For each phase, state parallel-vs-sequential and **delegate** the firing to `superpowers`/Workflow: "lenses 25/28/2 are independent → concurrent subagents via `superpowers`/Workflow"; "these phases depend on each other → sequential."
 
 **Worked example** — request: "implement field X on the billing model":
 
@@ -89,7 +87,7 @@ The boundary that keeps this lean: the router does **not** invent a file format 
 
 - **Genuinely ambiguous intent → interview-by-exception.** Route by default; ask only when intent is truly undecidable from the request. One question, with a recommendation embedded (Rule 4: "I'd treat this as a change to existing behavior — confirm?"), never an interrogation. Most requests arrive with intent legible in the first message; asking there is the friction this plugin rejects.
 - **Out-of-scope request** (research, prose, ad-hoc analysis) → the router goes quiet and stays out of the way, identical to the rules' scope gate. It does not force ceremony where it does not belong — that is the anti-pattern this plugin exists to prevent.
-- **Phase with no catalog** (release / rollout / infra / dependencies) → the honesty ruler: point at the existing lenses (planning #12, planning #13, the verification staged-promotion lenses, Rule 1), never fake a phase.
+- **Phase with no catalog** (release / rollout / infra / dependencies) → the honesty ruler (above).
 
 ## Coexistence and precedence
 
@@ -97,4 +95,4 @@ When other workflow engines are present (`superpowers`, `feature-dev`), the rout
 
 ## Output
 
-Report, briefly: the classification (genre + the four axes); the recommended phase sequence and the ceremony band; the per-phase execution shape (what parallelizes, what sequences, delegated to `superpowers`/Workflow); what was deliberately skipped and why (the most valuable part); and which phase the router is starting with.
+Report, briefly: the classification (genre + the four axes), the recommended phase sequence and ceremony band, the per-phase execution shape, what was deliberately skipped and why (the most valuable part), and which phase the router is starting with.
