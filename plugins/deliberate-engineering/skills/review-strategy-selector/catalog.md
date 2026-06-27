@@ -1,6 +1,6 @@
 # Review Strategy Catalog
 
-This catalog contains 53 review strategies organized into five groups plus composition patterns. Each strategy is a lens through which to examine work. The selector skill references these by number to build custom review workflows. No lens is mandatory — apply only the ones the change's context, risk, and scope actually call for.
+This catalog contains 54 review strategies organized into five groups plus composition patterns. Each strategy is a lens through which to examine work. The selector skill references these by number to build custom review workflows. No lens is mandatory — apply only the ones the change's context, risk, and scope actually call for.
 
 Strategy **numbers are stable identifiers, not reading order**: a lens keeps its number for life, and a new lens is appended with the next free number and *placed* under the group it belongs to. So a group may run out of numeric sequence (Part A ends with 52–53). This is deliberate — it keeps every published number citable (e.g. by an override) without renumbering.
 
@@ -37,6 +37,12 @@ Strategies **compose**. The strongest pattern is to *rotate the lens each pass* 
 - **How it works:** After applying fixes, review specifically **what those fixes might have broken**.
 - **Objective:** Prevent the repair of one defect from planting another.
 - **When most valuable:** Always, after a round of non-trivial edits.
+
+### 54. Stopping criterion — have we exhausted the lenses?
+
+- **How it works:** After a multi-angle review pass, run an explicit stop test rather than stopping by fatigue or by clock. Ask which *classes* of defect have been examined (correctness, security, failure modes, contract/spec conformance, simplicity), which lenses are still unrun, and whether the verifier is biased toward *recall* — preferring a false positive over letting a whole class of defect slip through. Stop only when the unrun lenses are deliberately judged not-applicable and that judgment is stated, not when you simply ran out of energy.
+- **Objective:** Make "the review is done" a defensible judgment with a named criterion — the same way "done" is a hypothesis to check, not a feeling, for the work under review.
+- **When most valuable:** Exhaustive audits and high-stakes changes, where stopping a lens too early silently caps coverage. For *running* the multiple angles, see the Composition Patterns (lens rotation, find → verify pipeline); this lens governs the *stopping*.
 
 ### 5. Devil's advocate / red team (rotated role)
 
