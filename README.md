@@ -59,14 +59,15 @@ Both steps are independent, and undoing this never touches your code or your rep
 
 ## What's inside (v0.1)
 
-A standing-rules skill, a front-door router, four phase selectors backed by four read-on-demand catalogs, an override layer (read + capture), and six commands.
+A standing-rules skill, a front-door router, four phase selectors backed by four read-on-demand catalogs, an override layer (read + capture), a catalog-contribution tool, and seven commands.
 
 - **`deliberate-engineering-rules` skill** — six standing rules held across every phase: keep the human's hand on irreversible and outward-facing actions; stay read-only on systems you don't own; verify claims against primary evidence before endorsing; recommend with a reasoned pick, not a bare menu; keep comments load-bearing; and checkpoint durable state before compacting context. Scoped to software work — it stays quiet on research, prose, and ad-hoc analysis.
 - **`deliberate-engineering-router` skill** — the front door. It classifies the work, names the phase sequence and the ceremony it earns, and routes to the matching selector; where the rules set your posture, the router decides where you start. It recommends rather than forces — the only hard stop is the human gate on irreversible actions.
 - **`deliberate-engineering-overrides` skill** — lets you override any shipped lens or standing rule from a personal file, and makes the agent declare the deviation — your practice takes precedence over the plugin's defaults, never silently.
 - **`deliberate-engineering-feedback` skill** — on demand, turns what you did this session into durable overrides: it distills the lenses you skipped or adjusted and the patterns the catalog lacks, shows you the exact block, and (only on your approval) appends it to your own override file. Your practice grows your file — distinct from the contribution tools that propose lenses for the shared catalog.
+- **`deliberate-engineering-contribute` skill** — on demand, turns generalizable judgment from a session into a clean catalog candidate: it generalizes at capture (extracting the employer-neutral principle and discarding the specifics), and on approval deposits a `pending` candidate in the `candidates/` queue. It never commits — promotion to the shared catalog is a separate, gated step.
 - **Four selector skills + four catalogs** — each selector classifies the work, then pulls the matching lenses from its catalog (read on demand, never all at once).
-- **Six commands** — `/deliberate-engineering:start` routes you to the right phase; `:plan`, `:review`, `:verify`, and `:debug` invoke a selector directly; `:capture` turns this session's practice into overrides.
+- **Seven commands** — `/deliberate-engineering:start` routes you to the right phase; `:plan`, `:review`, `:verify`, and `:debug` invoke a selector directly; `:capture` turns this session's practice into overrides; `:contribute` turns it into a catalog candidate.
 
 <details>
 <summary><strong>The four catalogs in detail</strong> (106 strategies total)</summary>
@@ -144,6 +145,12 @@ This is your machine's choice, never a requirement of the plugin.
 Writing the override file by hand is one way; letting the agent help is another. Run `/deliberate-engineering:capture` (or just ask in natural language) and it observes the session you just had: the lenses or rules you skipped, corrected, or contradicted (candidates to `disable` or `modify`), and the recurring practices the catalog lacks (candidates to `add`). For each one it shows you the exact block it would append and writes nothing until you approve. It is on demand only — it never runs on its own — and append-only: it adds to `~/.claude/deliberate-engineering-overrides.md`, never rewriting or reordering what is already there. If nothing is worth an override, it says so and writes nothing.
 
 This is the adopter's write side — it grows YOUR personal override file. It is not the author contribution tools (`contribute`/`promote`), which propose lenses for the shared catalog. Capture makes the plugin yours faster, without hand-editing the file.
+
+### Contribute a lens to the catalog (optional)
+
+The override file is for your own practice; the shared catalog is for judgment worth shipping to everyone. When a session surfaces a tactic that generalizes — a review angle, a verification mode, a planning discipline — run `/deliberate-engineering:contribute` (or just ask) and it turns that judgment into a catalog candidate. The central act is **generalize at capture**: it extracts the employer-neutral principle and discards the specifics — the service, the incident, the names — before anything is written. Anything that can't be generalized without those specifics is dropped, not half-cleaned. It shows you each candidate, confirms the principle survived and the specifics are gone, and on your approval writes a `pending` file to the `candidates/` queue.
+
+It never commits, opens a PR, or pushes. Promotion to the shipped catalog is a separate, gated step: a human reviews the candidate, a leak-audit runs, and the `promote` step edits the catalog in the working tree but still stops before publication. This is the author/contributor write side — it proposes lenses for the shared catalog via the `candidates/` queue. It is not the adopter feedback skill, which grows your own personal override file.
 
 ## Prior art & influences
 
