@@ -61,8 +61,8 @@ The override file lives at `~/.claude/deliberate-engineering-overrides.md`. Each
 ```
 
 **Reading contract:**
-- Headers are `## <target> — <operation>` where target is `review #N`, `planning #N`, `verification #N`, `debug-operate #N`, or `Rule N`, and operation is `disable`, `modify`, or `add`.
-- For `add` entries, the header is `## add — <catalog>` where catalog is `review`, `planning`, `verification`, `debug-operate`, or `rules`.
+- Headers are `## <target> — <operation>` where target is `review #N`, `planning #N`, `verification #N` or `verify #N`, `debug-operate #N` or `debug #N`, or `Rule N`, and operation is `disable`, `modify`, or `add`. A catalog may be cited by its catalog name or its command name — `verify` and `verification` mean the same catalog, as do `debug` and `debug-operate` — since this file is read by an agent, not a parser.
+- For `add` entries, the header is `## add — <catalog>` where catalog is `review`, `planning`, `verification` or `verify`, `debug-operate` or `debug`, or `rules`.
 - **disable** body: `**Why:**` (optional) — the operator's note on why this lens is skipped.
 - **modify** body: `**Add:**` (required) — the annotation to read alongside the shipped lens/rule text; the shipped text stays intact.
 - **add** body: `**Name:**` (required) — the strategy's name for reference; `**When:**` (required) — when to apply this operator-authored lens; `**Apply:**` (required) — the lens content itself.
