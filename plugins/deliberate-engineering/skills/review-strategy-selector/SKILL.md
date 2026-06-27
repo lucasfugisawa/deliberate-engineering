@@ -11,7 +11,7 @@ calls for* — and applies them — so review is tuned to the change, not a gene
 checklist run on autopilot.
 
 The reference for every strategy cited below is `catalog.md` in this directory
-(51 strategies in five groups + composition patterns). Read **only** the
+(53 strategies in five groups + composition patterns). Read **only** the
 sections you select — progressive disclosure, not the whole file.
 
 ## When to use
@@ -71,12 +71,14 @@ Read only those sections.
 - **Ambiguous intent (Requirement clarity)** → 15 assumption/invariant audit,
   32 cross-document consistency, 13 validation against real data, 50 spec
   self-review.
+- **Implementation reviewed against a spec/intent** → 52 spec-conformance audit
+  (alignment-not-correctness, drift taxonomy, discovery-only), with 25.
 - **Wide blast radius (Size/scope)** → 29 contract/API, 32 cross-service
   consistency, 18 test-quality, 34 readability.
 - **External-dependency / error paths** → 21 silent-failure hunting,
   22 error-handling adequacy.
 - **Frontend / mobile / infra / data / experiments** → the matching
-  Part-D/Part-E groups (37–51); open only the relevant subsection.
+  Part-D / Part-E group; open only the relevant subsection.
 
 **Worked example — change writes production data via a backfill:**
 Non-trivial on Risk + Reversibility + Size. Selected lenses:
@@ -121,4 +123,5 @@ duplicating the pass.
 
 Report, briefly: the classification (4 axes), the depth band, the lenses
 selected (by number) and why, anything deliberately skipped and why, and the
-findings — ending with the fresh-eyes close.
+findings — each tagged blocking vs. optional (53) — ending with the fresh-eyes
+close.

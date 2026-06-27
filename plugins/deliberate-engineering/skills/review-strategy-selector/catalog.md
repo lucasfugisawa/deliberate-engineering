@@ -1,6 +1,8 @@
 # Review Strategy Catalog
 
-This catalog contains 51 review strategies organized into five groups plus composition patterns. Each strategy is a lens through which to examine work. The selector skill references these by number to build custom review workflows. No lens is mandatory — apply only the ones the change's context, risk, and scope actually call for.
+This catalog contains 53 review strategies organized into five groups plus composition patterns. Each strategy is a lens through which to examine work. The selector skill references these by number to build custom review workflows. No lens is mandatory — apply only the ones the change's context, risk, and scope actually call for.
+
+Strategy **numbers are stable identifiers, not reading order**: a lens keeps its number for life, and a new lens is appended with the next free number and *placed* under the group it belongs to. So a group may run out of numeric sequence (Part A ends with 52–53). This is deliberate — it keeps every published number citable (e.g. by an override) without renumbering.
 
 ## Master Principle
 
@@ -77,6 +79,18 @@ Strategies **compose**. The strongest pattern is to *rotate the lens each pass* 
 - **How it works:** Before reviewing content, assess whether the change is small enough to review well. Flag oversized diffs that mix unrelated concerns, and recommend splitting them into focused, independently reviewable units.
 - **Objective:** Keep changes small enough that a reviewer can actually understand them — large changes hide defects and get rubber-stamped.
 - **When most valuable:** Any PR/CL; especially ones touching many files or mixing refactor with behavior change.
+
+### 52. Spec-conformance audit (alignment, not correctness)
+
+- **How it works:** Judge built reality against *agreed intent* rather than against your own sense of "correct" — a deviation from what was agreed is a finding even when the code looks reasonable, and an ambiguity is a finding rather than something to resolve by guessing. Drift takes three shapes worth watching equally: the code contradicts the spec, the code decides things the spec never mentioned (silent timeouts, retries, defaults), or the code omits behavior the spec requires.
+- **Objective:** Surface where built reality has drifted from agreed intent — including the unstated decisions that quietly hide the drift.
+- **When most valuable:** Verifying an implementation against a spec/ticket; reviewing AI- or externally-authored code against what was actually asked. (Lens 25 judges whether it does what was asked; this judges whether it matches what was *agreed* — alignment, not correctness.)
+
+### 53. Severity-tagged findings (blocking vs. optional)
+
+- **How it works:** Separate findings that are always a defect (a correctness, security, or data-integrity bug) from optional preferences (style, architecture taste, "I'd have done it this way"). Enforce the first as blocking; offer the second explicitly as take-it-or-leave-it, and tag each finding with which it is so the author can tell what must change from what is merely suggested.
+- **Objective:** Keep review authority proportional to the finding — blocking what's genuinely wrong, advising on the rest — so preferences don't masquerade as gates and real bugs aren't lost among nits.
+- **When most valuable:** Every review that produces findings; especially mixed passes where correctness issues and taste sit side by side. (Pairs with the recommend-with-rationale standing rule: an optional suggestion still carries its reasoning.)
 
 ---
 
@@ -350,5 +364,6 @@ Strategies **compose**. The strongest pattern is to *rotate the lens each pass* 
 - **Find → verify pipeline:** Find candidates broadly, then verify each adversarially (voting/refutation) before acting.
 - **Barrier when you need the whole:** Only synchronize between phases when the next phase needs *all* findings together (e.g. global dedup before expensive verification).
 - **Scale to the ask:** "Find bugs" → few finders, simple vote. "Exhaustive audit" → large finder pool + 3–5 adversarial votes + synthesis.
+- **Discovery before remediation:** Keep a review pass read-only — report what you find and stop, rather than fixing as you go. Findings stay trustworthy and complete when the audit doesn't mutate the artifact mid-pass; remediation is a separate, later step.
 - **No silent truncation:** If the review limited coverage (top-N, sampling, no retry), **log** what was left out — truncating silently reads as "covered everything."
 - **Close with fresh eyes:** The last pass should be independent of the edit history.
