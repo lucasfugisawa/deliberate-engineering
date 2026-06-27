@@ -47,11 +47,15 @@ The override file lives at `~/.claude/deliberate-engineering-overrides.md`. Each
 
 ## add — review
 
+**Name:** Public API schema validation
+
 **When:** The change touches a public API contract and adds a new field.
 
 **Apply:** Check the OpenAPI schema generation: confirm the new field appears in the generated schema with the correct type, that required-vs-optional matches the code, and that the example value (if present) is realistic. Remind the operator that clients relying on a fixed schema version will not see the field until they opt in to the new version.
 
 ## add — rules
+
+**Name:** Commit message convention enforcement
 
 **Apply:** On every commit message, check that the subject line follows the project's convention: imperative mood, lowercase, no trailing period, under 72 characters. Offer to rewrite it if it does not match, never silently skip.
 ```
@@ -61,7 +65,7 @@ The override file lives at `~/.claude/deliberate-engineering-overrides.md`. Each
 - For `add` entries, the header is `## add — <catalog>` where catalog is `review`, `planning`, `verification`, `debug-operate`, or `rules`.
 - **disable** body: `**Why:**` (optional) — the operator's note on why this lens is skipped.
 - **modify** body: `**Add:**` (required) — the annotation to read alongside the shipped lens/rule text; the shipped text stays intact.
-- **add** body: `**When:**` (required) — when to apply this operator-authored lens; `**Apply:**` (required) — the lens content itself.
+- **add** body: `**Name:**` (required) — the strategy's name for reference; `**When:**` (required) — when to apply this operator-authored lens; `**Apply:**` (required) — the lens content itself.
 
 If the file does not exist, this skill is silent and does nothing. Override is opt-in.
 
@@ -69,7 +73,7 @@ If the file does not exist, this skill is silent and does nothing. Override is o
 
 - **disable** — when a selected lens or rule is disabled, do not apply it. In the output, say it was skipped because the operator disabled it, quoting the operator's `**Why:**` if present. The lens is not evaluated; its text is not read. It is as if the selector never picked it.
 
-- **modify (append-only)** — the shipped lens or rule text stays intact; read the operator's `**Add:**` annotation alongside it and apply both. **modify never replaces the shipped text; it appends.** This is what keeps the override from rotting when the lens evolves in a future version of the plugin. The shipped lens remains the baseline; the operator's annotation refines or scopes it for their context. When applying a modified lens, read the shipped text first, then apply the `**Add:**` content as an additional constraint or loosening.
+- **modify (append-only)** — the shipped lens or rule text stays intact; read the operator's `**Add:**` annotation alongside it and apply both. **modify never replaces the shipped text; it appends.** This is what keeps the override from rotting when the lens evolves in a future version of the plugin. The shipped lens remains the baseline; the operator's annotation refines or scopes it for their context. When applying a modified lens, read the shipped text first, then apply the `**Add:**` content as an additional constraint or loosening. The ability to cite stable identifiers like `review #35` or `Rule 1` depends on the plugin's append-only numbering policy — shipped content is never renumbered, only appended.
 
 - **add** — an operator-authored strategy or rule that maps to no shipped number. Treat it as one more available lens in the named catalog (or one more standing rule for `add — rules`), applying it where its `**When:**` condition matches. The selector's classification and selection logic runs as normal, considering the `add` entries as part of the catalog. If an `add` entry's `**When:**` matches the work, apply its `**Apply:**` content exactly as you would apply a shipped lens.
 
