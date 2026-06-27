@@ -63,7 +63,7 @@ For the full picture — how the pieces fit together and how to drive each flow,
 Both steps are independent, and undoing this never touches your code or your repos:
 
 1. **Disable or remove the plugin** via `/plugin` — that's the whole product.
-2. **If** you added the optional always-on block (below) to your personal `~/.claude/CLAUDE.md`, delete it — everything from `<!-- deliberate-engineering:begin -->` through `<!-- deliberate-engineering:end -->`, inclusive. Removing it is unrelated to disabling the plugin; the rules then load only on description match, like any normal skill.
+2. **If** you added the optional always-on block (below) to your personal `~/.claude/CLAUDE.md`, delete it — everything from `<!-- deliberate-engineering:begin -->` through `<!-- deliberate-engineering:end -->`, inclusive. Removing it is unrelated to disabling the plugin; the router and rules then load only on description match, like any normal skill.
 
 ## What's inside (v0.1)
 
@@ -91,16 +91,20 @@ A standing-rules skill, a front-door router, four phase selectors backed by four
 
 ### Make the rules always-on (optional)
 
-Skills load when the model judges them relevant to the task. If you want the deliberate-engineering rules enforced on *every* engineering session — the way I run them — add a short block to your personal `~/.claude/CLAUDE.md`:
+Skills load when the model judges them relevant to the task. If you want the deliberate layer engaged on *every* engineering session — routing through `/deliberate-engineering:start` with the standing rules underneath, the way I run them — add a short block to your personal `~/.claude/CLAUDE.md`:
 
 ```markdown
 <!-- deliberate-engineering:begin -->
 ## Deliberate-engineering (always-on for engineering work)
 On software-engineering tasks — writing, reviewing, debugging, planning,
 migrating, shipping, or operating code with real consumers, risk, or
-irreversibility — apply the deliberate-engineering-rules skill, not just on
-description match. Skip it for research, prose, ad-hoc analysis, disposable
-no-consumer scripting, and non-technical work.
+irreversibility — begin by invoking `/deliberate-engineering:start` (the
+`deliberate-engineering-router`) to classify the work and route to the right
+phase, not just on description match. The `deliberate-engineering-rules` skill
+is the always-on constitution underneath — it holds on every engineering task
+regardless of phase, and the router cites it rather than replacing it. Skip
+both for research, prose, ad-hoc analysis, disposable no-consumer scripting,
+and non-technical work.
 <!-- deliberate-engineering:end -->
 ```
 
@@ -113,14 +117,18 @@ grep -q 'deliberate-engineering:begin' ~/.claude/CLAUDE.md 2>/dev/null || cat >>
 ## Deliberate-engineering (always-on for engineering work)
 On software-engineering tasks — writing, reviewing, debugging, planning,
 migrating, shipping, or operating code with real consumers, risk, or
-irreversibility — apply the deliberate-engineering-rules skill, not just on
-description match. Skip it for research, prose, ad-hoc analysis, disposable
-no-consumer scripting, and non-technical work.
+irreversibility — begin by invoking `/deliberate-engineering:start` (the
+`deliberate-engineering-router`) to classify the work and route to the right
+phase, not just on description match. The `deliberate-engineering-rules` skill
+is the always-on constitution underneath — it holds on every engineering task
+regardless of phase, and the router cites it rather than replacing it. Skip
+both for research, prose, ad-hoc analysis, disposable no-consumer scripting,
+and non-technical work.
 <!-- deliberate-engineering:end -->
 EOF
 ```
 
-This is your machine's choice, never a requirement of the plugin. The rules themselves live entirely in the skill above; this block only changes *when* they fire on your machine. To undo it, see [Uninstall](#uninstall).
+This is your machine's choice, never a requirement of the plugin. The router and the rules live entirely in the skills above; this block only changes *when* they fire on your machine. To undo it, see [Uninstall](#uninstall).
 
 ### Override a lens or rule (optional)
 
