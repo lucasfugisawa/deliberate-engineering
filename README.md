@@ -63,6 +63,7 @@ A standing-rules skill, a front-door router, four phase selectors backed by four
 
 - **`deliberate-engineering-rules` skill** — six standing rules held across every phase: keep the human's hand on irreversible and outward-facing actions; stay read-only on systems you don't own; verify claims against primary evidence before endorsing; recommend with a reasoned pick, not a bare menu; keep comments load-bearing; and checkpoint durable state before compacting context. Scoped to software work — it stays quiet on research, prose, and ad-hoc analysis.
 - **`deliberate-engineering-router` skill** — the front door. It classifies the work, names the phase sequence and the ceremony it earns, and routes to the matching selector; where the rules set your posture, the router decides where you start. It recommends rather than forces — the only hard stop is the human gate on irreversible actions.
+- **`deliberate-engineering-overrides` skill** — lets you override any shipped lens or standing rule from a personal file, and makes the agent declare the deviation — your practice takes precedence over the plugin's defaults, never silently.
 - **Four selector skills + four catalogs** — each selector classifies the work, then pulls the matching lenses from its catalog (read on demand, never all at once).
 - **Five commands** — `/deliberate-engineering:start` routes you to the right phase; `:plan`, `:review`, `:verify`, and `:debug` invoke a selector directly.
 
@@ -108,6 +109,34 @@ EOF
 ```
 
 This is your machine's choice, never a requirement of the plugin. The rules themselves live entirely in the skill above; this block only changes *when* they fire on your machine. To undo it, see [Uninstall](#uninstall).
+
+### Override a lens or rule (optional)
+
+The plugin lets you make your own practice take precedence over the shipped lenses and rules, from a personal file at `~/.claude/deliberate-engineering-overrides.md`. This means the plugin can be opinionated and you can still make it yours.
+
+Three operations are available: `disable` turns a lens or rule off; `modify` appends your own note to a shipped lens or rule (the shipped text stays, your annotation is read alongside it); and `add` defines your own strategy or rule. You address shipped content by its stable identifier: `review #35`, `verify #14`, `planning #8`, `debug #12`, or `rule 2`.
+
+The agent always declares when an override changed what it did — nothing happens silently. You can even loosen a safety rule (the human gate, or read-only-by-default); the agent will honor it and call out the raised autonomy.
+
+The override layer is opt-in: if the file does not exist, nothing changes.
+
+**Example override file:**
+
+```markdown
+## review #35 — disable
+
+**Why:** We run this lens manually in a separate security pass; not needed in the main review.
+
+## add — review
+
+**Name:** API backward-compatibility check — no breaking signature changes without major version bump
+
+**When:** The change modifies a public API surface — REST endpoints, library exports, gRPC contracts
+
+**Apply:** Review the diff for any breaking changes (removed endpoints, changed request/response shapes, deleted fields). If a breaking change is present and the version is not a major bump, flag it. Non-breaking additions (new optional fields, new endpoints) are fine.
+```
+
+This is your machine's choice, never a requirement of the plugin.
 
 ## Prior art & influences
 
