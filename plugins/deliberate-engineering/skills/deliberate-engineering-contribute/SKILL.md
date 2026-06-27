@@ -1,13 +1,13 @@
 ---
 name: deliberate-engineering-contribute
-description: "Use on demand to turn generalizable engineering judgment from this session into clean catalog candidates. Observes review tactics, verification modes, planning disciplines, and debugging strategies, extracts employer-neutral principles, and on approval deposits pending candidate files in candidates/ for later promotion. This is the author/contributor write side — it proposes lenses for the shared catalog via the candidates/ queue. It is not the adopter feedback skill, which grows your own personal override file. Stays silent unless invoked."
+description: "Use on demand to turn generalizable engineering judgment from this session into clean catalog candidates. Observes review tactics, verification modes, planning disciplines, and debugging strategies, extracts employer-neutral principles, and on approval deposits pending candidate files in candidates/ for later promotion. This is the author/contributor write side — it proposes lenses for the shared catalog via the candidates/ queue. It is not the adopter capture skill, which grows your own personal override file. Stays silent unless invoked."
 ---
 
 # Deliberate Engineering Contribute
 
 The author write side of the judgment catalog. Where `deliberate-engineering-capture` grows the adopter's personal override file from what they did, this skill proposes generalizable lenses for the shared catalog. It observes engineering judgment worth catalog content — a review tactic, a verification mode, a planning discipline, a debugging strategy — extracts the employer-neutral principle, and on approval deposits a pending candidate file in the `candidates/` queue at the repo root. A sibling skill, `promote`, later drives approved candidates from the queue into the shipped catalog.
 
-## vs the adopter feedback skill
+## vs the adopter capture skill
 
 `deliberate-engineering-capture` is for the **adopter** — it grows `~/.claude/deliberate-engineering-overrides.md`, your personal override file, from deviations and patterns you brought to this session. That file stays local and private. This skill is for the **author** — it proposes lenses for the shared catalog, which ships in the public plugin. Opposite write-targets. The differentiator: This is the author/contributor write side — it proposes lenses for the shared catalog via the candidates/ queue. It is not the adopter capture skill, which grows your own personal override file.
 
@@ -25,7 +25,7 @@ Use this skill when you want to turn generalizable engineering judgment from thi
 
 ## What it observes
 
-Generalizable engineering judgment worth catalog content — **not** personal deviations or adopter-specific overrides (that is the feedback skill's domain). What rises to catalog level:
+Generalizable engineering judgment worth catalog content — **not** personal deviations or adopter-specific overrides (that is the capture skill's domain). What rises to catalog level:
 
 1. **Review tactics** — a repeatable strategy for catching a class of defect, a forgotten integration, a deployment risk. Something that applies across codebases, expressed without the specific.
 
