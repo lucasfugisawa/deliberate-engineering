@@ -10,19 +10,28 @@ The plugin is a thin layer of judgment over a workflow engine. Two views: the li
 
 ```mermaid
 flowchart TD
-    rules["deliberate-engineering-rules<br/>seven always-on standing rules<br/>(human gate · read-only · verify · recommend ·<br/>comments · checkpoint · know your edge)"]
-    start(["/deliberate-engineering:start — the router<br/>classify the work, name the phases and the<br/>ceremony they earn, route to the right one"])
-    subgraph phases["the four deliberate phases — each: classify the work, then select the lenses that fit from its catalog"]
-        plan["planning-strategy-selector · :plan<br/>what is worth building?"]
-        review["review-strategy-selector · :review<br/>which lenses does this change call for?"]
-        verify["verification-strategy-selector · :verify<br/>is it true against reality, and what is the evidence?"]
-        debug["debug-operate-strategy-selector · :debug<br/>a live system misbehaves — now what?"]
+    rules["deliberate-engineering-rules<br/>the always-on constitution"]
+    start(["/deliberate-engineering:start<br/>the front-door router"])
+    subgraph phases["the four deliberate phases — classify, then select the lenses that fit"]
+        plan["planning-strategy-selector<br/>:plan"]
+        review["review-strategy-selector<br/>:review"]
+        verify["verification-strategy-selector<br/>:verify"]
+        debug["debug-operate-strategy-selector<br/>:debug"]
     end
-    engine["superpowers / Workflow<br/>the method: TDD, systematic debugging,<br/>plan execution, orchestration"]
+    engine["superpowers / Workflow<br/>the method engine"]
 
-    rules -.->|posture held under every phase| start
+    rules -.->|posture under every phase| start
     start --> phases
-    phases -.->|own the judgment, delegate the method| engine
+    phases -.->|own the judgment,<br/>delegate the method| engine
+
+    classDef constitution fill:#e8e0ff,stroke:#7c5cff,stroke-width:2px;
+    classDef router fill:#fff0d9,stroke:#e0962e,stroke-width:2px;
+    classDef phase fill:#e0f0ff,stroke:#3b82c4,stroke-width:1px;
+    classDef engine fill:#e6f5e6,stroke:#4a9d4a,stroke-width:2px;
+    class rules constitution
+    class start router
+    class plan,review,verify,debug phase
+    class engine engine
 ```
 
 - **The rules are the constitution.** Seven standing postures held across every phase and never switched off during engineering work. They set *how you behave*; everything below sets *where you start and what you do*.
@@ -35,17 +44,36 @@ flowchart TD
 ```mermaid
 flowchart LR
     session(["a working session"])
-    overrides["your overrides file<br/>~/.claude/deliberate-engineering-overrides.md<br/>read at runtime, takes precedence"]
-    capture["/deliberate-engineering:capture<br/>distill the session into override blocks"]
-    contribute["/deliberate-engineering:contribute<br/>generalize-at-capture into a candidate"]
-    queue["candidates/ queue<br/>pending, generalized"]
-    promote["/deliberate-engineering:promote<br/>blocking leak-audit + append-only catalog edit"]
-    catalog["the shared catalogs<br/>(working tree only)"]
-    gate["human gate — you commit / PR / push<br/>Rule 1; the tools never do"]
 
-    session --> capture --> overrides
-    overrides -.->|precedence over lenses and rules| session
-    session --> contribute --> queue --> promote --> catalog --> gate
+    subgraph adapt["Adapt — make it yours"]
+        direction LR
+        capture["/deliberate-engineering:capture"]
+        overrides["your overrides file<br/>runtime precedence"]
+        capture --> overrides
+    end
+
+    subgraph share["Contribute — share it with everyone"]
+        direction LR
+        contribute["/deliberate-engineering:contribute"]
+        queue["the candidates queue"]
+        promote["/deliberate-engineering:promote"]
+        catalog["the shared catalogs"]
+        gate["human gate<br/>commit / PR / push"]
+        contribute --> queue --> promote --> catalog --> gate
+    end
+
+    session --> capture
+    session --> contribute
+    overrides -.->|feeds your next session| session
+
+    classDef session fill:#e8e0ff,stroke:#7c5cff,stroke-width:2px;
+    classDef adopter fill:#e0f0ff,stroke:#3b82c4,stroke-width:1px;
+    classDef author fill:#fff0d9,stroke:#e0962e,stroke-width:1px;
+    classDef gate fill:#ffe0e0,stroke:#cc4444,stroke-width:2px;
+    class session session
+    class capture,overrides adopter
+    class contribute,queue,promote,catalog author
+    class gate gate
 ```
 
 - **Your overrides file is the personal layer.** Read at runtime, it takes precedence over any shipped lens or rule; when it changes what the agent does, the agent says so. `/deliberate-engineering:capture` grows that file for you, distilling a session into ready-to-paste blocks.
