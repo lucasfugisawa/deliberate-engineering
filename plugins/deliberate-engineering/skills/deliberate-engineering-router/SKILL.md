@@ -86,7 +86,7 @@ The test is one question — *would this have changed the call I made at the sta
 
 After classifying and sequencing, before invoking the first phase, the router emits one short output. These are two moments of that output, not separate features or formal sections — keep them concise.
 
-**(a) Visible judgment.** Narrate *judgment*, not mechanics — "now I'll read the file" is noise, since the harness already shows tool calls. Report: the classification (genre + the four axes, one line); the recommended phase sequence and ceremony band; and **what was deliberately left out and why** — the most valuable part (e.g. "skipping verify: no observable-behavior change"). This is Rule 4's recommend-with-rationale posture, applied to routing itself.
+**(a) Visible judgment.** Narrate *judgment*, not mechanics — "now I'll read the file" is noise, since the harness already shows tool calls. Report: the classification (genre + the four axes, one line); the recommended phase sequence and ceremony band; and **what was deliberately left out and why** — the most valuable part (e.g. "skipping verify: no observable-behavior change"). This is Rule 4's recommend-with-rationale posture, applied to routing itself. The same declaration covers a mid-flow **recalibration**: when the material-change test trips and the band or sequence moves, say what moved and what was added or dropped — a recalibration is never applied silently.
 
 **(b) Execution shape per phase.** For each phase, state parallel-vs-sequential and **delegate** the firing to `superpowers`/Workflow: "lenses 25/28/2 are independent → concurrent subagents via `superpowers`/Workflow"; "these phases depend on each other → sequential."
 
@@ -96,7 +96,7 @@ After classifying and sequencing, before invoking the first phase, the router em
 
 ## Live note and rehydration
 
-When the router defines a multi-phase sequence, it **recommends recording** — where the work is *already* tracked (the plan, a working-note, the tracker; not a new file) — two things: the phase sequence, and the current phase plus the completed phases. On resume, after compaction or in a new session, the router **re-reads that anchor before reasoning** rather than guessing where it left off. This prevents the classic failures: re-planning something already planned, or skipping verify believing it already ran.
+When the router defines a multi-phase sequence, it **recommends recording** — where the work is *already* tracked (the plan, a working-note, the tracker; not a new file) — the phase sequence, the current phase plus the completed phases, and — once any fires — a recalibration that changed the sequence or band ("risk↑ at build; verify re-introduced"), so a resumed session re-reads the *current* plan, not the original estimate. On resume, after compaction or in a new session, the router **re-reads that anchor before reasoning** rather than guessing where it left off. This prevents the classic failures: re-planning something already planned, or skipping verify believing it already ran.
 
 The boundary that keeps this lean: the router does **not** invent a file format or a persistence mechanism. It leans on **Rule 6** (checkpoint before compacting) and adds only the one piece outside Rule 6's stated scope — *the phase sequence and the current phase are part of what needs a durable home.* It decides and recommends; the persistence itself is delegated.
 
