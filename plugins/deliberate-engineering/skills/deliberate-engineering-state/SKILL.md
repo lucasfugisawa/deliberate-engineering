@@ -31,7 +31,7 @@ Always declare which location was chosen in the visible output when a note is re
 
 ## The working-note — naming and granularity
 
-One note per work-unit, named by a world-derived identifier in preference order: the current branch name, the PR number, or the ticket key. The filename is `<identifier>.md` — for example, `feat-waive-logic.md`, `pr-1234.md`, or `IOPS-5158.md`. By construction, parallel sessions working on different work-units never collide — each has its own note. The rare collision case is two sessions working on the same work-unit simultaneously; the write gate (below) handles that.
+One note per work-unit, named by a world-derived identifier in preference order: the current branch name, the PR number, or the ticket key. The filename is `<identifier>.md` — for example, `feat-user-export.md`, `pr-1234.md`, or `PROJ-42.md`. By construction, parallel sessions working on different work-units never collide — each has its own note. The rare collision case is two sessions working on the same work-unit simultaneously; the write gate (below) handles that.
 
 The naming preference order reflects the durability of the identifier: a branch name is stable across the work-unit's life and is local, so it is preferred. A PR number is stable once the PR is created. A ticket key is stable when the ticket exists but may predate the local branch. Choose the first available identifier in that order.
 
@@ -52,7 +52,7 @@ The working-note has two blocks: **Live state** (rewritten on each checkpoint) a
 Example:
 
 ```markdown
-# Work-unit: feat-waive-logic
+# Work-unit: feat-user-export
 
 ## Live state
 
@@ -66,9 +66,9 @@ Example:
 
 ## Decision log
 
-- 2026-06-28 14:32 — Skipped the feature-flag ritual (planning #15). Why: The waive logic change is gated by the existing `fee_waive_enabled` flag; no new flag needed.
-- 2026-06-28 16:45 — Chose verification #7 (cross-service impact check) over #9 (load test). Why: The waive endpoint is low-traffic; schema change risk is higher than volume risk.
-- 2026-06-29 09:15 — Added verification #12 (prod read-only smoke test) to the sequence. Why: The prod DB schema differs from staging (legacy column still present); read-only query confirms compatibility.
+- 2026-06-28 14:32 — Skipped the feature-flag ritual (planning #15). Why: The export change is gated by an existing flag; no new flag needed.
+- 2026-06-28 16:45 — Chose verification #7 (cross-service impact check) over #9 (load test). Why: The endpoint is low-traffic; schema change risk is higher than volume risk.
+- 2026-06-29 09:15 — Added verification #12 (prod read-only smoke test) to the sequence. Why: The prod DB schema differs from staging (a legacy column is still present); a read-only query confirms compatibility.
 ```
 
 ## Rehydrate (the read operation)
