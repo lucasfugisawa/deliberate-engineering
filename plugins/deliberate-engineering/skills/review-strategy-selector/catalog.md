@@ -226,7 +226,7 @@ Strategies **compose**. The strongest pattern is to *rotate the lens each pass* 
 
 - **How it works:** Verify the change is *diagnosable* in production — metrics, structured logs, traces, alerts, tag cardinality — and that the telemetry it adds doesn't itself leak a secret, token, or personal data into a log line, trace tag, or error payload.
 - **Objective:** Ensure you can detect and debug when it goes wrong.
-- **When most valuable:** Changes with possible silent failures; critical systems; gradual rollouts.
+- **When most valuable:** Changes with possible silent failures; critical systems; gradual rollouts. (The leak check overlaps #26's credential-in-logs hygiene and #42's personal-data handling, applied here to the telemetry this change adds.)
 
 ### 31. Operability / deployability review (rollout, flags, migrations)
 

@@ -82,7 +82,7 @@ It is also **distinct from verification.** Verification *confirms an expectation
 
 - **How it works:** When there is no clean revert — the bad state is already loose, the cause is novel, or rolling back would lose data — the first move is not diagnosis but containment: shrink the damage and buy time. Shed or rate-limit load, disable the failing path or feature behind its flag, fail over to a healthy replica or region, or serve a degraded-but-safe response. Each buys room to diagnose without the fire still spreading. Containment is a holding action, not a fix — name it as such, and keep full restoration as the goal.
 - **Objective:** Stop the bleeding when you can't yet stop the cause, so the incident stops growing while you work the real fix.
-- **When most valuable:** Live degradation with no known-good state to revert to — a forward-only data corruption, a novel failure, a dependency outage you don't own; any incident where full restoration will take longer than the damage can safely run.
+- **When most valuable:** Live degradation with no known-good state to revert to — a forward-only data corruption, a novel failure, a dependency outage you don't own; any incident where full restoration will take longer than the damage can safely run. (#6 is the move when a known-good revert exists; this is the move when it doesn't.)
 
 ---
 
