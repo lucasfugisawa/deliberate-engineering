@@ -53,6 +53,15 @@ Open the catalog **groups** matching your non-trivial axes and pick lenses. Read
 
 **Operator overrides.** Before applying the selected lenses, consult `deliberate-engineering-overrides`: if any selected lens has an operator override (disable / modify / add), honor it and declare the deviation in the Output.
 
+**Each substantive lens emits an evidence artifact — and the artifact IS its completion criterion.** A lens has not run until it has produced, from THIS pass, the concrete trace of what it examined:
+
+- **25 functional correctness** → the requirement clause quoted from its source + the `file:line` implementing each clause + a per-clause verdict.
+- **28 data integrity** → the invariant/transaction checked + the `file:line` it lives at + the concrete case that would violate it.
+- **26 security** → the attack surface examined + the `file:line` + the check applied and its result.
+- Other selected lenses follow the same shape: name what was examined, cite where (`file:line`, command + output), and state the verdict.
+
+This is what makes a recalled review visibly incomplete: reused conclusions carry no fresh artifact, so a pass that only reformats prior findings produces empty artifacts and fails its own completion criterion. It is also what exposes overclaimed exhaustion — an artifact that lists three opened files cannot be presented as a whole-file audit of thirty.
+
 ## Step 4 — Compose the passes
 
 Apply the composition patterns from the catalog's Appendix:
@@ -71,4 +80,4 @@ This skill **never requires removing or disabling** any other reviewer. It orche
 
 ## Output
 
-Report, briefly: the classification (4 axes), the depth band, the lenses selected (by number) and why, anything deliberately skipped and why, and the findings — each tagged blocking vs. optional (53) — ending with the fresh-eyes close.
+Report, briefly: the classification (4 axes), the depth band, the lenses selected (by number) and why, anything deliberately skipped and why, and the findings — each tagged blocking vs. optional (53), and each tied to the concrete evidence produced in this pass (the `file:line` actually opened, the command run and its output, the requirement clause quoted from source). A finding with no fresh-pass evidence is incomplete, not done — recompute it, don't relay it. End with the fresh-eyes close.
