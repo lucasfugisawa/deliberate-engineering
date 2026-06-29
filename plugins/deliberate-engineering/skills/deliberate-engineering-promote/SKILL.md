@@ -13,7 +13,7 @@ The third vertex of the authoring trio. Where `deliberate-engineering-capture` g
 
 ## vs the adopter capture skill
 
-`deliberate-engineering-capture` grows the **adopter's personal override file** — `~/.claude/deliberate-engineering-overrides.md`, local and private. This skill edits the **shared catalog** — the shipped plugin content. Opposite write-targets. The differentiator: This is the promotion step of the author contribution flow — it drives a candidate into the shared catalog (working tree only, gated). It is not the adopter capture skill, which writes your personal override file.
+`deliberate-engineering-capture` grows the **adopter's personal override file** — `~/.claude/deliberate-engineering/overrides.md`, local and private. This skill edits the **shared catalog** — the shipped plugin content. Opposite write-targets. The differentiator: This is the promotion step of the author contribution flow — it drives a candidate into the shared catalog (working tree only, gated). It is not the adopter capture skill, which writes your personal override file.
 
 ## On demand only
 
