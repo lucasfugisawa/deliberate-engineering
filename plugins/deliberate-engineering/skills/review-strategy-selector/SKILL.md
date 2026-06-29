@@ -19,6 +19,10 @@ The reference for every strategy cited below is `catalog.md` in this directory (
 
 This is calibration, not always-more. For a **trivial-and-safe** change (typo, comment, log string, isolated pure function with tests, no money/data/security/production exposure) you may deliberately choose MINIMAL ceremony. When you do, **say so explicitly**: state that you classified it as trivial-and-safe and chose a light pass. Silence is not calibration — a stated decision is.
 
+## Scope and re-invocation
+
+Resolve what to review from the **world**, never from the conversation. Scope is a diff range, a branch, an explicit PR/file list, or the working-tree change — something re-derivable without trusting memory of "what we just discussed." If `$ARGUMENTS` is empty and the working tree is clean, do not guess: ask one question with an embedded recommendation (Rule 4), e.g. "I'd review the diff of `<branch>` against `origin/main` — confirm?". On re-invocation in the same session, this is also the integrity gate (Rule 3): re-execute from the resolved scope in fresh context; a recalled scope ("the PRs I just reviewed") is itself a memory artifact, not a re-derived target.
+
 ## Step 1 — Classify the change on four axes
 
 Assess each axis. These, not line count, set the depth.
@@ -32,9 +36,9 @@ Assess each axis. These, not line count, set the depth.
 
 ## Step 2 — Map to a depth band
 
-- **Trivial-and-safe** → minimal: baseline (1) only, plus a stated rationale for stopping. See "When NOT to pile on."
-- **Standard** → a small set of targeted lenses (typically 2–4) chosen for the axes that scored non-trivial, closed with fresh eyes (3).
-- **Risky / irreversible / ambiguous / money-or-data** → full adversarial depth: a broad finder set, adversarial verification (2, 9), and the domain-specific lenses below.
+- **Trivial-and-safe** → minimal: baseline (1) only, plus a stated rationale for stopping (see "When NOT to pile on"). A solo in-context pass is fine here, **but the reuse-vs-recompute declaration (Rule 3) is mandatory** — if this re-runs an earlier pass, say whether you recomputed or reused, and why.
+- **Standard** → a small set of targeted lenses (typically 2–4) for the non-trivial axes; **dispatch each substantive lens to a fresh-context subagent** as the default unit of work so the lens recomputes rather than recalls, and each returns its evidence artifact (Task: see "Compose the passes"). Close with fresh eyes (3).
+- **Risky / irreversible / ambiguous / money-or-data** → full adversarial depth in fresh-context fan-out: per-PR as the default unit, **per-(PR × lens) for the critical lenses (25, 28, 26)**; adversarial majority-refute (2, 9) on top; close with a fresh-eyes pass (3) run as a *literally separate* fresh-context agent, not an in-context re-read.
 
 ## Step 3 — Select lenses from the catalog
 
@@ -69,7 +73,7 @@ Apply the composition patterns from the catalog's Appendix:
 - **Rotate the lens each pass** — one strategy per pass, never the same angle twice.
 - **Find → verify** — find candidates broadly, then verify each adversarially (9 majority-refute) before acting on it. For unknown-size audits, loop until dry (6).
 - **Self-review your own fixes** (4) — after editing, review what the fix may have broken.
-- **CLOSE with a fresh-eyes pass (3)** — the final pass must be independent of the edit history. Always.
+- **CLOSE with a fresh-eyes pass (3) in a separate context** — the final pass must be independent of the edit history AND of the prior conclusions. In-context re-reading inherits what you already concluded, so it confirms rather than re-sees; dispatch it as a fresh-context agent (or defer to a new session). Always.
 - **Never silently truncate** — if you limited coverage (sampled, capped, skipped a group), **log what you deliberately skipped and why.** Truncating silently reads as "covered everything," which is a lie of omission.
 
 ## Step 5 — Coexistence and precedence
