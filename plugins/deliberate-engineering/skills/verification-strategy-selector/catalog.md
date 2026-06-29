@@ -1,6 +1,6 @@
 # Verification Strategy Catalog
 
-This catalog contains 22 verification strategies organized into five groups plus composition patterns. Each strategy is a way to establish that something is *actually* true — by confronting it with reality (a run, a query, the live system) rather than by reading the artifact and judging it plausible. The selector skill references these by number to build a verification plan tuned to what is being verified and how irreversible the consequence of being wrong is.
+This catalog contains 23 verification strategies organized into five groups plus composition patterns. Each strategy is a way to establish that something is *actually* true — by confronting it with reality (a run, a query, the live system) rather than by reading the artifact and judging it plausible. The selector skill references these by number to build a verification plan tuned to what is being verified and how irreversible the consequence of being wrong is.
 
 ## What verification is — and how it differs from review
 
@@ -26,9 +26,9 @@ The review catalog's Part B (empirical validation, real-data validation, source-
 
 ### 2. No guessing — evidence and provenance for every claim
 
-- **How it works:** Refuse to deduce or assume. For every claim — especially every number — demand a concrete source: a run link, a query and its result, a file and line. Re-derive quantities from authoritative queries rather than estimating.
-- **Objective:** Eliminate confident-but-unverified assertions, the dominant failure mode of fast work.
-- **When most valuable:** Quantitative claims, impact estimates, "this is safe" assertions, anything that will feed a decision.
+- **How it works:** Treat every quantity as provenance-bearing: a number is not established until you can point to the exact query, run, or file-and-line it came from and could re-derive it. Re-derive counts, rates, and impact estimates from an authoritative query rather than carrying forward an estimate, a memory, or a figure from a derived doc.
+- **Objective:** Eliminate the unsourced number — the figure that feels right, gets repeated, and turns out wrong — by attaching provenance to every quantity.
+- **When most valuable:** Quantitative claims, impact estimates, counts and rates headed into a writeup, a review comment, or a decision. (Companion to #1: #1 grounds *behavioral* claims in the live source; this grounds *quantities* in re-derivable provenance.)
 
 ### 22. Match verification scope to the claim's scope
 
@@ -70,7 +70,7 @@ The review catalog's Part B (empirical validation, real-data validation, source-
 
 - **How it works:** Before opening a PR, run the same aggregate verification gate CI will run — including lint/format — not a convenient subset. Mirror the command CI uses.
 - **Objective:** Surface the failure on your machine, not in the pipeline after review has started.
-- **When most valuable:** Before every PR; especially where CI bundles lint+format+test into one gate.
+- **When most valuable:** Before every PR; whenever CI runs an aggregate gate — any bundle of lint, format, type-check, and tests — that a convenient local subset would let you skip past.
 
 ### 8. Dry-run before proposing or executing
 
@@ -80,15 +80,21 @@ The review catalog's Part B (empirical validation, real-data validation, source-
 
 ### 9. Establish a validation methodology before changes that affect others
 
-- **How it works:** For a change whose value or safety is contested (a performance fix, a shared-behavior change), define how you will prove it works *before* proposing it: a proof-of-concept, a cold-vs-warm or before/after measurement, a named success metric. Propose only the variant that the methodology validated.
+- **How it works:** For a change whose value or safety is contested — a performance fix, a shared-behavior change — commit in advance to *how* you will prove it works: name the success metric, the comparison, and the threshold that counts as success or failure, before you build or measure. Then bring only the variant that cleared the pre-committed bar. Choosing the methodology after seeing the results is how a regression gets argued into a win.
 - **Objective:** Bring evidence, not a hypothesis, to a change that costs other people if it's wrong.
-- **When most valuable:** Performance/optimization work; changes to shared infrastructure or contracts.
+- **When most valuable:** Performance/optimization work; changes to shared infrastructure or contracts. (The measurement mechanics — capture before, change, re-capture — are #10; this lens is the *pre-commitment* to the metric and bar, so results can't be reverse-justified.)
 
 ### 10. Reproduce, then confirm the change caused the fix
 
 - **How it works:** Before changing anything, capture the failing state as concrete evidence — a failing test, the actual error, the bad payload/row. Make the change. Then re-capture the same evidence and show it flipped: the test now passes, the error is gone, the payload is correct. The before/after pair proves *this change* caused the fix — not that the code merely compiles or reads correctly. Where a real counterpart payload exists, replay it through the new code to confirm the contract holds in practice.
 - **Objective:** Prove causation, not coincidence; defeat "it looks fixed" and fixes that address the wrong cause.
 - **When most valuable:** Every bug fix; any change motivated by a specific observed failure. (Static analog: review judges whether the fix *reads* correct; this proves it actually resolves the reported failure.)
+
+### 23. Differential verification — run old and new against the same input
+
+- **How it works:** When a change is meant to *preserve* behavior — a refactor, a re-implementation, a migration, an optimization — verify it by running the old path and the new path on the same real inputs and diffing the outputs, rather than reasoning that they "should" match. Drive both with a captured set of real cases, or mirror live traffic to the new path in shadow and compare without serving its result; treat every difference as a finding until explained. The equivalence you can demonstrate beats the equivalence you can argue.
+- **Objective:** Prove behavior-preservation empirically — catching the unintended difference a reading would miss — instead of trusting that two implementations agree.
+- **When most valuable:** Refactors and rewrites that must not change behavior; data or system migrations (compare old vs new store on the same keys); performance changes where the output must stay identical; any "equivalent, just faster/cleaner" claim. (Pairs with #10: #10 proves a change *fixed* a known failure; this proves a change *changed nothing it shouldn't*.)
 
 ---
 
@@ -122,9 +128,9 @@ The review catalog's Part B (empirical validation, real-data validation, source-
 
 ### 15. Final confidence check before a production merge
 
-- **How it works:** Treat the production merge/deploy as a hard gate demanding one last independent confidence check. Distrust a premature "safe to merge with confidence" — ask explicitly whether you are truly certain *because this is production*, and what specifically grounds that certainty.
+- **How it works:** At the production boundary, run a deliberate over-confidence check — not another verification pass (#5 owns that), but a pause to interrogate the *feeling* of certainty. Name what specifically grounds your confidence — which evidence, which check — out loud, and ask whether you'd stake the production outcome on it. A confidence you can't itemize is the one to distrust most at the gate.
 - **Objective:** Insert one deliberate pause where over-confidence is most expensive.
-- **When most valuable:** The moment before any irreversible production action.
+- **When most valuable:** The moment before any irreversible production action. (Distinct from #5's independent re-verification and #12's red-CI stop — this lens adds only the over-confidence pause, keyed to production.)
 
 ---
 
@@ -182,6 +188,7 @@ The review catalog's Part B (empirical validation, real-data validation, source-
 
 - **Expectation-first:** Pair every check with its pre-stated expected result (the Master Principle; mechanically, strategy 17). A check with no expectation can't fail loudly.
 - **Reproduce → fix → re-confirm:** Capture the failing baseline as evidence before the change (10), so the after-state proves causation rather than coincidence.
+- **Parity over argument:** For a change meant to preserve behavior, demonstrate equivalence by running the old and new paths on the same inputs and diffing (23), rather than reasoning that they match.
 - **Prove → re-prove:** Reach a conclusion, then re-verify it independently (5) before acting. The second pass is where the rationalized error dies.
 - **Promotion ladder:** Run the cheapest faithful verification at each environment gate (Part C); never skip a gate because the next one "will catch it."
 - **Calibrate depth to irreversibility:** A reversible config tweak needs a dry-run; a production data deletion needs the full mutation protocol (20–21) plus post-deploy confirmation (Part D).
