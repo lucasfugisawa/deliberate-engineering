@@ -2,21 +2,11 @@
 
 *Engineering discipline for AI-assisted development. Less vibe coding, more deliberate craft.*
 
-## Why this exists
-
-I build software with coding agents every day, and the same failure kept recurring: the agent is *capable* of acting, so it acts — at full autonomy, with uniform effort, on every task. A one-line change to a money calculation gets the same shrug as a typo fix. "Done" gets reported before anything was actually checked against reality. The result reads productive and is quietly wrong.
-
-I built `deliberate-engineering` to put judgment back in front of capability. It is the layer I wanted: one that decides *how much* ceremony a given change has earned, *which* lenses it actually calls for, and *whether* the work is really done — before the agent charges ahead.
-
-It is a **judgment layer, not another how-to engine.** Three problems it targets:
-
-- **Over-agentic by default** → the agent calibrates autonomy and depth to risk, reversibility, and blast radius, and stops at a human gate for anything irreversible or outward-facing.
-- **One-size-fits-all review** → it classifies the change first, then selects the review/verification/planning lenses that fit *this* case, instead of running a generic pass on autopilot.
-- **"Looks correct" mistaken for "is correct"** → verification confronts reality (a run, a query, a production metric) and states the expected result *before* observing the actual one.
-
 ## What it is
 
-`deliberate-engineering` is a thin layer of deliberate judgment on top of a workflow engine. The thesis: **interception + curated tactic catalogs + context-aware selection.** It does not replace your workflow; it sharpens each step by classifying the work in front of you and selecting the right tactics for that specific case.
+Coding agents are good at *acting*. `deliberate-engineering` makes them good at *judging how much* — sizing each change to its risk, reversibility, and reach; applying the review, verification, and planning lenses that fit *this* case; and checking that "done" holds against reality before moving on. It is a thin **judgment layer** on top of your agent's raw capability, not another how-to engine.
+
+Left to its defaults, an agent gives a one-line change to a money calculation the same effort as a typo fix, and can report "done" before anything met reality — not from carelessness, but because nothing told it this change was different. This layer is what tells it: it classifies the work first, then decides *how much* ceremony the change has earned, *which* lenses it actually calls for, and *whether* the result is really true — and it stops at a human gate for anything irreversible or outward-facing.
 
 One mental model runs across the whole lifecycle — **risk, reversibility, requirement clarity, and reach decide the depth, not line count:**
 
@@ -29,18 +19,16 @@ One mental model runs across the whole lifecycle — **risk, reversibility, requ
 
 Planning decides what to build; review reasons about the artifact; verification confronts reality; and debug/operate takes over when a live system misbehaves and no reliable expectation holds.
 
-## Scope & boundaries
+## See it in action
 
-`deliberate-engineering` is a **horizontal** layer: the judgment that holds across every domain — how to classify risk, calibrate ceremony, verify claims, and decide deliberately. It deliberately stops where domain *depth* begins, and that boundary is the design, not a gap. Process judgment is the same whether you're shipping an API, a database schema, or a mobile screen — so this layer stays transferable across all of them, and folding in any one domain's depth would only make it less so.
+Ask for something risky and it sizes the work *before* diving in. For "implement field X on the billing model," instead of charging ahead it leads with its judgment:
 
-So it does not carry domain-specific knowledge — API design, data modeling, performance tuning, observability, security hardening, mobile, front-end, and the rest. At the edge where that depth matters, it does the honest thing: it names what it doesn't carry and points you to bring your own domain expertise, rather than fake a competence it doesn't have. That is the same discipline the rules ask of the agent (Rule 7 — name the edge of what you know), turned on the plugin itself.
+> **Genre:** change to an existing system. **Axes:** clarity medium, risk high (billing), reversibility low, reach wide.
+> **Sequence:** plan → build → review → verify, full ceremony.
+> **Skipping:** nothing — high risk allows no shortcut.
+> **Gate (Rule 1):** I stop before deploy/merge for you to trigger. Starting with the **plan** phase.
 
-## Requirements & compatibility
-
-- **Requires [`superpowers`](https://github.com/obra/superpowers)** (Jesse Vincent) as its discipline engine. `deliberate-engineering` orchestrates it — it owns the *judgment*, and delegates the *method* (TDD, systematic debugging, plan execution) to superpowers. It does not replace it.
-- **Ships as a Claude Code plugin.** The selectors and rules are Claude Code skills/commands. It does not claim to run on other agents or IDEs — the honest scope is Claude Code today.
-- **Complements** review tooling such as `pr-review-toolkit`: it decides *which* review tactics a change calls for, and can invoke those agents as tactics.
-- **Takes precedence, doesn't evict.** If you also run other workflow plugins (e.g. `feature-dev`), you don't need to remove anything. When multiple engines are available, `deliberate-engineering` decides which to invoke; on ambiguity it prefers the deliberate flow. A leaner environment is your choice, never a requirement.
+For a typo fix it does the opposite — and says so: "trivial and safe, single phase, no ceremony." Calibration runs both ways; the point is that the depth is a deliberate, visible decision, not an autopilot default.
 
 ## Install
 
@@ -48,48 +36,15 @@ So it does not carry domain-specific knowledge — API design, data modeling, pe
 /plugin marketplace add lucasfugisawa/deliberate-engineering
 ```
 
-Then enable it via `/plugin`. Install `superpowers` first (or alongside) — it's a hard prerequisite.
+Then enable it via `/plugin`.
 
-## Getting started
+**Recommended companion:** install [`superpowers`](https://github.com/obra/superpowers) (Jesse Vincent) alongside it. `deliberate-engineering` owns the *judgment* and delegates the *method* — TDD, systematic debugging, plan execution — to `superpowers`. Without it the judgment layer still works: it classifies the work, calibrates the ceremony, and applies the rules and lenses; it simply delegates execution to whatever engine you have, including Claude Code's built-in abilities.
 
-Not sure where to begin? Run `/deliberate-engineering:start` and describe the work — it's the front door. It classifies the work, names the phases and the ceremony they earn, and routes you to the right deliberate phase. You can also call a phase directly (`:plan`, `:review`, `:verify`, `:debug`) when you already know where you are.
+It ships as a Claude Code plugin — the honest scope is Claude Code today; it doesn't claim to run on other agents or IDEs. It complements review tooling such as `pr-review-toolkit` (it decides *which* tactics a change calls for and can invoke those agents as tactics) and coexists with other workflow plugins such as `feature-dev` (when several engines are present it decides which to invoke and removes nothing).
 
-For the full picture — how the pieces fit together and how to drive each flow, including personalizing and contributing — see **[Architecture & usage](docs/architecture-and-usage.md)**.
+### Optional: make the deliberate layer always-on
 
-## Uninstall
-
-Both steps are independent, and undoing this never touches your code or your repos:
-
-1. **Disable or remove the plugin** via `/plugin` — that's the whole product.
-2. **If** you added the optional always-on block (below) to your personal `~/.claude/CLAUDE.md`, delete it — everything from `<!-- deliberate-engineering:begin -->` through `<!-- deliberate-engineering:end -->`, inclusive. Removing it is unrelated to disabling the plugin; the router and rules then load only on description match, like any normal skill.
-
-## What's inside (v0.1)
-
-A standing-rules skill, a front-door router, four phase selectors backed by four read-on-demand catalogs, one cross-cutting communication selector, an override layer (read + capture), a catalog-contribution flow (capture + promote), and nine commands.
-
-- **`deliberate-engineering-rules` skill** — eight standing rules held across every phase: keep the human's hand on irreversible and outward-facing actions; stay read-only on systems you don't own; verify claims against primary evidence before endorsing; recommend with a reasoned pick, not a bare menu; keep comments load-bearing; checkpoint durable state before compacting context; name the edge of what you know rather than fabricate certainty; and treat trust in an output as earned by convergence — when review stabilizes and assumptions hold — not granted on a single pass. Scoped to software work — it stays quiet on research, prose, and ad-hoc analysis.
-- **`deliberate-engineering-router` skill** — the front door. It classifies the work, names the phase sequence and the ceremony it earns, and routes to the matching selector; where the rules set your posture, the router decides where you start. It recommends rather than forces — the only hard stop is the human gate on irreversible actions.
-- **`deliberate-engineering-overrides` skill** — lets you override any shipped lens or standing rule from a personal file, and makes the agent declare the deviation — your practice takes precedence over the plugin's defaults, never silently.
-- **`deliberate-engineering-capture` skill** — on demand, turns what you did this session into durable overrides: it distills the lenses you skipped or adjusted and the patterns the catalog lacks, shows you the exact block, and (only on your approval) appends it to your own override file. Your practice grows your file — distinct from the contribution tools that propose lenses for the shared catalog.
-- **`deliberate-engineering-contribute` skill** — on demand, turns generalizable judgment from a session into a clean catalog candidate: it generalizes at capture (extracting the employer-neutral principle and discarding the specifics), and on approval deposits a `pending` candidate in the `candidates/` queue. It never commits — promotion to the shared catalog is a separate, gated step.
-- **`deliberate-engineering-promote` skill** — on demand, drives a pending candidate into the catalog: a blocking leak-audit gate, then an append-only edit of the matching catalog (a new lens gets the next free number; existing lenses are never renumbered) plus a skill-reviewer pass, or — for a structural change — a stop-and-recommend. It edits in the working tree and always stops before commit/PR/push: publication stays a human act.
-- **Four selector skills + four catalogs** — each selector classifies the work, then pulls the matching lenses from its catalog (read on demand, never all at once).
-- **`communication-collaboration-selector` skill** — the one cross-cutting selector, not a phase. When the artifact you're producing is a *communication* — a PR description, a review comment, a message to a stakeholder, a writeup of alternatives — it classifies by audience and artifact (not the four phase axes) and pulls the matching lenses from its own six-lens catalog. Consult it from inside any phase; the router routes communication work to it by nature.
-- **Nine commands** — `/deliberate-engineering:start` routes you to the right phase; `:plan`, `:review`, `:verify`, and `:debug` invoke a selector directly; `:communicate` selects the lenses for a communication you're about to write (cross-cutting — from any phase); `:capture` turns this session's practice into overrides; `:contribute` turns it into a catalog candidate; `:promote` drives a candidate into the catalog.
-
-<details>
-<summary><strong>The four phase catalogs in detail</strong> (111 strategies total; the cross-cutting communication catalog adds six lenses)</summary>
-
-- **Review — 54 strategies** in five groups: process / meta-review (14), verification & evidence (7), failure & contradiction reasoning (6), engineering-quality lenses (12), and reviews beyond back-end (15). Classifies your change by risk, reversibility, requirement clarity, and size, then selects the lenses that fit.
-- **Verification — 22 strategies** in five groups: evidence & ground truth (6), local & pre-merge (5), staged promotion & rollout (5), post-deploy production verification (4), and operational data-mutation verification (2). For establishing something is *actually* true, with evidence from running systems — not just plausible on paper. Review asks "does this look correct?"; verification asks "is it correct, and what's my evidence?"
-- **Planning — 19 strategies** in six groups: scope / anti-over-engineering (4), ground the plan in reality (4), calibrate ceremony to risk (2), slice & sequence (3), capture the plan (3), and disambiguation / readiness (3). For *before* code exists: deciding what work is worth doing and how much process it calls for. It delegates the *how-to-plan* discipline to your workflow engine.
-- **Debug/Operate — 16 strategies** in five groups: trust the evidence (3), diagnose under uncertainty (2), respond under pressure (3), keep the signal healthy (5), and learn from the failure (3). For when a *live system* misbehaves and you must diagnose under uncertainty and respond. Verification confirms an expectation you already hold; this is discovery under failure, and it delegates the debugging *method* to your workflow engine.
-
-</details>
-
-### Make the rules always-on (optional)
-
-Skills load when the model judges them relevant to the task. If you want the deliberate layer engaged on *every* engineering session — routing through `/deliberate-engineering:start` with the standing rules underneath, the way I run them — add a short block to your personal `~/.claude/CLAUDE.md`:
+Skills load when the model judges them relevant to the task. If you want the layer engaged on *every* engineering session — routing through `/deliberate-engineering:start` with the standing rules underneath, the way I run it — add a short block to your personal `~/.claude/CLAUDE.md`:
 
 ```markdown
 <!-- deliberate-engineering:begin -->
@@ -126,17 +81,40 @@ and non-technical work.
 EOF
 ```
 
-This is your machine's choice, never a requirement of the plugin. The router and the rules live entirely in the skills above; this block only changes *when* they fire on your machine. To undo it, see [Uninstall](#uninstall).
+This is your machine's choice, never a requirement of the plugin — it only changes *when* the router and rules fire on your machine. To undo it, see [Uninstall](#uninstall).
 
-### Override a lens or rule (optional)
+## Getting started
 
-The plugin lets you make your own practice take precedence over the shipped lenses and rules, from a personal file at `~/.claude/deliberate-engineering-overrides.md`. This means the plugin can be opinionated and you can still make it yours.
+Not sure where to begin? Run `/deliberate-engineering:start` and describe the work — it's the front door. It classifies the work, names the phases and the ceremony they earn, and routes you to the right phase. When you already know where you are, call a phase directly: `:plan`, `:review`, `:verify`, `:debug`.
 
-Three operations are available: `disable` turns a lens or rule off; `modify` appends your own note to a shipped lens or rule (the shipped text stays, your annotation is read alongside it); and `add` defines your own strategy or rule. You address shipped content by its stable identifier: `review #35`, `verify #14`, `planning #8`, `debug #12`, or `rule 2`.
+For the full picture — how the pieces fit together and how to drive each flow, including personalizing and contributing — see **[Architecture & usage](docs/architecture-and-usage.md)**.
 
-The agent always declares when an override changed what it did — nothing happens silently. You can even loosen a safety rule (the human gate, or read-only-by-default); the agent will honor it and call out the raised autonomy.
+## What's inside
 
-The override layer is opt-in: if the file does not exist, nothing changes.
+A standing-rules skill, a front-door router, four phase selectors backed by four read-on-demand catalogs, one cross-cutting communication selector, a personal override layer, and an author contribution flow — plus nine commands.
+
+- **`deliberate-engineering-rules`** — eight standing rules held across every phase: keep the human's hand on irreversible and outward-facing actions; stay read-only on systems you don't own; verify claims against primary evidence before endorsing; recommend with a reasoned pick, not a bare menu; keep comments load-bearing; checkpoint durable state before compacting; name the edge of what you know rather than fabricate certainty; and treat trust in an output as earned by convergence — when review stabilizes and assumptions hold — not granted on a single pass. Scoped to software work; quiet on research, prose, and ad-hoc analysis.
+- **`deliberate-engineering-router`** (`:start`) — the front door: it classifies the work, names the phase sequence and the ceremony it earns, and routes to the matching selector. It recommends rather than forces — the only hard stop is the human gate on irreversible actions.
+- **Four phase selectors + catalogs** — `:plan`, `:review`, `:verify`, `:debug`. Each classifies the work, then pulls only the matching lenses from its catalog (read on demand, never all at once).
+- **`communication-collaboration-selector`** (`:communicate`) — cross-cutting, not a phase: when the artifact you're producing is a *communication* — a PR description, a review comment, a stakeholder message, a writeup of alternatives — it classifies by audience and artifact (not the four phase axes) and applies the matching lenses. Consult it from inside any phase.
+- **Make it yours** — a personal override layer lets your own practice take precedence over any shipped lens or rule; `/deliberate-engineering:capture` distills a session into ready-to-paste override blocks. See [Make it yours](#make-it-yours).
+- **For contributors** — `/deliberate-engineering:contribute` and `:promote` grow the *shared* catalog from a local clone of this repo (generalize-at-capture, a blocking leak-audit, append-only numbering, and a stop before publish). This is the author side, distinct from your personal overrides; see [`CONTRIBUTING.md`](CONTRIBUTING.md).
+
+<details>
+<summary><strong>The four phase catalogs in detail</strong> (111 strategies total; the cross-cutting communication catalog adds six lenses)</summary>
+
+- **Review — 54 strategies** in five groups: process / meta-review (14), verification & evidence (7), failure & contradiction reasoning (6), engineering-quality lenses (12), and reviews beyond back-end (15). Classifies your change by risk, reversibility, requirement clarity, and size, then selects the lenses that fit.
+- **Verification — 22 strategies** in five groups: evidence & ground truth (6), local & pre-merge (5), staged promotion & rollout (5), post-deploy production verification (4), and operational data-mutation verification (2). For establishing something is *actually* true, with evidence from running systems — not just plausible on paper. Review asks "does this look correct?"; verification asks "is it correct, and what's my evidence?"
+- **Planning — 19 strategies** in six groups: scope / anti-over-engineering (4), ground the plan in reality (4), calibrate ceremony to risk (2), slice & sequence (3), capture the plan (3), and disambiguation / readiness (3). For *before* code exists: deciding what work is worth doing and how much process it calls for. It delegates the *how-to-plan* discipline to your workflow engine.
+- **Debug/Operate — 16 strategies** in five groups: trust the evidence (3), diagnose under uncertainty (2), respond under pressure (3), keep the signal healthy (5), and learn from the failure (3). For when a *live system* misbehaves and you must diagnose under uncertainty and respond. Verification confirms an expectation you already hold; this is discovery under failure, and it delegates the debugging *method* to your workflow engine.
+
+</details>
+
+## Make it yours
+
+The plugin is opinionated, and it's meant to become yours. A personal file at `~/.claude/deliberate-engineering-overrides.md` takes precedence over the shipped lenses and rules, addressed by stable identifiers — `review #35`, `verify #14`, `planning #8`, `debug #12`, or `rule 2`. Three operations: `disable` turns a lens or rule off; `modify` appends your own note alongside the shipped text (the shipped text stays, your annotation is read with it); and `add` defines your own strategy or rule. The agent always declares when an override changed what it did — nothing happens silently — and you can even loosen a safety rule, which it honors while calling out the raised autonomy. The layer is opt-in: if the file doesn't exist, nothing changes.
+
+You can write that file by hand, or let `/deliberate-engineering:capture` (or just ask) distill the session you just had — the lenses you skipped or adjusted, the practice the catalog lacks — into ready-to-paste blocks, appended only on your approval.
 
 **Example override file:**
 
@@ -154,25 +132,30 @@ The override layer is opt-in: if the file does not exist, nothing changes.
 **Apply:** Review the diff for any breaking changes (removed endpoints, changed request/response shapes, deleted fields). If a breaking change is present and the version is not a major bump, flag it. Non-breaking additions (new optional fields, new endpoints) are fine.
 ```
 
-This is your machine's choice, never a requirement of the plugin.
+For the override format in full and the adopter and author flows end to end, see **[Architecture & usage](docs/architecture-and-usage.md)**.
 
-### Capture practice into overrides (optional)
+## Why a plugin, not a `CLAUDE.md`?
 
-Run `/deliberate-engineering:capture` (or just ask) and the agent distills the session you just had into ready-to-paste override blocks — the lenses you skipped or corrected, the practices the catalog lacks. On demand only, append-only, written only on your approval. This grows YOUR personal override file, distinct from the author contribution tools. See the [Adapt journey](docs/architecture-and-usage.md#how-to-use-it) for the full flow.
+You could paste a few rules into your `CLAUDE.md` — and the always-on recipe above is exactly that for the always-on part. The plugin adds what a static file can't: it **classifies each change first** and reads only the lenses that fit (progressive disclosure — the catalogs load on demand, never as a wall of text in your context); it exposes **addressable, overridable** lenses and rules (`review #35`, `rule 2`) you can disable, annotate, or extend from your own file, and grow with `:capture`; and it ships a router that engages the right depth *just-in-time* instead of as standing instructions you pay for on every task. The eight rules are the small always-on core; everything else loads when the work calls for it.
 
-### Communicate deliberately (optional)
+## Scope & boundaries
 
-Run `/deliberate-engineering:communicate` (or just ask) when the next thing you're producing is a *communication* — a PR description, a review comment, a message to a stakeholder, a writeup of alternatives. It classifies by audience and artifact and applies the matching lenses so the message is tuned to its reader. It is cross-cutting: consult it from inside any phase; it is not a phase of its own. See the [Use journey](docs/architecture-and-usage.md#how-to-use-it) for the full flow.
+`deliberate-engineering` is a **horizontal** layer: the judgment that holds across every domain — how to classify risk, calibrate ceremony, verify claims, and decide deliberately. It deliberately stops where domain *depth* begins, and that boundary is the design, not a gap. Process judgment is the same whether you're shipping an API, a database schema, or a mobile screen — so this layer stays transferable across all of them, and folding in any one domain's depth would only make it less so.
 
-### Contribute a lens to the catalog (optional)
+So it does not carry domain-specific knowledge — API design, data modeling, performance tuning, observability, security hardening, mobile, front-end, and the rest. At the edge where that depth matters, it does the honest thing: it names what it doesn't carry and points you to bring your own domain expertise, rather than fake a competence it doesn't have. That is the same discipline the rules ask of the agent (Rule 7 — name the edge of what you know), turned on the plugin itself.
 
-Judgment worth shipping to everyone goes to the shared catalog in two gated steps: `/deliberate-engineering:contribute` generalizes a session's tactic into a `pending` candidate (extracting the employer-neutral principle, dropping anything that can't be said without the specifics), and `/deliberate-engineering:promote` runs a blocking leak-audit and edits the catalog append-only — never renumbering existing lenses, always stopping before commit, PR, or push (Rule 1). This is the author side, distinct from your personal override file. See the [Contribute journey](docs/architecture-and-usage.md#how-to-use-it) and [`CONTRIBUTING.md`](CONTRIBUTING.md) for the full flow.
+## Uninstall
+
+Both steps are independent, and undoing this never touches your code or your repos:
+
+1. **Disable or remove the plugin** via `/plugin` — that's the whole product.
+2. **If** you added the optional always-on block to your personal `~/.claude/CLAUDE.md`, delete it — everything from `<!-- deliberate-engineering:begin -->` through `<!-- deliberate-engineering:end -->`, inclusive. Removing it is unrelated to disabling the plugin; the router and rules then load only on description match, like any normal skill.
 
 ## Prior art & influences
 
 This plugin stands on the shoulders of:
 
-- **[superpowers](https://github.com/obra/superpowers)** (Jesse Vincent) — the required discipline engine that makes deliberate interception possible.
+- **[superpowers](https://github.com/obra/superpowers)** (Jesse Vincent) — the recommended discipline engine that makes deliberate interception possible.
 - **[addyosmani/agent-skills](https://github.com/addyosmani/agent-skills)** and **[mattpocock/skills](https://github.com/mattpocock/skills)** — pioneering work in curated skill catalogs for AI-assisted development. They also exemplify the vertical, domain-deep catalogs that complement this horizontal layer — the kind of depth the *Scope & boundaries* section points you to bring yourself.
 - **General engineering practice** — review strategies, threat modeling, FMEA, and deliberate practice.
 
