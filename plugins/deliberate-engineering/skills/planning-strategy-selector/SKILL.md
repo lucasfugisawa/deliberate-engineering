@@ -77,4 +77,4 @@ When a planning or brainstorming engine is present (e.g. `superpowers`), **run i
 
 ## Output
 
-Report, briefly: the classification (4 axes), the planning depth, the lenses selected (by number) and why, what you scoped **out** and why (the most valuable part of a plan), anything deliberately skipped, and the plan itself — every decision point carrying a recommendation with its rationale.
+Report, briefly: the classification (4 axes), the planning depth, the lenses selected (by number) and why, what you scoped **out** and why (the most valuable part of a plan), anything deliberately skipped, and the plan itself — every decision point carrying a recommendation with its rationale. When a decision rests on a fact about the codebase, data, or feasibility, tie it to the evidence that established it in this pass (the `file:line` read, the spike run and its result) rather than to recalled belief — a plan built on an unverified premise is a hypothesis, not a plan.
