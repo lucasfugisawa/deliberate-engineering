@@ -81,7 +81,7 @@ It sits *before* code exists. Where review judges an artifact and verification c
 ### 9. Plan-before-code gate
 
 - **How it works:** For non-trivial work, no implementation until the approach is presented and explicitly approved. Frame open-ended work as "help me understand and decide, not build yet" — explore, lay out options, agree on an approach, *then* build. If the agent starts editing prematurely, stop it and return to the decision.
-- **Objective:** Prevent committing effort (and a sunk-cost bias) to an approach nobody agreed to.
+- **Objective:** Prevent sinking effort into an approach nobody agreed to — and the sunk-cost bias that then defends it.
 - **When most valuable:** Ambiguous, risky, or large work; any time the right approach isn't obvious. (This is also a cross-cutting standing rule — present the plan, await approval.)
 
 ### 10. Calibrate ceremony to risk and blast radius
@@ -110,7 +110,7 @@ It sits *before* code exists. Where review judges an artifact and verification c
 
 ### 13. Migration backward-compatibility — the old code must survive
 
-- **How it works:** Treat any schema or data change as something the *currently-running* code must survive: in a non-atomic deploy the old version keeps serving while the change rolls out, so backward-compatibility is judged against that live old code — it must still both *read* what it expects **and** *write* semantically valid rows (passing only one is not safe). When a change can't be made compatible in a single deploy — a rename, a drop of something still referenced, a `NOT NULL` without default, a type change — don't ship it as one step; phase it across explicit deploy boundaries and do only the safe step now, never trading safety for fewer PRs. The judgment is choosing the right multi-step shape: **expand → adopt → contract** for a non-additive change, or **dual-write + backfill** for a large *online* data move — keeping a proven fallback and advancing one *deployed* phase at a time. When in doubt, add a deploy boundary rather than remove one.
+- **How it works:** The judgment is choosing the right multi-step shape so a schema or data change never outruns the code deployed beside it: **expand → adopt → contract** for a non-additive change (a rename, a drop of something still referenced, a `NOT NULL` without default, a type change), or **dual-write + backfill** for a large *online* data move — keeping a proven fallback and advancing one *deployed* phase at a time. The rule that makes each phase safe: backward-compatibility is judged against the *currently-running* old code, which in a non-atomic deploy keeps serving while the change rolls out — so at every step the old code must still both *read* what it expects **and** *write* semantically valid rows (passing only one is not safe). When a change can't be made compatible in a single deploy, don't ship it as one step; do only the safe step now, never trading safety for fewer PRs. When in doubt, add a deploy boundary rather than remove one.
 - **Objective:** Keep every step of a multi-deploy schema or data change compatible with the code running beside it, so a migration never becomes an outage even when the new code is correct.
 - **When most valuable:** Any schema change to a live system; renames, drops, constraint/type tightening; large online data migrations; anywhere schema and code deploy separately. (Sequencing analog: lens 12, *avoid hidden intermediate states* — that keeps each step internally safe; this keeps each step compatible with the *old code still running*. Evidence analogs in verification: strategy 13 *deploy ordering*, 14 *kill-switch/fallback*, 21 *reconcile before cutover*.)
 
@@ -132,11 +132,11 @@ It sits *before* code exists. Where review judges an artifact and verification c
 - **Objective:** A planning artifact that stands alone and serves both the human who approves it and the agent who executes it.
 - **When most valuable:** Any spec/ticket that will outlive the conversation or be handed to someone (or an agent) without the original context.
 
-### 16. Calibrate document altitude to audience
+### 16. Calibrate a plan's altitude to the decision it supports
 
-- **How it works:** Set the altitude of each planning/communication doc to its purpose. Aggressively cut implementation detail from an intent-communication artifact; present top-down, with detail living next to the item it concerns rather than in repeated passes at different altitudes; choose the representation (prose / table / diagram) that fits each point.
-- **Objective:** Match the document's level of detail to the decision it supports, so readers aren't drowned or starved.
-- **When most valuable:** Design docs and proposals with mixed audiences (deciders vs implementers); any doc that keeps drifting between "why" and "how."
+- **How it works:** Set a planning doc's altitude to the decision it must support, and hold it there: a doc meant to get an *approach* approved carries the shape and the trade-offs, not line-level implementation — push that detail down to where the work is actually specified. Present top-down, with each detail living next to the item it concerns rather than re-explained at several altitudes, and pick the representation (prose / table / diagram) that fits each point.
+- **Objective:** Match a plan's level of detail to the decision it supports, so a reader is neither drowned in implementation nor starved of what they need to decide.
+- **When most valuable:** Plans and proposals that mix an approach to approve with implementation to execute; any planning doc that keeps drifting between "why" and "how." (Distinct from lens 15, which governs an artifact's *self-containment*; the *audience register* — how to phrase a doc for a given reader — belongs to the communication catalog, not here.)
 
 ---
 
