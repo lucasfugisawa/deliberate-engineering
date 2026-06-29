@@ -64,6 +64,7 @@ Open only the parts matching your classification:
 
 Apply the catalog's Appendix patterns:
 
+- **Re-execute on re-invocation (Rule 3)** — resolve scope from a world-derived target, and recompute in fresh context rather than relaying a prior in-session conclusion.
 - **Expectation-first** — every check carries its expected result *before* you observe the actual one. A check with no stated expectation can't fail loudly.
 - **Prove → re-prove** — reach a conclusion, then re-verify it independently (5) before acting. The second pass is where the rationalized error dies.
 - **Calibrate depth to irreversibility** — match the protocol to the cost of being wrong, not to the diff size.
