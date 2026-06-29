@@ -71,7 +71,7 @@ Having decided the sequence, the router invokes the selector skill for the curre
 
 State the boundary explicitly: **conduct between phases, stop at the irreversible action.** The router never crosses a Rule 1 gate autonomously; and between gates it does **not** ask permission at every step — that step-by-step friction is the shape this plugin rejects. **Recommend, never force:** the router scales the firmness of its recommendation to risk but blocks nothing. The only hard stop is Rule 1's gate on the irreversible *action* — never on the *process*. A trivial change is free to skip phases; a risky one gets a firm recommendation and, at the irreversible step, a real gate.
 
-## Recalibrate — the band is a live hypothesis
+## Recalibrate while conducting — the band is a live hypothesis
 
 The ceremony band and phase sequence from Steps 2–3 are a starting estimate, not a verdict; conducting includes re-checking them as the work teaches you more. Re-check at two moments:
 
