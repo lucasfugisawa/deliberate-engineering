@@ -24,7 +24,7 @@ This structure makes lenses composable and context-aware: a selector reasons abo
 
 ## How to contribute a lens
 
-Contribution is assisted and gated — you do not hand-edit a catalog and open a PR. Use the author tools:
+Contribution is assisted and gated — you do not hand-edit a catalog and open a PR. Run the author tools from a local clone of this repository (they operate on the repo's own catalogs and `candidates/` queue):
 
 - `/deliberate-engineering:contribute` turns a session's generalizable judgment into a `pending` candidate (generalizing at capture — extracting the employer-neutral principle and discarding the specifics).
 - `/deliberate-engineering:promote` drives a candidate into the catalog through a blocking leak-audit and an append-only edit, and stops before commit/PR/push — publication is your decision.

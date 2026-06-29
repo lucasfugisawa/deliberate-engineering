@@ -7,6 +7,8 @@ description: "Use on demand to turn generalizable engineering judgment from this
 
 The author write side of the judgment catalog. Where `deliberate-engineering-capture` grows the adopter's personal override file from what they did, this skill proposes generalizable lenses for the shared catalog. It observes engineering judgment worth catalog content — a review tactic, a verification mode, a planning discipline, a debugging strategy — extracts the employer-neutral principle, and on approval deposits a pending candidate file in the `candidates/` queue at the repo root. A sibling skill, `promote`, later drives approved candidates from the queue into the shipped catalog.
 
+This is contributor tooling: it runs against a local clone of the `deliberate-engineering` plugin repository and writes to that repo's `candidates/` queue — not your own project. If you are tuning the plugin for your own work rather than contributing lenses back, use `deliberate-engineering-capture` and your overrides file instead.
+
 ## vs the adopter capture skill
 
 `deliberate-engineering-capture` is for the **adopter** — it grows `~/.claude/deliberate-engineering-overrides.md`, your personal override file, from deviations and patterns you brought to this session. That file stays local and private. This skill is for the **author** — it proposes lenses for the shared catalog, which ships in the public plugin. Opposite write-targets. The differentiator: This is the author/contributor write side — it proposes lenses for the shared catalog via the candidates/ queue. It is not the adopter capture skill, which grows your own personal override file.
@@ -99,7 +101,7 @@ A worked candidate presentation:
 For each approved candidate:
 
 1. Generate a slug from the principle heading — lowercase, hyphens for spaces, otherwise alphanumeric.
-2. Write the candidate file to `candidates/<slug>.md` at the repo root (`~/Developer/deliberate-engineering/candidates/<slug>.md`). If the directory does not exist, create it and add a `README.md` with a brief explanation of the queue.
+2. Write the candidate file to `candidates/<slug>.md` at the root of your local checkout of the plugin repository — a path relative to that checkout, never an absolute path tied to one machine. If the directory does not exist, create it and add a `README.md` with a brief explanation of the queue.
 3. On slug collision, differentiate the slug with a numeric suffix (e.g., `feature-flag-hygiene-2.md`) — never overwrite.
 4. **NEVER commit, NEVER open a PR, NEVER push.** This skill deposits candidates in the queue; it does not elevate them to the catalog. Promotion is a separate, gated step.
 

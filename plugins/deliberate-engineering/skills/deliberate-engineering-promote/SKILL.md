@@ -5,7 +5,7 @@ description: "Use on demand to drive a pending candidate into the catalog system
 
 # Deliberate Engineering Promote
 
-The third vertex of the authoring trio. Where `deliberate-engineering-capture` grows the adopter's personal override file, and `deliberate-engineering-contribute` captures generalizable judgment into clean candidate files in `candidates/`, this skill drives an approved candidate from the queue into the shipped catalog. It is the promotion half: systematically elevate a candidate through a blocking leak-audit gate, classify it as isolated or structural, route to the correct path, and stop at the human gate before commit. All catalog edits happen in the working tree only. The skill NEVER commits, opens a PR, or pushes — that irreversible, outward-facing act is the human's.
+The third vertex of the authoring trio. Where `deliberate-engineering-capture` grows the adopter's personal override file, and `deliberate-engineering-contribute` captures generalizable judgment into clean candidate files in `candidates/`, this skill drives an approved candidate from the queue into the shipped catalog. It is the promotion half: systematically elevate a candidate through a blocking leak-audit gate, classify it as isolated or structural, route to the correct path, and stop at the human gate before commit. All catalog edits happen in the working tree only. The skill NEVER commits, opens a PR, or pushes — that irreversible, outward-facing act is the human's. Like `contribute`, this is contributor tooling: it runs against a local clone of the plugin repository and edits that repo's catalog files — not your own project.
 
 ## vs the contribute skill
 
