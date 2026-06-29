@@ -7,7 +7,7 @@ description: "Use when you need to establish that something is actually true in 
 
 The deliberate layer of verification. Where review reasons about a static artifact, this skill confronts a claim with **reality** — a run, a query, a production metric, a captured payload — and decides *which* evidence THIS claim actually needs before you trust or ship it.
 
-The reference for every strategy cited below is `catalog.md` in this directory (22 strategies in five groups + composition patterns). Read **only** the sections you select — progressive disclosure, not the whole file.
+The reference for every strategy cited below is `catalog.md` in this directory (five groups of strategies + composition patterns). Read **only** the sections you select — progressive disclosure, not the whole file.
 
 ## Review vs. verification — stay on the right side of the line
 

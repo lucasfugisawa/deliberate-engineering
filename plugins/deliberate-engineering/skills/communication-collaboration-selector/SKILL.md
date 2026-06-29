@@ -9,7 +9,7 @@ The deliberate layer of *how you communicate around the work*. Engineering is no
 
 It is **cross-cutting, not a phase.** The four phase selectors (plan / review / verify / debug-operate) classify engineering work by the four canonical axes. Communication does not classify by those axes — what selects a lens here is **which artifact + which audience.** So this selector has its own two-axis classification, and you consult it from *within* any phase the moment the next thing you produce is a communication.
 
-The reference for every lens cited below is `catalog.md` in this directory (six lenses + a composition note). Read **only** the sections you select — progressive disclosure, not the whole file.
+The reference for every lens cited below is `catalog.md` in this directory (a handful of lenses + a composition note). Read **only** the sections you select — progressive disclosure, not the whole file.
 
 ## When to use
 

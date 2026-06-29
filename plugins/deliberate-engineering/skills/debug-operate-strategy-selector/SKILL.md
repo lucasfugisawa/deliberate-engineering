@@ -7,7 +7,7 @@ description: "Use when a live system behaves unexpectedly and you must diagnose 
 
 The deliberate layer of diagnose-and-respond-under-failure. Where verify confronts a claim you already hold with reality, this skill begins where there is **no reliable expectation** — a live system is misbehaving and you don't yet know why, or an incident is live and you must act before you fully understand. It decides *which* evidence to trust when production signals lie, *which* failure signature you're reading, and *how* to respond while the system is degraded and the clock is running.
 
-The reference for every strategy cited below is `catalog.md` in this directory (16 strategies in five Parts + composition patterns). Read **only** the Parts you select — progressive disclosure, not the whole file.
+The reference for every strategy cited below is `catalog.md` in this directory (five Parts of strategies + composition patterns). Read **only** the Parts you select — progressive disclosure, not the whole file.
 
 ## Verify vs. debug/operate — stay on the right side of the line
 

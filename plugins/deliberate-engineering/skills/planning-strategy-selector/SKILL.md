@@ -7,7 +7,7 @@ description: "Use before building, when deciding what work to do and how to appr
 
 The deliberate layer of planning. Where review judges a finished artifact and verification confronts reality, this skill operates *before code exists* — it decides **what work is worth doing, and how much process it calls for**, so the plan builds the right thing instead of everything plausible.
 
-The reference for every strategy cited below is `catalog.md` in this directory (19 strategies in six groups + composition patterns). Read **only** the sections you select — progressive disclosure, not the whole file.
+The reference for every strategy cited below is `catalog.md` in this directory (six groups of strategies + composition patterns). Read **only** the sections you select — progressive disclosure, not the whole file.
 
 ## This is judgment, not a planning engine
 

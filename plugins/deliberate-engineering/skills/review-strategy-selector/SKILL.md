@@ -7,7 +7,7 @@ description: "Use after any baseline code review, or when reviewing a change, to
 
 The deliberate layer of review. A baseline pass (catalog strategy 1) finds the obvious. This skill decides *which additional lenses THIS change actually calls for* — and applies them — so review is tuned to the change, not a generic checklist run on autopilot.
 
-The reference for every strategy cited below is `catalog.md` in this directory (54 strategies in five groups + composition patterns). Read **only** the sections you select — progressive disclosure, not the whole file.
+The reference for every strategy cited below is `catalog.md` in this directory (five groups of strategies + composition patterns). Read **only** the sections you select — progressive disclosure, not the whole file.
 
 ## When to use
 
