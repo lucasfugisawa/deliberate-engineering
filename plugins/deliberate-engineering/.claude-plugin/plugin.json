@@ -1,7 +1,7 @@
 {
   "name": "deliberate-engineering",
   "version": "0.1.0",
-  "description": "A thin layer of deliberate engineering judgment on top of your workflow: intercept each step and apply the right review tactics for the case.",
+  "description": "A thin layer of engineering judgment for AI-assisted coding: it classifies each change, then applies the right depth and lenses across planning, review, verification, and debugging — instead of one uniform pass regardless of risk.",
   "author": {
     "name": "Lucas Fugisawa",
     "url": "https://github.com/lucasfugisawa"
