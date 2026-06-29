@@ -11,7 +11,7 @@ This is contributor tooling: it runs against a local clone of the `deliberate-en
 
 ## vs the adopter capture skill
 
-`deliberate-engineering-capture` is for the **adopter** — it grows `~/.claude/deliberate-engineering-overrides.md`, your personal override file, from deviations and patterns you brought to this session. That file stays local and private. This skill is for the **author** — it proposes lenses for the shared catalog, which ships in the public plugin. Opposite write-targets. The differentiator: This is the author/contributor write side — it proposes lenses for the shared catalog via the candidates/ queue. It is not the adopter capture skill, which grows your own personal override file.
+`deliberate-engineering-capture` is for the **adopter** — it grows `~/.claude/deliberate-engineering/overrides.md`, your personal override file, from deviations and patterns you brought to this session. That file stays local and private. This skill is for the **author** — it proposes lenses for the shared catalog, which ships in the public plugin. Opposite write-targets. The differentiator: This is the author/contributor write side — it proposes lenses for the shared catalog via the candidates/ queue. It is not the adopter capture skill, which grows your own personal override file.
 
 ## vs the promote skill
 
