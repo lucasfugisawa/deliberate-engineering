@@ -32,11 +32,18 @@ For a typo fix it does the opposite — and says so: "trivial and safe, single p
 
 ## Install
 
-```bash
+Inside Cloude Code:
+```claude
 /plugin marketplace add lucasfugisawa/deliberate-engineering
+/plugin install deliberate-engineering@deliberate-engineering
+/reload-plugins
 ```
 
-Then enable it via `/plugin`.
+or in terminal:
+```bash
+claude plugin marketplace add lucasfugisawa/deliberate-engineering
+claude plugin install deliberate-engineering@deliberate-engineering
+```
 
 **Recommended companion:** install [`superpowers`](https://github.com/obra/superpowers) (Jesse Vincent) alongside it. `deliberate-engineering` owns the *judgment* and delegates the *method* — TDD, systematic debugging, plan execution — to `superpowers`. Without it the judgment layer still works: it classifies the work, calibrates the ceremony, and applies the rules and lenses; it simply delegates execution to whatever engine you have, including Claude Code's built-in abilities.
 
