@@ -1,6 +1,6 @@
 # Debug/Operate Strategy Catalog
 
-This catalog contains 16 strategies organized into five Parts plus composition patterns. Each strategy is a lens for the moment a *live system* behaves unexpectedly and you must diagnose under uncertainty and respond — deciding which evidence to trust, which failure-mode you're looking at, and how to act while the system is degraded. The selector skill references these by number to build a response tuned to the quality of the evidence and to how irreversible the consequence of being wrong is.
+This catalog contains 17 strategies organized into five Parts plus composition patterns. Each strategy is a lens for the moment a *live system* behaves unexpectedly and you must diagnose under uncertainty and respond — deciding which evidence to trust, which failure-mode you're looking at, and how to act while the system is degraded. The selector skill references these by number to build a response tuned to the quality of the evidence and to how irreversible the consequence of being wrong is.
 
 ## What this catalog is — and is not
 
@@ -34,7 +34,7 @@ It is also **distinct from verification.** Verification *confirms an expectation
 
 - **How it works:** When findings arrive faster than you can chase them, the first triage is reachability: does the flagged issue — a vulnerability, a regression, a suspicious dependency — actually affect the *resolved, effective* version your system runs, or only a version a report names in the abstract? Resolution, transitive overrides, and pins frequently mean it's already patched or never reachable in your build. Resolve the effective version first, and spend the bounded investigation budget only on findings that are real for *your* running system.
 - **Objective:** Spend investigation budget only on findings that are real for *your* running system, not on noise from a scanner reasoning about a version you don't ship.
-- **When most valuable:** Triaging a security or dependency alert under pressure; any finding stated against a declared version rather than the resolved one. (Review #36 finds the candidate in the static artifact and verify #2 grounds the provenance; this lens decides, under live-investigation pressure, whether the candidate is even reachable before you act on it.)
+- **When most valuable:** Mid-incident, when a flagged issue — a CVE, a regression, a suspect dependency — is a *candidate cause* of the live break and you must decide whether it even reaches your running build before chasing it; or triaging an alert under pressure when investigation budget is scarce. (Review #36 finds the candidate in the static artifact and verify #2 grounds the provenance; this lens decides, under live-investigation pressure, whether the candidate is even reachable before you act on it.)
 
 ---
 
@@ -51,7 +51,7 @@ It is also **distinct from verification.** Verification *confirms an expectation
 ### 5. Recover original intent before changing unfamiliar code
 
 - **How it works:** Under incident pressure the temptation is to rip out the thing that looks wrong. Resist it long enough to recover *why* the suspect code exists — its authors, the original design, the decision it encodes — so you don't remove a load-bearing constraint you don't yet understand and trade one incident for a worse one. This is Chesterton's fence at incident speed: understand the fence before you tear it down.
-- **Objective:** Avoid a "fix" that breaks a deliberate, non-obvious decision, the failure mode of confident edits to unfamiliar code under stress.
+- **Objective:** Avoid a "fix" that breaks a deliberate, non-obvious decision — the failure mode of editing unfamiliar code under stress before recovering why it exists.
 - **When most valuable:** Editing code you didn't write, mid-incident, where the design rationale isn't obvious from the code alone. (Distrust derived docs and stale checkouts — go to the primary source for the intent, per the standing verify-before-endorse rule — and dispatch `superpowers:systematic-debugging` for the elimination method itself.)
 
 ---
@@ -70,13 +70,19 @@ It is also **distinct from verification.** Verification *confirms an expectation
 
 - **How it works:** When the stakes are elevated, over-escalating a borderline incident is preferable to hesitating. The cost of pulling in help that turned out unneeded is small and recoverable; the cost of sitting on something that turned out serious compounds while you deliberate. Calibrate the escalation threshold to the stakes — and the team's culture should explicitly permit erring toward action so no one fears looking alarmist.
 - **Objective:** Resolve the hesitation that lets a serious incident grow during the minutes spent deciding whether it's serious.
-- **When most valuable:** Borderline-severity incidents where stakes are high and the cost of a false alarm is low relative to the cost of a missed real one.
+- **When most valuable:** Ambiguous early signals where escalation is cheap and reversible — paging a second responder, opening a bridge — but delay is not, and where team norms make people hesitate to look alarmist.
 
 ### 8. An un-actionable page is reassigned or escalated, never left to sit
 
 - **How it works:** If a page reaches you and you can't act on it — wrong owner, missing context, missing access — your job is to route it: reassign it to who can, or escalate until someone owns it. What you must not do is let it sit because it isn't "yours." An active incident outranks routine work, and ownership of the *response* is explicit and transferred deliberately, never silently assumed to be someone else's problem.
 - **Objective:** Guarantee every live page has an active owner, eliminating the dropped-page gap where everyone assumes someone else has it.
 - **When most valuable:** On-call hand-offs; pages that land on the wrong person; any incident where response ownership is ambiguous.
+
+### 17. Contain the blast radius before you can fully restore
+
+- **How it works:** When there is no clean revert — the bad state is already loose, the cause is novel, or rolling back would lose data — the first move is not diagnosis but containment: shrink the damage and buy time. Shed or rate-limit load, disable the failing path or feature behind its flag, fail over to a healthy replica or region, or serve a degraded-but-safe response. Each buys room to diagnose without the fire still spreading. Containment is a holding action, not a fix — name it as such, and keep full restoration as the goal.
+- **Objective:** Stop the bleeding when you can't yet stop the cause, so the incident stops growing while you work the real fix.
+- **When most valuable:** Live degradation with no known-good state to revert to — a forward-only data corruption, a novel failure, a dependency outage you don't own; any incident where full restoration will take longer than the damage can safely run.
 
 ---
 
@@ -94,13 +100,13 @@ It is also **distinct from verification.** Verification *confirms an expectation
 
 - **How it works:** Triage every error to a terminal state — fixed or explicitly backlogged with a reason — so the steady-state error stream sits near zero. When the baseline is zero, a freshly appearing error is unambiguous signal: it means a regression, and it stands out instantly. When the baseline is a constant roar of known-and-ignored errors, a new one drowns in it and you lose the cheapest early-warning system you have.
 - **Objective:** Make new errors loud by keeping old ones out of the stream, turning the error feed into a regression detector.
-- **When most valuable:** Services with an accumulated backlog of tolerated errors; anywhere the error feed has stopped being read because it's always noisy.
+- **When most valuable:** Services with an accumulated backlog of tolerated errors; anywhere the error feed has stopped being read because it's always noisy. (Same signal-preservation logic as #9, applied to the error feed rather than the alert set.)
 
 ### 11. Tie alert thresholds to business recovery cadence
 
 - **How it works:** Set staleness and age thresholds from how the system actually recovers, not from a generic default. The right question is "how far behind can this get before recovery becomes impossible or expensive?" — and the threshold is derived from that answer, not from a round number someone copied from another system. A threshold untethered from real recovery dynamics either cries wolf or fires too late to matter.
 - **Objective:** Make a threshold mean something — fire with enough lead time to still recover, without firing on conditions that are operationally fine.
-- **When most valuable:** Backlog/lag/age alerts; any threshold currently set to a generic default rather than derived from the cost of falling behind.
+- **When most valuable:** Inheriting alert thresholds from another system or a template; backlog/lag/age alerts that have cried wolf or fired too late at least once.
 
 ### 12. Own the observability of inputs you don't control
 
@@ -112,7 +118,7 @@ It is also **distinct from verification.** Verification *confirms an expectation
 
 - **How it works:** Every individual component can be healthy while the journey across them is broken — a flow's failure lives in the seams that no single service owns. Assign explicit ownership to the end-to-end flows, not only to the services, so someone watches the journey as a whole. Unowned flows are the ones that surface for the first time mid-incident, when nobody can say whose job it was to be watching.
 - **Objective:** Eliminate the gap between "all services green" and "the user can't complete the task," by giving the whole path an owner.
-- **When most valuable:** Multi-service user journeys; anywhere component dashboards are all healthy but the outcome still fails.
+- **When most valuable:** Multi-service user journeys; anywhere component dashboards are all healthy but the outcome still fails. (Kin to #12 — both close an ownership blind spot: #12 at the external-input boundary, this at the cross-service seam.)
 
 ---
 
@@ -145,7 +151,7 @@ It is also **distinct from verification.** Verification *confirms an expectation
 *How to chain these lenses together across the arc of an incident.*
 
 - **Evidence before action:** Establish what's true (Part A) before you respond — but hold this in tension with restoration. When the service is degraded, you do *not* wait for perfect evidence; the Master Principle's second clause overrides the first, and you restore the shared baseline first. Name the tension explicitly so you know which way it resolves: degraded → restore; not degraded → keep gathering.
-- **Restore, then diagnose:** Under a live break, Part C (revert/restore) precedes Part B (root-cause). Get the baseline back to known-good, *then* hunt the cause in peacetime — diagnosing a live outage while it burns trades the whole team's time for your curiosity.
+- **Restore, then diagnose:** Under a live break, Part C (revert/restore) precedes Part B (root-cause). Get the baseline back to known-good, *then* hunt the cause in peacetime — diagnosing a live outage while it burns trades the whole team's time for your curiosity. When there's no clean baseline to revert to, contain the blast radius first (17) to stop the spread, then diagnose.
 - **Delegate the method, own the judgment:** Dispatch `superpowers:systematic-debugging` for the hypothesis-elimination mechanics; this catalog decides which evidence to trust (Part A) and how to respond (Parts B–C). The method and the judgment are different jobs — don't reinvent the method here.
 - **Peacetime feeds wartime:** Part D's hygiene is what makes Part A's evidence trustworthy in the *next* incident — near-zero error streams, actionable alerts, owned flows, instrumented external inputs. The two are one loop across time: every shortcut taken in peacetime is a blind spot you inherit mid-incident.
 - **Close the loop or it's theater:** An incident isn't done at restoration. Part E converts it into a timeline (14), a blameless analysis (15), and owned follow-through (16). Stop short of any of these and the next incident is the same incident.
