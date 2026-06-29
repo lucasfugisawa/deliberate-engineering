@@ -98,13 +98,14 @@ For the full picture — how the pieces fit together and how to drive each flow,
 
 ## What's inside
 
-A standing-rules skill, a front-door router, four phase selectors backed by four read-on-demand catalogs, one cross-cutting communication selector, a personal override layer, and an author contribution flow — plus nine commands.
+A standing-rules skill, a front-door router, four phase selectors backed by four read-on-demand catalogs, one cross-cutting communication selector, a personal override layer, a process-state working-note, and an author contribution flow — plus nine commands.
 
 - **`deliberate-engineering-rules`** — eight standing rules held across every phase: keep the human's hand on irreversible and outward-facing actions; stay read-only on systems you don't own; verify claims against primary evidence before endorsing; recommend with a reasoned pick, not a bare menu; keep comments load-bearing; checkpoint durable state before compacting; name the edge of what you know rather than fabricate certainty; and treat trust in an output as earned by convergence — when review stabilizes and assumptions hold — not granted on a single pass. Scoped to software work; quiet on research, prose, and ad-hoc analysis.
 - **`deliberate-engineering-router`** (`:start`) — the front door: it classifies the work, names the phase sequence and the ceremony it earns, and routes to the matching selector. It recommends rather than forces — the only hard stop is the human gate on irreversible actions.
 - **Four phase selectors + catalogs** — `:plan`, `:review`, `:verify`, `:debug`. Each classifies the work, then pulls only the matching lenses from its catalog (read on demand, never all at once).
 - **`communication-collaboration-selector`** (`:communicate`) — cross-cutting, not a phase: when the artifact you're producing is a *communication* — a PR description, a review comment, a stakeholder message, a writeup of alternatives — it classifies by audience and artifact (not the four phase axes) and applies the matching lenses. Consult it from inside any phase.
 - **Make it yours** — a personal override layer lets your own practice take precedence over any shipped lens or rule; `/deliberate-engineering:capture` distills a session into ready-to-paste override blocks. See [Make it yours](#make-it-yours).
+- **`deliberate-engineering-state`** — a consulted-only skill that owns a per-work-unit working-note, so process state (the phase sequence, current phase, chosen rituals, open pendings, and the decisions and why) survives across sessions. The router and Rule 6 delegate to it to rehydrate on resume and checkpoint as work proceeds; it delegates to your tracker or workflow engine when one already holds the work.
 - **For contributors** — `/deliberate-engineering:contribute` and `:promote` grow the *shared* catalog from a local clone of this repo (generalize-at-capture, a blocking leak-audit, append-only numbering, and a stop before publish). This is the author side, distinct from your personal overrides; see [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 <details>
@@ -119,7 +120,7 @@ A standing-rules skill, a front-door router, four phase selectors backed by four
 
 ## Make it yours
 
-The plugin is opinionated, and it's meant to become yours. A personal file at `~/.claude/deliberate-engineering-overrides.md` takes precedence over the shipped lenses and rules, addressed by stable identifiers — `review #35`, `verify #14`, `planning #8`, `debug #12`, or `rule 2`. Three operations: `disable` turns a lens or rule off; `modify` appends your own note alongside the shipped text (the shipped text stays, your annotation is read with it); and `add` defines your own strategy or rule. The agent always declares when an override changed what it did — nothing happens silently — and you can even loosen a safety rule, which it honors while calling out the raised autonomy. The layer is opt-in: if the file doesn't exist, nothing changes.
+The plugin is opinionated, and it's meant to become yours. A personal file at `~/.claude/deliberate-engineering/overrides.md` takes precedence over the shipped lenses and rules, addressed by stable identifiers — `review #35`, `verify #14`, `planning #8`, `debug #12`, or `rule 2`. Three operations: `disable` turns a lens or rule off; `modify` appends your own note alongside the shipped text (the shipped text stays, your annotation is read with it); and `add` defines your own strategy or rule. The agent always declares when an override changed what it did — nothing happens silently — and you can even loosen a safety rule, which it honors while calling out the raised autonomy. The layer is opt-in: if the file doesn't exist, nothing changes.
 
 You can write that file by hand, or let `/deliberate-engineering:capture` (or just ask) distill the session you just had — the lenses you skipped or adjusted, the practice the catalog lacks — into ready-to-paste blocks, appended only on your approval.
 
@@ -162,7 +163,7 @@ Both steps are independent, and undoing this never touches your code or your rep
 
 This plugin stands on the shoulders of:
 
-- **[superpowers](https://github.com/obra/superpowers)** (Jesse Vincent) — the recommended discipline engine that makes deliberate interception possible.
+- **[superpowers](https://github.com/obra/superpowers)** (Jesse Vincent) — the recommended companion engine this layer delegates method to (TDD, systematic debugging, plan execution); the judgment layer degrades gracefully without it.
 - **[addyosmani/agent-skills](https://github.com/addyosmani/agent-skills)** and **[mattpocock/skills](https://github.com/mattpocock/skills)** — pioneering work in curated skill catalogs for AI-assisted development. They also exemplify the vertical, domain-deep catalogs that complement this horizontal layer — the kind of depth the *Scope & boundaries* section points you to bring yourself.
 - **General engineering practice** — review strategies, threat modeling, FMEA, and deliberate practice.
 

@@ -67,6 +67,7 @@ Open only the Parts matching your classification:
 
 Apply the catalog's Appendix patterns:
 
+- **Re-execute on re-invocation (Rule 3)** — resolve scope from a world-derived target, and recompute in fresh context rather than relaying a prior in-session conclusion.
 - **Evidence before action — except under degradation.** Establish what's true (Part A) before responding, but hold this in tension with restoration: when the service is degraded, you do *not* wait for perfect evidence — the Master Principle's second clause wins and you restore the baseline first. Name which way the tension resolves: degraded → restore; not degraded → keep gathering.
 - **Restore, then diagnose.** Under a live break, Part C precedes Part B. Get the baseline back to known-good, *then* hunt the cause in peacetime — diagnosing a live outage while it burns trades the whole team's time for your curiosity.
 - **Delegate the method, own the judgment.** Dispatch `superpowers:systematic-debugging` for the mechanics; this skill decides which evidence to trust and how to respond. Different jobs — don't reinvent the method.

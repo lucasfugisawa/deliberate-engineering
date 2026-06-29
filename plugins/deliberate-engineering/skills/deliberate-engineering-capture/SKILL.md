@@ -1,11 +1,11 @@
 ---
 name: deliberate-engineering-capture
-description: "Use on demand to capture what you did this session into durable overrides. Observes deviations (you corrected/skipped a catalog lens or rule) and patterns (recurring practice the catalog lacks), discusses candidates, and on approval appends disable/modify/add entries to ~/.claude/deliberate-engineering-overrides.md. This is the adopter's write side — it grows YOUR personal override file. It is not the author contribution tools (contribute/promote), which propose lenses for the shared catalog. Stays silent unless invoked."
+description: "Use on demand to capture what you did this session into durable overrides. Observes deviations (you corrected/skipped a catalog lens or rule) and patterns (recurring practice the catalog lacks), discusses candidates, and on approval appends disable/modify/add entries to ~/.claude/deliberate-engineering/overrides.md. This is the adopter's write side — it grows YOUR personal override file. It is not the author contribution tools (contribute/promote), which propose lenses for the shared catalog. Stays silent unless invoked."
 ---
 
 # Deliberate Engineering Capture
 
-The adopter write side of the override layer. Where `deliberate-engineering-overrides` reads the personal override file and honors it at runtime, this skill helps you grow that file from what you actually did. It watches for two signals — deviations from the catalog (you skipped or corrected a lens/rule) and patterns beyond it (you brought a recurring practice the catalog lacks) — proposes override entries, and on approval appends them to `~/.claude/deliberate-engineering-overrides.md`.
+The adopter write side of the override layer. Where `deliberate-engineering-overrides` reads the personal override file and honors it at runtime, this skill helps you grow that file from what you actually did. It watches for two signals — deviations from the catalog (you skipped or corrected a lens/rule) and patterns beyond it (you brought a recurring practice the catalog lacks) — proposes override entries, and on approval appends them to `~/.claude/deliberate-engineering/overrides.md`.
 
 ## vs the override read side
 
@@ -13,7 +13,7 @@ The adopter write side of the override layer. Where `deliberate-engineering-over
 
 ## vs the author contribution tools
 
-The `contribute` and `promote` tools are for growing the **shared catalog** — proposing a lens for inclusion in the plugin's shipped content. That is a product act with leak audit and review. This skill grows the **adopter's personal override file** — `~/.claude/deliberate-engineering-overrides.md` — which stays local and private. Opposite targets. The differentiator: This is the adopter's write side — it grows YOUR personal override file. It is not the author contribution tools (contribute/promote), which propose lenses for the shared catalog.
+The `contribute` and `promote` tools are for growing the **shared catalog** — proposing a lens for inclusion in the plugin's shipped content. That is a product act with leak audit and review. This skill grows the **adopter's personal override file** — `~/.claude/deliberate-engineering/overrides.md` — which stays local and private. Opposite targets. The differentiator: This is the adopter's write side — it grows YOUR personal override file. It is not the author contribution tools (contribute/promote), which propose lenses for the shared catalog.
 
 ## On demand only
 
@@ -103,7 +103,7 @@ An `add` candidate is a full operator-authored lens — a recurring practice you
 
 ## The append-only write
 
-For each approved candidate, **append** the block to `~/.claude/deliberate-engineering-overrides.md`. If the file does not exist, create it with this header:
+For each approved candidate, **append** the block to `~/.claude/deliberate-engineering/overrides.md`. If the file does not exist, create it with this header:
 
 ```markdown
 # Deliberate Engineering Overrides
@@ -133,7 +133,7 @@ Report:
 
 1. The candidates shown — target, operation, and the signal that produced each.
 2. Which candidates were approved, edited, or rejected.
-3. What was appended — for each approved candidate, state the target, the operation, and confirm it was written to `~/.claude/deliberate-engineering-overrides.md`.
+3. What was appended — for each approved candidate, state the target, the operation, and confirm it was written to `~/.claude/deliberate-engineering/overrides.md`.
 4. If no candidates were identified, state that explicitly.
 
 The contract: the caller knows what was observed, what was discussed, and exactly what was written to the file (or that nothing was written).

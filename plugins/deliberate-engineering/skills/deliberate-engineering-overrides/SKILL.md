@@ -1,6 +1,6 @@
 ---
 name: deliberate-engineering-overrides
-description: "Use when applying any deliberate-engineering lens or standing rule. Reads ~/.claude/deliberate-engineering-overrides.md before applying catalog lenses or standing rules, honors disable/modify/add overrides, and declares each deviation. Stays silent when no override file exists or no override matches."
+description: "Use when applying any deliberate-engineering lens or standing rule. Reads ~/.claude/deliberate-engineering/overrides.md before applying catalog lenses or standing rules, honors disable/modify/add overrides, and declares each deviation. Stays silent when no override file exists or no override matches."
 ---
 
 # Deliberate Engineering Overrides
@@ -30,7 +30,7 @@ The selectors and the rules skill own the decision to invoke this skill; it does
 
 ## The override file
 
-The override file lives at `~/.claude/deliberate-engineering-overrides.md`. Each entry has a header in one of two forms — `<target> — <operation>` for a specific lens or rule, or `add — <catalog>` for an operator-authored strategy — followed by a body that depends on the operation.
+The override file lives at `~/.claude/deliberate-engineering/overrides.md`. Each entry has a header in one of two forms — `<target> — <operation>` for a specific lens or rule, or `add — <catalog>` for an operator-authored strategy — followed by a body that depends on the operation.
 
 ```markdown
 ## review #35 — disable
@@ -82,7 +82,7 @@ If the file does not exist, this skill is silent and does nothing. Override is o
 The flow when this skill is invoked:
 
 1. The selector classifies the work and picks its lenses normally, using the shipped catalogs.
-2. The selector consults this skill. This skill reads `~/.claude/deliberate-engineering-overrides.md` if the file exists.
+2. The selector consults this skill. This skill reads `~/.claude/deliberate-engineering/overrides.md` if the file exists.
 3. For each selected lens with an override, this skill applies the operation instead of the shipped content. For `add` entries in the relevant catalog, this skill reads them as additional operator-authored lenses available in that catalog, applied when their `**When:**` guidance fits the work.
 4. This skill declares the deviation in the visible output — **always, never silent.** Every override that fires is reported.
 
