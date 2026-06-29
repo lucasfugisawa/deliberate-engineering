@@ -23,7 +23,7 @@ This skill is consulted, not invoked directly. It is read at two lifecycle momen
 
 The working-note lives in a project-local directory that is ensured-ignored by the VCS, with a fallback to a global directory when no project-local home is available. The resolution order:
 
-1. **Project-local preferred**: `.deliberate/state/` in the repository root. Before writing here, ensure the `.deliberate/` directory is ignored by the VCS in use. The concretely-implemented case is git: run `git check-ignore .deliberate` to confirm it is ignored; if not, add `.deliberate/` to `.gitignore` and declare the addition in the visible output. The generic principle is "ignored by the VCS in use" — git is the implemented case; other VCSes would follow the same principle but are not concretely implemented in this skill. If the working directory is not under version control, skip to the fallback.
+1. **Project-local preferred**: `.deliberate/state/` in the repository root. Before writing here, ensure the `.deliberate/` directory is ignored by the VCS in use. The concretely-implemented case is git: run `git check-ignore .deliberate` to confirm it is ignored (exit code 0 means the path IS ignored and safe to write; exit code 1 means it is NOT ignored — add `.deliberate/` to `.gitignore` first and declare the addition in the visible output). The generic principle is "ignored by the VCS in use" — git is the implemented case; other VCSes would follow the same principle but are not concretely implemented in this skill. If the working directory is not under version control, skip to the fallback.
 
 2. **Fallback when project-local is unavailable**: `~/.claude/deliberate-engineering/state/`. Use this when there is no repository root or the project-local ignore setup failed.
 
@@ -31,7 +31,7 @@ Always declare which location was chosen in the visible output when a note is re
 
 ## The working-note — naming and granularity
 
-One note per work-unit, named by a world-derived identifier in preference order: the current branch name, the PR number, or the ticket key. The filename is `<identifier>.md` — for example, `feat-user-export.md`, `pr-1234.md`, or `PROJ-42.md`. By construction, parallel sessions working on different work-units never collide — each has its own note. The rare collision case is two sessions working on the same work-unit simultaneously; the write gate (below) handles that.
+One note per work-unit, named by a world-derived identifier in preference order: the current branch name, the PR number, or the ticket key. The filename is `<identifier>.md`, where path-unsafe characters in the identifier (e.g., `/` in a branch name like `feat/user-export`) are sanitized (e.g., to `-`) to produce a valid filename like `feat-user-export.md`. Other examples: `pr-1234.md`, `PROJ-42.md`. By construction, parallel sessions working on different work-units never collide — each has its own note. The rare collision case is two sessions working on the same work-unit simultaneously; the write gate (below) handles that with best-effort detect-and-reconcile.
 
 The naming preference order reflects the durability of the identifier: a branch name is stable across the work-unit's life and is local, so it is preferred. A PR number is stable once the PR is created. A ticket key is stable when the ticket exists but may predate the local branch. Choose the first available identifier in that order.
 
@@ -48,6 +48,7 @@ The working-note has two blocks: **Live state** (rewritten on each checkpoint) a
 
 **Decision log** (append-only):
 - Each entry: timestamp, the decision made, and the why (the constraint, risk, or context that drove it). Format: `- YYYY-MM-DD HH:MM — <decision>. Why: <reason>.`
+- Note: The append-only log's safety is subject to the same residual race as the live state — two concurrent sessions writing to the same work-unit can still lose a log entry despite the changed-since-read check.
 
 Example:
 
@@ -73,17 +74,13 @@ Example:
 
 ## Rehydrate (the read operation)
 
-At session or phase start, read the work-unit's note (or the delegated tracker task). Return the current phase, the phase sequence, the ceremony band, the chosen rituals, and the open pendings. If no note exists for this work-unit, return nothing — the work is starting from scratch. When resuming work, re-read the note before reasoning about what to do next, rather than guessing from memory or prior context. The rehydrated state is the source of truth for where the work stands.
+At session or phase start, read the work-unit's note (or the delegated tracker task). Return the current phase, the phase sequence, the ceremony band, the chosen rituals, and the open pendings. If no note exists for this work-unit at the resolved location, check for orphaned notes before starting fresh: (a) if the work-unit identifier changed (e.g., branch renamed, or work moved from ticket-named to branch-named), look for a note under a prior or alternate identifier (other names in the branch→PR→ticket set) and adopt it if found; (b) if the resolved location is project-local (.deliberate/state/) but has no note, check the fallback location (~/.claude/deliberate-engineering/state/) for a note written by an earlier session before a repository was initialized, and adopt it if found. If no note exists after checking alternates and fallback, return nothing — the work is starting from scratch. When resuming work, re-read the note before reasoning about what to do next, rather than guessing from memory or prior context. The rehydrated state is the source of truth for where the work stands.
 
 ## Checkpoint (the write operation)
 
-At Rule 6 checkpoints, rewrite the live state block and append new decisions to the decision log. Before writing, apply the changed-since-read check: compare the file's current hash or mtime to the value when it was last read. If the file changed since the last read, re-read it, reconcile the changes (merge pendings, preserve newer decisions), and declare the reconciliation in the visible output. Never overwrite blindly. After the check passes (or reconciliation completes), write the updated live state and append new decision-log entries with timestamps.
+At Rule 6 checkpoints, rewrite the live state block and append new decisions to the decision log. Before writing, apply the changed-since-read check: compare the file's current hash or mtime to the value when it was last read. If the file changed since the last read, re-read it, reconcile the changes (merge pendings, preserve newer decisions), and declare the reconciliation in the visible output. This check minimizes the blind-overwrite window rather than eliminating it — a residual time-of-check-to-time-of-use race remains between the re-read/compare and the subsequent write, so two sessions writing to the same work-unit simultaneously can still collide and lose a decision-log entry or a pending. After the check passes (or reconciliation completes), write the updated live state and append new decision-log entries with timestamps.
 
-The changed-since-read check is detect-and-reconcile, not lock-based. There is no daemon and no lock file. If the check fails, pause, re-read, reconcile, announce, and proceed. The rare collision case (two sessions writing to the same work-unit simultaneously) is resolved by the agent merging the states, not by one session silently clobbering the other.
-
-## Concurrency
-
-The per-work-unit naming provides by-construction isolation: parallel sessions on different work-units never collide. The rare case — two sessions on the same work-unit — is handled by the write gate's changed-since-read check. There is no locking; the gate is detect-and-reconcile. If a concurrent write is detected, re-read the note, reconcile the changes (preserve newer decisions, merge pendings without duplicating), and declare the reconciliation. The goal is to avoid losing work, not to prevent the collision — the collision is rare enough that detect-and-reconcile is sufficient.
+The changed-since-read check is detect-and-reconcile, not lock-based. There is no daemon and no lock file. If the check fails, pause, re-read, reconcile, announce, and proceed. The per-work-unit naming provides by-construction isolation for different work-units (different branches, PRs, or tickets — each has its own note, so parallel sessions on different work-units genuinely never collide). The rare case — two sessions on the same work-unit — is handled by the write gate's best-effort detect-and-reconcile check, which narrows the collision window but does not close it. The goal is to catch most concurrent writes and avoid losing work in the common case; the residual race is accepted as rare enough that perfect serialization (via locking or a daemon) is not warranted.
 
 ## The declaration protocol
 
