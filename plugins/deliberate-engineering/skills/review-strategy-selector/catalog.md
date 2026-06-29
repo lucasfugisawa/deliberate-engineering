@@ -1,6 +1,6 @@
 # Review Strategy Catalog
 
-This catalog contains 54 review strategies organized into five groups plus composition patterns. Each strategy is a lens through which to examine work. The selector skill references these by number to build custom review workflows. No lens is mandatory — apply only the ones the change's context, risk, and scope actually call for.
+This catalog contains 55 review strategies organized into five groups plus composition patterns. Each strategy is a lens through which to examine work. The selector skill references these by number to build custom review workflows. No lens is mandatory — apply only the ones the change's context, risk, and scope actually call for.
 
 Strategy **numbers are stable identifiers, not reading order**: a lens keeps its number for life, and a new lens is appended with the next free number and *placed* under the group it belongs to. So a group may run out of numeric sequence (Part A ends with 52–54). This is deliberate — it keeps every published number citable (e.g. by an override) without renumbering.
 
@@ -14,7 +14,7 @@ Strategies **compose**. The strongest pattern is to *rotate the lens each pass* 
 
 *How to conduct the review, independent of the artifact's domain. This is the core: technique, not domain knowledge.*
 
-### 1. Baseline review (correctness / resilience / consistency)
+### 1. Baseline review (correctness / resilience / internal consistency)
 
 - **How it works:** A first broad pass, reading the whole artifact for logic errors, failures under adverse conditions, and internal contradictions.
 - **Objective:** Establish a quality floor and map the terrain before going deep.
@@ -70,15 +70,15 @@ Strategies **compose**. The strongest pattern is to *rotate the lens each pass* 
 
 ### 9. Adversarial majority-refute voting
 
-- **How it works:** For each finding, dispatch N independent skeptics, each instructed to *refute* it; kill the finding if the majority refute.
+- **How it works:** For each finding, dispatch N independent skeptics, each instructed to *refute* it; kill the finding when the majority refute **and the refutation holds up on inspection** — a vote that surfaced a real counterargument, not an unexamined tally.
 - **Objective:** Prevent plausible-but-wrong findings from surviving.
-- **When most valuable:** When the cost of acting on a false positive is high; automated/at-scale reviews.
+- **When most valuable:** When the cost of acting on a false positive is high; automated/at-scale reviews. (The at-scale, automated form of the adversarial stance in #2.)
 
 ### 10. Completeness critic
 
 - **How it works:** A final pass asking "what is missing? — a modality not exercised, a claim not verified, a source not read?" What it finds becomes the next round.
 - **Objective:** Close coverage gaps the themed passes did not catch.
-- **When most valuable:** At the end of long audits; before declaring "done."
+- **When most valuable:** At the end of long audits; before declaring "done." (Pairs with #6's loop-until-dry and #54's stopping criterion: this finds what's missing, #6 sets the loop, #54 decides when to stop.)
 
 ### 11. Change-size / reviewability review
 
@@ -136,7 +136,7 @@ Strategies **compose**. The strongest pattern is to *rotate the lens each pass* 
 
 ### 17. Boundary / edge-case review
 
-- **How it works:** Focus on the extremes — empty, one, many, numeric limits, timezone/DST, encoding, off-by-one, nulls/absent.
+- **How it works:** Focus on the extremes — empty, one, many, numeric limits, integer overflow and size/length limits, truncation, timezone/DST, encoding, off-by-one, nulls/absent.
 - **Objective:** Bugs live at the edges, not on the happy path.
 - **When most valuable:** Parsing, aggregations, time windows, pagination.
 
@@ -206,7 +206,7 @@ Strategies **compose**. The strongest pattern is to *rotate the lens each pass* 
 
 ### 27. Performance / scalability review
 
-- **How it works:** Analyze algorithmic complexity, query patterns (N+1, full scans, indexes), allocation, behavior under load and data growth, resource limits and quotas, peak/autoscaling behavior. For frontend, include Core Web Vitals (LCP/CLS/INP), bundle size, and re-renders.
+- **How it works:** Analyze algorithmic complexity, query patterns (N+1, full scans, indexes), allocation, behavior under load and data growth, resource limits and quotas, peak/autoscaling behavior. For frontend, include perceived-load and interaction-latency metrics (the current Core Web Vitals), bundle size, and re-render cost.
 - **Objective:** Avoid degradation at production scale and under peak load.
 - **When most valuable:** Hot paths, queries over large tables, request-path code, conversion-critical UI, and before high-load events.
 
@@ -224,7 +224,7 @@ Strategies **compose**. The strongest pattern is to *rotate the lens each pass* 
 
 ### 30. Observability review
 
-- **How it works:** Verify the change is *diagnosable* in production — metrics, structured logs, traces, alerts, tag cardinality.
+- **How it works:** Verify the change is *diagnosable* in production — metrics, structured logs, traces, alerts, tag cardinality — and that the telemetry it adds doesn't itself leak a secret, token, or personal data into a log line, trace tag, or error payload.
 - **Objective:** Ensure you can detect and debug when it goes wrong.
 - **When most valuable:** Changes with possible silent failures; critical systems; gradual rollouts.
 
@@ -264,6 +264,12 @@ Strategies **compose**. The strongest pattern is to *rotate the lens each pass* 
 - **Objective:** Avoid vulnerabilities and inherited third-party debt.
 - **When most valuable:** When adding/updating libs; periodic audits; build security.
 
+### 55. Blast-radius / change-impact review
+
+- **How it works:** Before judging the change in isolation, map what else it reaches: every caller of a changed signature, every consumer of a changed data shape or event, the feature flags and config it interacts with, and the shared state it reads or writes. Trace outward from the diff — including into repos and services not in front of you — and ask what breaks, loudly or silently, if this behaves a little differently than before.
+- **Objective:** Surface the true reach of a change so it isn't reviewed as a local edit when its effects are global — the defect that ships because the reviewer only read the lines that changed.
+- **When most valuable:** Changes to shared functions, contracts, schemas, events, or config consumed elsewhere; anything whose callers or consumers span modules, services, or teams. (Planning analog: planning-catalog lens 7, *blast-radius modeling*, sizes the reach while planning; this judges it on the finished change. Reversibility is #24; this is reach, not undo.)
+
 ---
 
 ## Part E — Beyond Back-end
@@ -272,15 +278,15 @@ Strategies **compose**. The strongest pattern is to *rotate the lens each pass* 
 
 ### 37. Accessibility (a11y) review
 
-- **How it works:** Check WCAG, ARIA semantics, keyboard navigation, contrast, screen readers.
-- **Objective:** Ensure the UI is usable by everyone.
-- **When most valuable:** Any public/regulated UI.
+- **How it works:** Operate the UI the way a user who can't rely on the author's assumptions must: navigate by keyboard alone, drive it with a screen reader, and check that meaning survives without color or sound. WCAG and ARIA are the standard to meet; the test is whether the interface is operable without the senses, pointer precision, or speed the author took for granted.
+- **Objective:** Ensure the UI is operable by people using assistive technology or constrained input — not just on the author's setup.
+- **When most valuable:** Any user-facing UI, most of all public or regulated ones; anything with custom controls, dynamic content, or media.
 
 ### 38. Responsiveness / cross-browser / cross-device review
 
 - **How it works:** Behavior across breakpoints, browsers, and devices.
 - **Objective:** Consistent experience across the audience's environments.
-- **When most valuable:** UIs with a broad audience.
+- **When most valuable:** UIs whose users span viewports, browsers, or devices you don't control — public web, BYOD, a wide form-factor range.
 
 ### 39. State / data-flow review
 
@@ -302,9 +308,9 @@ Strategies **compose**. The strongest pattern is to *rotate the lens each pass* 
 
 ### 42. Privacy / compliance review (GDPR, LGPD, PCI)
 
-- **How it works:** Data minimization, retention, consent, residency.
-- **Objective:** Meet legal and regulatory obligations.
-- **When most valuable:** Personal/financial data.
+- **How it works:** Trace personal data through the change: what is collected, on what legal basis, how long it is kept, where it lives, and who can reach it. Treat "we collect it because we can" as a finding — the question isn't only legality but minimization: the least data that does the job, kept the shortest time that serves it.
+- **Objective:** Meet legal and regulatory obligations and the stronger bar of data minimization — not collecting or retaining what isn't needed.
+- **When most valuable:** Any change that collects, stores, moves, or exposes personal or financial data; new fields on a user record; new logging or analytics on user activity.
 
 ### 43. Infrastructure-as-Code review
 
@@ -322,7 +328,7 @@ Strategies **compose**. The strongest pattern is to *rotate the lens each pass* 
 
 - **How it works:** Cost impact of provisioned resources, autoscaling, egress, data retention.
 - **Objective:** Avoid runaway spend.
-- **When most valuable:** Infra changes at scale.
+- **When most valuable:** Changes that provision resources, move data across boundaries (egress, cross-AZ/region), or alter retention or autoscaling defaults — not only infrastructure changes.
 
 ### 46. Disaster-recovery / resilience review
 
@@ -350,15 +356,15 @@ Strategies **compose**. The strongest pattern is to *rotate the lens each pass* 
 
 ### 50. Documentation / spec self-review
 
-- **How it works:** Placeholders, internal contradictions, ambiguity, scope.
-- **Objective:** Ship clear, complete specs.
-- **When most valuable:** When finalizing any spec/plan.
+- **How it works:** Read the spec or doc as its eventual reader, who lacks the context you have now: hunt unresolved placeholders (TBD/TODO), claims that contradict each other across sections, sentences that admit two readings, and scope that has silently grown or shrunk from what was agreed.
+- **Objective:** Ship a spec a stranger can execute from — clear, complete, internally consistent, and scoped to the agreement.
+- **When most valuable:** When finalizing any spec/plan, especially before handing it to someone (or an agent) without the original context. (Distinct from #34, which judges code-comment accuracy, and #52, which judges built code against agreed intent; this judges the planning doc itself.)
 
 ### 51. Architecture critic (adversarial)
 
-- **How it works:** Review the target architecture against best practice, hunting over-engineering and simpler alternatives.
-- **Objective:** Keep the design as simple as it can correctly be.
-- **When most valuable:** Design proposals before implementation.
+- **How it works:** Critique the architecture at the level #35 doesn't reach: where the boundaries fall, how modules couple and cohere, which component owns which data, and which way dependencies point (and whether anything cyclic or backwards sneaks in). Hunt the structural smell — a god component, a leaky boundary, a shared mutable store, a dependency from core to detail — and the simpler structure that would carry the same requirements.
+- **Objective:** Keep the structure sound — clear ownership, low coupling, dependencies pointing the right way — and no more elaborate than the requirements demand.
+- **When most valuable:** Design proposals and significant refactors before implementation; any change that moves a boundary, introduces a component, or shifts who owns what. (Lens 35 removes local over-engineering; this judges the system's shape — they compose, they don't overlap.)
 
 ---
 
