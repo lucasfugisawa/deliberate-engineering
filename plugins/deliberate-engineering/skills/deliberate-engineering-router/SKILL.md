@@ -71,6 +71,17 @@ Having decided the sequence, the router invokes the selector skill for the curre
 
 State the boundary explicitly: **conduct between phases, stop at the irreversible action.** The router never crosses a Rule 1 gate autonomously; and between gates it does **not** ask permission at every step — that step-by-step friction is the shape this plugin rejects. **Recommend, never force:** the router scales the firmness of its recommendation to risk but blocks nothing. The only hard stop is Rule 1's gate on the irreversible *action* — never on the *process*. A trivial change is free to skip phases; a risky one gets a firm recommendation and, at the irreversible step, a real gate.
 
+## Recalibrate — the band is a live hypothesis
+
+The ceremony band and phase sequence from Steps 2–3 are a starting estimate, not a verdict; conducting includes re-checking them as the work teaches you more. Re-check at two moments:
+
+- **On returning from each phase** — a terse reconciliation against the start estimate, folded into the phase-entry output, not a separate ceremony: "at plan I judged risk medium; entering review, still medium — proceeding as sequenced."
+- **Mid-phase** — only when a discovery trips the **material-change test**: it crosses an axis band (risk low→high, reach narrow→wide, reversibility into irreversible, clarity high→low) or invalidates a skip rationale (you skipped verify for "no observable-behavior change," and the change now alters observable behavior).
+
+The test is one question — *would this have changed the call I made at the start?* If **no**, keep going, silent: the band does not re-open for immaterial findings, and re-evaluating ceremony after every minor discovery is the misplaced process this plugin exists to prevent. If **yes**, re-classify on the four axes, reopen the band and/or the sequence — including **re-introducing a skipped phase** or lightening an over-heavy one — declare the change through the output step (what moved, which axis crossed, the new sequence, what was added or dropped), and continue. Rule 1 is unchanged: if recalibration introduces an irreversible or outward-facing step, the gate fires there as always.
+
+> **Worked example (recalibration mid-build):** the start classified "add an analytics event" as low-risk and sequenced plan → build → review, *skipping verify* ("no observable-behavior change"). Mid-build you find the event also decrements a billing counter. Material change — risk low→high, and the skip rationale is now false. Recalibrate: "billing mutation discovered → risk↑, reversibility↓; re-introducing **verify** and raising review to full depth; I stop before deploy for you to trigger (Rule 1)." The reverse also fires: if a "migration" turns out to touch one dead call site, recalibrate the other way — drop the planned review escalation and state the lighter pass.
+
 ## The output step — visible judgment and execution shape
 
 After classifying and sequencing, before invoking the first phase, the router emits one short output. These are two moments of that output, not separate features or formal sections — keep them concise.
