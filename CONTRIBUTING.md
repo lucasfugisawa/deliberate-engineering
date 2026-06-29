@@ -31,6 +31,18 @@ Contribution is assisted and gated — you do not hand-edit a catalog and open a
 
 A **new catalog**, a reorganization, or a rule change is a *structural* change, not a single lens. It is not auto-applied: `/deliberate-engineering:promote` recommends the full design cycle (brainstorm → spec → plan → build) for it. Open an issue describing the classification axes, the lens structure, and how it composes with the existing catalogs before investing in implementation.
 
+## Releasing (maintainer)
+
+A release is any change to the shipped plugin that reaches adopters. The version is decided by a human — the CI gate only checks that the step was not forgotten; it never picks or applies a number for you.
+
+When publishing a release:
+
+1. **Bump the version in lockstep** — `plugins/deliberate-engineering/.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` must carry the **same** version. Pre-1.0: a new skill, command, catalog, or lens is a **minor** (`0.x.0`); a pure fix is a **patch** (`0.x.y`). The override-file relocation in 0.2.0 was technically breaking, but pre-1.0 minor already covers that. The client offers an update only when the version *string* changes — without a bump, adopters never see the release.
+2. **Update `CHANGELOG.md`** — a new section for the version (Added / Changed / Fixed), newest first.
+3. **Tag the release** — annotated tag `vX.Y.Z` on the release commit, pushed alongside `main`.
+
+The CI workflow `.github/workflows/version-gate.yml` enforces two of these: it fails if the two manifests disagree (Check A), and if anything under `plugins/deliberate-engineering/**` changed without a version bump (Check B). On a pull request these block the merge; on a push to `main` they flag the commit. They do not check the changelog or the tag — those stay your discipline.
+
 ## Questions?
 
 Open an issue on the [GitHub repository](https://github.com/lucasfugisawa/deliberate-engineering) with your question or proposal.
