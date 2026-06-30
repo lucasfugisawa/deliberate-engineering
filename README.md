@@ -45,6 +45,14 @@ claude plugin marketplace add lucasfugisawa/deliberate-engineering
 claude plugin install deliberate-engineering@deliberate-engineering
 ```
 
+### Keeping it up to date
+
+New lenses, rules, and fixes ship as version bumps. To receive them automatically, enable auto-update for the marketplace. Auto-update is a property of the *marketplace* (not the individual plugin), and for third-party — non-official — marketplaces Claude Code leaves it **off by default**, by design: it never updates third-party code without your consent. Turn it on once:
+
+`/plugin` → **Marketplaces** tab → select `deliberate-engineering` → **Enable auto-update**.
+
+With auto-update off, you can still update manually from the same `/plugin` menu whenever a new version is available.
+
 **Recommended companion:** install [`superpowers`](https://github.com/obra/superpowers) (Jesse Vincent) alongside it. `deliberate-engineering` owns the *judgment* and delegates the *method* — TDD, systematic debugging, plan execution — to `superpowers`. Without it the judgment layer still works: it classifies the work, calibrates the ceremony, and applies the rules and lenses; it simply delegates execution to whatever engine you have, including Claude Code's built-in abilities.
 
 It ships as a Claude Code plugin — the honest scope is Claude Code today; it doesn't claim to run on other agents or IDEs. It complements review tooling such as `pr-review-toolkit` (it decides *which* tactics a change calls for and can invoke those agents as tactics) and coexists with other workflow plugins such as `feature-dev` (when several engines are present it decides which to invoke and removes nothing).

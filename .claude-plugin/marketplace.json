@@ -9,7 +9,7 @@
     {
       "name": "deliberate-engineering",
       "description": "A thin layer of engineering judgment for AI-assisted coding: it classifies each change, then applies the right depth and lenses across planning, review, verification, and debugging — instead of one uniform pass regardless of risk.",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "source": "./plugins/deliberate-engineering",
       "author": {
         "name": "Lucas Fugisawa",
