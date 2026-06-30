@@ -1,0 +1,77 @@
+name: version-gate
+
+# Two release-hygiene checks. Neither decides or applies a version — that
+# judgment is the maintainer's (Rule 1). They only fail loudly when a release
+# step was forgotten, so a forgotten bump can't reach an adopter silently.
+#
+# Check A — lockstep: the plugin manifest and the marketplace manifest must
+#   always carry the same version. Pure invariant, no false positives.
+# Check B — bump-on-content-change: if anything under the plugin source
+#   directory changed versus the base, the version must have changed too.
+#   Scoped to plugins/** so root-only edits (README, docs, this workflow)
+#   never demand a bump.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  version-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out with history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check A — manifests are in lockstep
+        run: |
+          plugin_ver=$(jq -r '.version' plugins/deliberate-engineering/.claude-plugin/plugin.json)
+          market_ver=$(jq -r '.plugins[] | select(.name=="deliberate-engineering") | .version' .claude-plugin/marketplace.json)
+          echo "plugin.json:      $plugin_ver"
+          echo "marketplace.json: $market_ver"
+          if [ "$plugin_ver" != "$market_ver" ]; then
+            echo "::error::Version mismatch — plugin.json ($plugin_ver) and marketplace.json ($market_ver) must be in lockstep. Bump both to the same value."
+            exit 1
+          fi
+          echo "Lockstep OK ($plugin_ver)."
+
+      - name: Determine base ref
+        id: base
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_REF: ${{ github.base_ref }}
+          EVENT_BEFORE: ${{ github.event.before }}
+        run: |
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            echo "ref=origin/$BASE_REF" >> "$GITHUB_OUTPUT"
+          else
+            # push to main: compare against the commit before this push
+            echo "ref=$EVENT_BEFORE" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check B — plugin content change requires a version bump
+        env:
+          BASE: ${{ steps.base.outputs.ref }}
+        run: |
+          base="$BASE"
+          # On the very first push to a branch, github.event.before is all-zeros — no base to diff; skip.
+          if [ -z "$base" ] || [ "$base" = "0000000000000000000000000000000000000000" ]; then
+            echo "No usable base ref ($base) — skipping content/bump comparison."
+            exit 0
+          fi
+          if ! git cat-file -e "$base^{commit}" 2>/dev/null; then
+            echo "Base ref $base not present — skipping content/bump comparison."
+            exit 0
+          fi
+          changed_plugin=$(git diff --name-only "$base" HEAD -- plugins/deliberate-engineering/ | grep -v '\.claude-plugin/plugin.json$' || true)
+          ver_now=$(jq -r '.version' plugins/deliberate-engineering/.claude-plugin/plugin.json)
+          ver_base=$(git show "$base:plugins/deliberate-engineering/.claude-plugin/plugin.json" 2>/dev/null | jq -r '.version' 2>/dev/null || echo "")
+          echo "version base=$ver_base now=$ver_now"
+          if [ -n "$changed_plugin" ] && [ "$ver_now" = "$ver_base" ]; then
+            echo "::error::Plugin content under plugins/deliberate-engineering/ changed but version stayed $ver_now. Bump plugin.json AND marketplace.json (see CONTRIBUTING.md → Releasing)."
+            echo "Changed files:"; echo "$changed_plugin" | sed 's/^/  /'
+            exit 1
+          fi
+          echo "Bump check OK."
