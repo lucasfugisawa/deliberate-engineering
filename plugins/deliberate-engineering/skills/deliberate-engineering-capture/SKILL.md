@@ -45,9 +45,15 @@ The signals are drawn from the **full session transcript on disk**, not the live
 TRANSCRIPT=$(find ~/.claude/projects -name "$CLAUDE_CODE_SESSION_ID.jsonl" -not -path "*/subagents/*" | head -1)
 ```
 
-Compaction appends to the same file, so this one file holds the full history. For project scope, gather all `*.jsonl` directly under the project's `~/.claude/projects/<encoded>` directories (there may be several — one per worktree), excluding `subagents/`.
+Compaction appends to the same file, so this one file holds the full history. For project scope, gather all `*.jsonl` directly under the project's `~/.claude/projects/<encoded>` directories (there may be several — one per worktree), excluding `subagents/`. If `$TRANSCRIPT` comes back empty, stop here and follow **Degradation** below instead of proceeding to Step 2.
 
-**Step 2 — Filter to the operator's voice.** Keep only the operator's typed messages; drop agent output, tool-results, and harness-injected messages. Write the result to a scratchpad file:
+**Step 2 — Filter to the operator's voice.** Keep only the operator's typed messages; drop agent output, tool-results, and harness-injected messages. Establish a scratchpad directory for the intermediate artifacts (create one if you don't already have a session scratchpad):
+
+```bash
+SCRATCH=$(mktemp -d)
+```
+
+Then write the result to a scratchpad file:
 
 ```bash
 python3 - "$TRANSCRIPT" > "$SCRATCH/operator_messages.txt" <<'PY'
@@ -76,7 +82,7 @@ PY
 
 The predicate: `type == "user"`, textual content (not a `tool_result`), `isMeta` false, `isSidechain` false, with `<command-*>`/`<local-command-stdout>`/`<system-reminder>` wrappers stripped and now-empty messages dropped. Agent output and tool-results never pass.
 
-**Step 3 — Chunk to scratchpad.** Split `operator_messages.txt` (on the NUL separator) into chunk files small enough to fit a subagent context — e.g. `$SCRATCH/chunk_001.txt`, `chunk_002.txt`, …. Keep only the chunk paths and message counts in your own context; never load the raw operator text into the main thread.
+**Step 3 — Chunk to scratchpad.** Split `operator_messages.txt` (on the NUL separator) into chunk files small enough to fit a subagent context — on the order of a few hundred messages per chunk, fewer if messages run long — e.g. `$SCRATCH/chunk_001.txt`, `chunk_002.txt`, …. Keep only the chunk paths and message counts in your own context; never load the raw operator text into the main thread.
 
 **Step 4 — Fan-out mine and consolidate.** Dispatch one subagent per chunk (Task tool). Give each the chunk-file path and this brief:
 
