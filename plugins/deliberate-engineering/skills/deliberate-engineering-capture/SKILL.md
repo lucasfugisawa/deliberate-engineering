@@ -71,6 +71,8 @@ for line in open(sys.argv[1]):
     except Exception: continue
     if o.get('type') != 'user': continue
     if o.get('isMeta') or o.get('isSidechain'): continue
+    origin = o.get('origin')
+    if isinstance(origin, dict) and origin.get('kind') not in (None, 'human'): continue
     c = o.get('message', {}).get('content')
     if isinstance(c, list) and any(isinstance(b, dict) and b.get('type')=='tool_result' for b in c): continue
     t = WRAPPER_RE.sub('', extract_text(c)).strip()
@@ -80,7 +82,7 @@ for line in open(sys.argv[1]):
 PY
 ```
 
-The predicate: `type == "user"`, textual content (not a `tool_result`), `isMeta` false, `isSidechain` false, with `<command-*>`/`<local-command-stdout>`/`<system-reminder>` wrappers stripped and now-empty messages dropped. Agent output and tool-results never pass.
+The predicate: `type == "user"`, `origin.kind` is `human` (harness-injected messages like task-notifications carry a different `origin.kind` and are dropped; older transcripts without an `origin` field fall through this check), textual content (not a `tool_result`), `isMeta` false, `isSidechain` false, with `<command-*>`/`<local-command-stdout>`/`<system-reminder>` wrappers stripped and now-empty messages dropped. Agent output, tool-results, and harness notifications never pass.
 
 **Step 3 — Chunk to scratchpad.** Split `operator_messages.txt` (on the NUL separator) into chunk files small enough to fit a subagent context — on the order of a few hundred messages per chunk, fewer if messages run long — e.g. `$SCRATCH/chunk_001.txt`, `chunk_002.txt`, …. Keep only the chunk paths and message counts in your own context; never load the raw operator text into the main thread.
 
