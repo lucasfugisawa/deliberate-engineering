@@ -1,6 +1,6 @@
 ---
 name: deliberate-engineering-capture
-description: "Use on demand to capture what you did this session into durable overrides. Observes deviations (you corrected/skipped a catalog lens or rule) and patterns (recurring practice the catalog lacks), discusses candidates, and on approval appends disable/modify/add entries to ~/.claude/deliberate-engineering/overrides.md. This is the adopter's write side — it grows YOUR personal override file. It is not the author contribution tools (contribute/promote), which propose lenses for the shared catalog. Stays silent unless invoked."
+description: "Use on demand to capture what you did this session into durable overrides. Observes the full session transcript on disk (operator-typed messages only, mined via subagent fan-out) for deviations (you corrected/skipped a catalog lens or rule) and patterns (recurring practice the catalog lacks), discusses candidates, and on approval appends disable/modify/add entries to ~/.claude/deliberate-engineering/overrides.md. This is the adopter's write side — it grows YOUR personal override file. It is not the author contribution tools (contribute/promote), which propose lenses for the shared catalog. Stays silent unless invoked."
 ---
 
 # Deliberate Engineering Capture
