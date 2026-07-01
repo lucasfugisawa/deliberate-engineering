@@ -1,6 +1,6 @@
 ---
 name: deliberate-engineering-capture
-description: "Use on demand to capture what you did this session into durable overrides. Observes deviations (you corrected/skipped a catalog lens or rule) and patterns (recurring practice the catalog lacks), discusses candidates, and on approval appends disable/modify/add entries to ~/.claude/deliberate-engineering/overrides.md. This is the adopter's write side — it grows YOUR personal override file. It is not the author contribution tools (contribute/promote), which propose lenses for the shared catalog. Stays silent unless invoked."
+description: "Use on demand to capture what you did this session into durable overrides. Observes the full session transcript on disk (operator-typed messages only, mined via subagent fan-out) for deviations (you corrected/skipped a catalog lens or rule) and patterns (recurring practice the catalog lacks), discusses candidates, and on approval appends disable/modify/add entries to ~/.claude/deliberate-engineering/overrides.md. This is the adopter's write side — it grows YOUR personal override file. It is not the author contribution tools (contribute/promote), which propose lenses for the shared catalog. Stays silent unless invoked."
 ---
 
 # Deliberate Engineering Capture
@@ -25,13 +25,74 @@ Use this skill when you want to make the practice from this session durable — 
 
 ## What it observes
 
-Two signals, both drawn from the current session:
+Two signals, both drawn from the **full session transcript on disk** (see "Where it reads from — the session transcript"), not the live context window:
 
 1. **Deviations** — a catalog lens or standing rule was applicable, and you corrected it, skipped it, or contradicted it. The lens said one thing; you did another, with signs of intent (not a one-off accident). Candidate for `disable` if you rejected the lens outright, or `modify` if you used it with a recurring adjustment.
 
 2. **Patterns** — a recurring practice or strategy you brought that the catalog lacks. Something you applied consistently, explained clearly, and that has the shape of a lens (a named strategy with a when-to-apply condition). Candidate for `add`.
 
 What does NOT produce a signal: a behavior seen once with no sign of intent, or a deviation that has no clear addressable target. One-session noise is dropped; recurring practice with intent is elevated.
+
+## Where it reads from — the session transcript
+
+The signals are drawn from the **full session transcript on disk**, not the live context window. The live window shrinks and compacts as you work; the transcript is durable. Reading from disk means capture sees the whole session even when invoked late — and compacting the live context never harms it. (This is why capture needs no "compact first" ritual: the raw material lives on disk, and the heavy reading is offloaded to subagents.)
+
+**Scope.** By default, read only the **current session**. Widen to the whole project only when the operator explicitly asks (e.g., "capture across all my sessions on this project"). Never widen without an explicit request.
+
+**Step 1 — Resolve the transcript.** The current session id is in `CLAUDE_CODE_SESSION_ID`. Find the transcript by searching for that filename — do NOT reconstruct the encoded project-dir path (it replaces both `/` and `.` with `-` and is fragile):
+
+```bash
+TRANSCRIPT=$(find ~/.claude/projects -name "$CLAUDE_CODE_SESSION_ID.jsonl" -not -path "*/subagents/*" | head -1)
+```
+
+Compaction appends to the same file, so this one file holds the full history. For project scope, gather all `*.jsonl` directly under the project's `~/.claude/projects/<encoded>` directories (there may be several — one per worktree), excluding `subagents/`. If `$TRANSCRIPT` comes back empty, stop here and follow **Degradation** below instead of proceeding to Step 2.
+
+**Step 2 — Filter to the operator's voice.** Keep only the operator's typed messages; drop agent output, tool-results, and harness-injected messages. Establish a scratchpad directory for the intermediate artifacts (create one if you don't already have a session scratchpad):
+
+```bash
+SCRATCH=$(mktemp -d)
+```
+
+Then write the result to a scratchpad file:
+
+```bash
+python3 - "$TRANSCRIPT" > "$SCRATCH/operator_messages.txt" <<'PY'
+import json, sys, re
+WRAPPER_RE = re.compile(r'<(command-name|command-message|command-args|local-command-stdout|system-reminder)>.*?</\1>', re.DOTALL)
+def extract_text(content):
+    if isinstance(content, str): return content
+    if isinstance(content, list):
+        return '\n'.join(b.get('text','') for b in content if isinstance(b, dict) and b.get('type')=='text')
+    return ''
+for line in open(sys.argv[1]):
+    line = line.strip()
+    if not line: continue
+    try: o = json.loads(line)
+    except Exception: continue
+    if o.get('type') != 'user': continue
+    if o.get('isMeta') or o.get('isSidechain'): continue
+    origin = o.get('origin')
+    if isinstance(origin, dict) and origin.get('kind') not in (None, 'human'): continue
+    c = o.get('message', {}).get('content')
+    if isinstance(c, list) and any(isinstance(b, dict) and b.get('type')=='tool_result' for b in c): continue
+    t = WRAPPER_RE.sub('', extract_text(c)).strip()
+    if not t: continue
+    print(t)
+    print("\x00", end="")   # NUL record separator between messages
+PY
+```
+
+The predicate: `type == "user"`, `origin.kind` is `human` (harness-injected messages like task-notifications carry a different `origin.kind` and are dropped; older transcripts without an `origin` field fall through this check), textual content (not a `tool_result`), `isMeta` false, `isSidechain` false, with `<command-*>`/`<local-command-stdout>`/`<system-reminder>` wrappers stripped and now-empty messages dropped. Agent output, tool-results, and harness notifications never pass.
+
+**Step 3 — Chunk to scratchpad.** Split `operator_messages.txt` (on the NUL separator) into chunk files small enough to fit a subagent context — on the order of a few hundred messages per chunk, fewer if messages run long — e.g. `$SCRATCH/chunk_001.txt`, `chunk_002.txt`, …. Keep only the chunk paths and message counts in your own context; never load the raw operator text into the main thread.
+
+**Step 4 — Fan-out mine and consolidate.** Dispatch one subagent per chunk (Task tool). Give each the chunk-file path and this brief:
+
+> Read these operator-typed messages. Identify two kinds of signal: (a) **deviations** — a catalog lens or standing rule was applicable and the operator corrected, skipped, or contradicted it, with signs of recurring intent (not a one-off); and (b) **patterns** — a recurring practice or strategy the operator brought that the catalog lacks. Return ONLY structured candidates. For each: the signal (one sentence), the supporting quoted operator lines, and the kind (deviation | pattern). Return nothing for one-off noise with no sign of intent.
+
+Collect every subagent's returned candidates and **deduplicate** overlapping signals across chunks before triage.
+
+**Degradation.** If `CLAUDE_CODE_SESSION_ID` is unset, the transcript is not found, or it cannot be read, fall back to observing the live context (the pre-refactor behavior) and **say so explicitly** in the output. Never fail silently.
 
 ## Triage and mapping
 
