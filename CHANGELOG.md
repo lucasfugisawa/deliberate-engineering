@@ -2,6 +2,19 @@
 
 All notable changes to the `deliberate-engineering` plugin are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/), and the project aims at [Semantic Versioning](https://semver.org/) (pre-1.0: minor covers features and breaking changes, patch covers fixes).
 
+## [0.4.0] — 2026-07-03
+
+### Added
+- **Consistency harness** — `scripts/check-consistency.sh` plus a `consistency` CI workflow assert that every lens-count claim agrees across the catalogs, the README, and the architecture doc, and that no lens number repeats. The catalogs are the single source of truth; the check fails loudly on the class of drift where a lens is added append-only while a routing table or a doc count goes stale. Runnable locally before pushing.
+- **Verification lens #24 — closeout obligations discharged** (Part D, post-deploy). After a flagged, staged, or temporary ship, verify with evidence that the cleanup it obligated was actually done — the flag removed, the stranded code deleted, the docs updated — not just that the feature works. The *doing* stays cross-referenced to review #35 and planning; this lens confirms it happened.
+- **`deliberate-engineering-capture` — a third signal, calibration adjustments.** Alongside deviations and patterns, capture now surfaces recurring miscalibration — running a class of work heavier or lighter than the recommended ceremony — and proposes it as `planning #10 — modify` or `add — rules`. It never targets the router's classification axes, which are architecture, not overridable content.
+
+### Fixed
+- **Communication selector routed handoffs nowhere.** The durable-handoff lens (7) existed in the catalog, but the selector's Step 2 routing stopped at lens 6 and the architecture doc miscounted the catalog as six lenses — so an agent following the routing never selected the lens built for handoffs. Handoffs, status updates, and working notes now route to lens 7; the count is corrected to seven.
+
+### Changed
+- **Meta-skill concision.** `capture`, `contribute`, and `promote` each stated their differentiator three times (frontmatter description, a "vs …" section, and an inline restatement); the "vs …" sections and "On demand only" collapse into one compact `## Boundaries` list per skill. All operational content — the transcript/bash/python steps, candidate formats, and gated-write/error-handling procedures — is unchanged.
+
 ## [0.3.0] — 2026-07-01
 
 ### Changed
@@ -25,6 +38,7 @@ All notable changes to the `deliberate-engineering` plugin are recorded here. Th
 ### Added
 - First public release. A standing-rules skill (eight rules), a front-door router (`:start`), four phase selectors backed by four read-on-demand catalogs (`:plan`, `:review`, `:verify`, `:debug`), one cross-cutting communication selector (`:communicate`), a personal override layer with an adopter capture tool (`:capture`), and an author contribution flow (`:contribute`, `:promote`). Includes the live-recalibration router step and the catalog lens-quality pass shipped on 2026-06-29 prior to versioned releases.
 
+[0.4.0]: https://github.com/lucasfugisawa/deliberate-engineering/releases/tag/v0.4.0
 [0.3.0]: https://github.com/lucasfugisawa/deliberate-engineering/releases/tag/v0.3.0
 [0.2.1]: https://github.com/lucasfugisawa/deliberate-engineering/releases/tag/v0.2.1
 [0.2.0]: https://github.com/lucasfugisawa/deliberate-engineering/releases/tag/v0.2.0
