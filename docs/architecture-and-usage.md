@@ -102,9 +102,9 @@ One mental model runs across all of them: risk, reversibility, requirement clari
 
 ### Adapt — make it think like you
 
-The plugin is opinionated, and it's meant to become yours. A personal file at `~/.claude/deliberate-engineering-overrides.md` takes precedence over the shipped content, addressed by stable identifiers — `review #N`, `verify #N`, `planning #N`, `debug #N`, or `rule N`. Three operations: `disable` turns a lens or rule off; `modify` appends your annotation alongside the shipped text; `add` defines your own. The agent always declares when an override changed what it did — nothing happens silently — and you can even loosen a safety rule, which it honors while calling out the raised autonomy.
+The plugin is opinionated, and it's meant to become yours. A personal file at `~/.claude/deliberate-engineering/overrides.md` takes precedence over the shipped content, addressed by stable identifiers — `review #N`, `verify #N`, `planning #N`, `debug #N`, or `rule N`. Three operations: `disable` turns a lens or rule off; `modify` appends your annotation alongside the shipped text; `add` defines your own. The agent always declares when an override changed what it did — nothing happens silently — and you can even loosen a safety rule, which it honors while calling out the raised autonomy.
 
-You can write that file by hand (the README's *Override a lens or rule* section shows the format), or let the agent help: run `/deliberate-engineering:capture` (or just ask) and it distills the session you just had — the lenses you skipped or corrected, the practices the catalog lacks — into ready-to-paste blocks. On demand only, append-only, written only on your approval. This grows *your* file; it is the adopter's side, distinct from the author tools below.
+You can write that file by hand (the README's *Make it yours* section shows the format), or let the agent help: run `/deliberate-engineering:capture` (or just ask) and it distills the session you just had — the lenses you skipped or corrected, the practices the catalog lacks — into ready-to-paste blocks. On demand only, append-only, written only on your approval. This grows *your* file; it is the adopter's side, distinct from the author tools below.
 
 ### Contribute — ship judgment to everyone
 
@@ -118,5 +118,5 @@ Both tools edit only the working tree and always stop before commit, PR, or push
 ### Where to go next
 
 - Install, uninstall, and the optional always-on recipe live in the [README](../README.md).
-- The exact override-file format and an example are in the README's *Override a lens or rule* section.
+- The exact override-file format and an example are in the README's *Make it yours* section.
 - Why the plugin stays horizontal and where it stops is the README's *Scope & boundaries* section.

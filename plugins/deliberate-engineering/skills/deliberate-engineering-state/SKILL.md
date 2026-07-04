@@ -58,18 +58,18 @@ Example:
 ## Live state
 
 - **Phase**: verification
-- **Sequence**: planning → contribution → verification
+- **Sequence**: planning → review → verification
 - **Ceremony band**: medium
-- **Rituals**: planning #8, #12, #19; contribution #4, #11; verification #3, #7
+- **Rituals**: planning #8, #12, #19; review #25, #35; verification #3, #16
 - **Pendings**:
   - ✗ PR description needs ticket link
   - ✗ DB migration test pending prod schema fetch
 
 ## Decision log
 
-- 2026-06-28 14:32 — Skipped the feature-flag ritual (planning #15). Why: The export change is gated by an existing flag; no new flag needed.
-- 2026-06-28 16:45 — Chose verification #7 (cross-service impact check) over #9 (load test). Why: The endpoint is low-traffic; schema change risk is higher than volume risk.
-- 2026-06-29 09:15 — Added verification #12 (prod read-only smoke test) to the sequence. Why: The prod DB schema differs from staging (a legacy column is still present); a read-only query confirms compatibility.
+- 2026-06-28 14:32 — Skipped verify #14 (kill-switch verification). Why: The export is gated by an existing flag; no new switch to verify.
+- 2026-06-28 16:45 — Chose verify #4 (validate against the real schema) over a broad load pass. Why: The endpoint is low-traffic; schema-change risk outweighs volume risk.
+- 2026-06-29 09:15 — Added verify #16 (direct runtime evidence — a read-only prod query). Why: The prod DB schema differs from staging (a legacy column is still present); a read-only query confirms compatibility.
 ```
 
 ## Rehydrate (the read operation)
