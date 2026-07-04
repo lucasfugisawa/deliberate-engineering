@@ -2,6 +2,12 @@
 
 All notable changes to the `deliberate-engineering` plugin are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/), and the project aims at [Semantic Versioning](https://semver.org/) (pre-1.0: minor covers features and breaking changes, patch covers fixes).
 
+## [0.4.2] — 2026-07-03
+
+### Changed
+- **Rule 3 readability** — the standing rule's dense single-paragraph "How to apply" (which packed ~9 distinct imperatives into one block) is broken into a lead sentence plus a labeled sub-list, so no directive is buried mid-paragraph. No content changed; every imperative is preserved verbatim.
+- **`deliberate-engineering-overrides` `modify` concision** — the append-only / read-both instruction, previously asserted ~5 times in one bullet, is trimmed to the bold safety statement plus one operational sentence. Meaning unchanged. (The parallel selector "Step 4" restatement flagged in the same review was assessed and **kept** — on inspection only the verify selector genuinely restates its catalog Appendix; planning and debug Step 4s are selector-specific composition ordering, and review's is the load-bearing fresh-eyes discipline.)
+
 ## [0.4.1] — 2026-07-03
 
 ### Fixed
@@ -47,6 +53,7 @@ All notable changes to the `deliberate-engineering` plugin are recorded here. Th
 ### Added
 - First public release. A standing-rules skill (eight rules), a front-door router (`:start`), four phase selectors backed by four read-on-demand catalogs (`:plan`, `:review`, `:verify`, `:debug`), one cross-cutting communication selector (`:communicate`), a personal override layer with an adopter capture tool (`:capture`), and an author contribution flow (`:contribute`, `:promote`). Includes the live-recalibration router step and the catalog lens-quality pass shipped on 2026-06-29 prior to versioned releases.
 
+[0.4.2]: https://github.com/lucasfugisawa/deliberate-engineering/releases/tag/v0.4.2
 [0.4.1]: https://github.com/lucasfugisawa/deliberate-engineering/releases/tag/v0.4.1
 [0.4.0]: https://github.com/lucasfugisawa/deliberate-engineering/releases/tag/v0.4.0
 [0.3.0]: https://github.com/lucasfugisawa/deliberate-engineering/releases/tag/v0.3.0
