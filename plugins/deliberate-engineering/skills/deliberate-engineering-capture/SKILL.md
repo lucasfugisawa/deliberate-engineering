@@ -1,37 +1,29 @@
 ---
 name: deliberate-engineering-capture
-description: "Use on demand to capture what you did this session into durable overrides. Observes the full session transcript on disk (operator-typed messages only, mined via subagent fan-out) for deviations (you corrected/skipped a catalog lens or rule) and patterns (recurring practice the catalog lacks), discusses candidates, and on approval appends disable/modify/add entries to ~/.claude/deliberate-engineering/overrides.md. This is the adopter's write side — it grows YOUR personal override file. It is not the author contribution tools (contribute/promote), which propose lenses for the shared catalog. Stays silent unless invoked."
+description: "Use on demand to capture what you did this session into durable overrides. Observes the full session transcript on disk (operator-typed messages only, mined via subagent fan-out) for deviations (you corrected/skipped a catalog lens or rule), patterns (recurring practice the catalog lacks), and calibration adjustments (recurring ceremony heavier/lighter than the default for a class of work), discusses candidates, and on approval appends disable/modify/add entries to ~/.claude/deliberate-engineering/overrides.md. This is the adopter's write side — it grows YOUR personal override file. It is not the author contribution tools (contribute/promote), which propose lenses for the shared catalog. Stays silent unless invoked."
 ---
 
 # Deliberate Engineering Capture
 
-The adopter write side of the override layer. Where `deliberate-engineering-overrides` reads the personal override file and honors it at runtime, this skill helps you grow that file from what you actually did. It watches for two signals — deviations from the catalog (you skipped or corrected a lens/rule) and patterns beyond it (you brought a recurring practice the catalog lacks) — proposes override entries, and on approval appends them to `~/.claude/deliberate-engineering/overrides.md`.
+The adopter write side of the override layer. Where `deliberate-engineering-overrides` reads the personal override file and honors it at runtime, this skill helps you grow that file from what you actually did. It watches for three signals — deviations from the catalog (you skipped or corrected a lens/rule), patterns beyond it (you brought a recurring practice the catalog lacks), and calibration adjustments (you repeatedly ran a class of work heavier or lighter than the recommended ceremony) — proposes override entries, and on approval appends them to `~/.claude/deliberate-engineering/overrides.md`.
 
-## vs the override read side
+## Boundaries
 
-`deliberate-engineering-overrides` is the **read side** — it consults the file, honors the overrides, and declares them. This skill is the **write side** — it proposes entries based on observed signals and appends approved entries to the file. The read side runs whenever a selector or the rules skill applies content; the write side runs on demand only. Different moments, different directions, same file.
-
-## vs the author contribution tools
-
-The `contribute` and `promote` tools are for growing the **shared catalog** — proposing a lens for inclusion in the plugin's shipped content. That is a product act with leak audit and review. This skill grows the **adopter's personal override file** — `~/.claude/deliberate-engineering/overrides.md` — which stays local and private. Opposite targets. The differentiator: This is the adopter's write side — it grows YOUR personal override file. It is not the author contribution tools (contribute/promote), which propose lenses for the shared catalog.
-
-## On demand only
-
-This skill never self-triggers. It runs only when invoked — via `/deliberate-engineering:capture` or an explicit natural-language request. Absence of invocation means total silence. It does not insert itself into every session, does not run as a background observer, does not propose overrides unprompted. The adopter decides when to make a session's practice durable; the skill does not decide for them.
-
-## When to use
-
-Use this skill when you want to make the practice from this session durable — turning what you did into an override that will apply in future sessions. Trigger it via `/deliberate-engineering:capture` or by asking explicitly (e.g., "capture what we did as an override" or "add this to my overrides"). If you never invoke it, it does nothing.
+- **vs `deliberate-engineering-overrides` (the read side)** — that skill consults the file and honors overrides at runtime; this skill *proposes and appends* entries from observed signals. Different directions, same file.
+- **vs `contribute`/`promote` (the author tools)** — those grow the *shared, shipped* catalog (a product act, with leak audit); this grows your *personal, private* override file at `~/.claude/deliberate-engineering/overrides.md`. Opposite targets.
+- **On demand only** — never self-triggers; runs only via `/deliberate-engineering:capture` or an explicit request (e.g. "capture what we did as an override," "add this to my overrides"). No invocation → total silence; it never proposes overrides unprompted.
 
 ## What it observes
 
-Two signals, both drawn from the **full session transcript on disk** (see "Where it reads from — the session transcript"), not the live context window:
+Three signals, all drawn from the **full session transcript on disk** (see "Where it reads from — the session transcript"), not the live context window:
 
 1. **Deviations** — a catalog lens or standing rule was applicable, and you corrected it, skipped it, or contradicted it. The lens said one thing; you did another, with signs of intent (not a one-off accident). Candidate for `disable` if you rejected the lens outright, or `modify` if you used it with a recurring adjustment.
 
 2. **Patterns** — a recurring practice or strategy you brought that the catalog lacks. Something you applied consistently, explained clearly, and that has the shape of a lens (a named strategy with a when-to-apply condition). Candidate for `add`.
 
-What does NOT produce a signal: a behavior seen once with no sign of intent, or a deviation that has no clear addressable target. One-session noise is dropped; recurring practice with intent is elevated.
+3. **Calibration adjustments** — for a recognizable *class* of work, you repeatedly ran a ceremony depth different from the plugin's recommendation, with intent: consistently skipping a phase the router would have sequenced, or demanding full depth on a class the plugin would call standard. This is not a single-lens deviation — it is a recurring preference about *how much* process a class of work earns. Candidate for `planning #10 — modify` (the calibrate-ceremony-to-risk lens), or `add — rules` for a standing calibration posture.
+
+What does NOT produce a signal: a behavior seen once with no sign of intent, or a signal with no clear addressable target. One-session noise is dropped; recurring practice with intent is elevated.
 
 ## Where it reads from — the session transcript
 
@@ -88,7 +80,7 @@ The predicate: `type == "user"`, `origin.kind` is `human` (harness-injected mess
 
 **Step 4 — Fan-out mine and consolidate.** Dispatch one subagent per chunk (Task tool). Give each the chunk-file path and this brief:
 
-> Read these operator-typed messages. Identify two kinds of signal: (a) **deviations** — a catalog lens or standing rule was applicable and the operator corrected, skipped, or contradicted it, with signs of recurring intent (not a one-off); and (b) **patterns** — a recurring practice or strategy the operator brought that the catalog lacks. Return ONLY structured candidates. For each: the signal (one sentence), the supporting quoted operator lines, and the kind (deviation | pattern). Return nothing for one-off noise with no sign of intent.
+> Read these operator-typed messages. Identify three kinds of signal: (a) **deviations** — a catalog lens or standing rule was applicable and the operator corrected, skipped, or contradicted it, with signs of recurring intent (not a one-off); (b) **patterns** — a recurring practice or strategy the operator brought that the catalog lacks; and (c) **calibration adjustments** — for a recognizable class of work, the operator repeatedly chose a ceremony depth heavier or lighter than the plugin's recommendation, with intent (e.g. consistently skipping a phase, or demanding full depth on a routine change). Return ONLY structured candidates. For each: the signal (one sentence), the supporting quoted operator lines, and the kind (deviation | pattern | calibration). Return nothing for one-off noise with no sign of intent.
 
 Collect every subagent's returned candidates and **deduplicate** overlapping signals across chunks before triage.
 
@@ -100,6 +92,7 @@ For each observed signal, identify the addressable target and the operation:
 
 - **Targets** use the canonical form: `review #N`, `verify #N`, `planning #N`, `debug #N`, `Rule N` for specific lenses/rules; or `add — <catalog>` for operator-authored strategies where catalog is `review`, `planning`, `verify`, `debug`, or `rules`.
 - **Operations** are `disable`, `modify`, or `add`.
+- **A calibration adjustment** maps to `planning #10 — modify` (annotate the recurring ceremony adjustment for that class of work) or `add — rules`. It never targets the router's classification axes (clarity / risk / reversibility / reach) — those are the plugin's architecture, not overridable content; the override rides on the *ceremony lens*, not the classifier.
 
 If a signal has no clear target (ambiguous lens number, or a practice that does not fit any catalog), ask rather than force a wrong number, or propose an `add` entry. Drop candidates with no clear target or that are one-session noise — this skill does NOT propose an override of something seen once without a sign of recurring intent.
 
@@ -160,6 +153,21 @@ An `add` candidate is a full operator-authored lens — a recurring practice you
 > 
 > Approve this candidate, edit it, or reject it?
 
+A calibration candidate is a `modify` on the ceremony lens — you want a class of work to earn a different depth than the plugin's default:
+
+> **Candidate:** planning #10 — modify
+> 
+> **Signal:** Across the session you skipped the plan phase for analytics-only event changes three times, each time noting they carry no user-facing behavior or data-model impact.
+> 
+> **Block to append:**
+> ```markdown
+> ## planning #10 — modify
+> 
+> **Add:** For analytics-only changes with no user-facing behavior or data-model impact, run one band lighter than the default — skip the plan phase and treat review as standard, not full.
+> ```
+> 
+> Approve this candidate, edit it, or reject it?
+
 **Recommend, never force.** The candidate is a proposal; the adopter decides. Present all candidates, let the adopter approve/edit/reject each. Do not append anything without approval.
 
 ## The append-only write
@@ -186,7 +194,7 @@ After appending, declare what was written: the target, the operation, and the fi
 
 ## No candidates
 
-If no deviation or pattern from this session is worth an override, say so plainly and write nothing. No forced candidates, no theater, no "let me create an override for completeness." Silence is the correct output when nothing rises to the level of durable preference. The skill's job is to recognize the signal, not to manufacture one.
+If no deviation, pattern, or calibration adjustment from this session is worth an override, say so plainly and write nothing. No forced candidates, no theater, no "let me create an override for completeness." Silence is the correct output when nothing rises to the level of durable preference. The skill's job is to recognize the signal, not to manufacture one.
 
 ## Output
 

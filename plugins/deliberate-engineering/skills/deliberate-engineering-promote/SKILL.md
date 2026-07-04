@@ -7,17 +7,11 @@ description: "Use on demand to drive a pending candidate into the catalog system
 
 The third vertex of the authoring trio. Where `deliberate-engineering-capture` grows the adopter's personal override file, and `deliberate-engineering-contribute` captures generalizable judgment into clean candidate files in `candidates/`, this skill drives an approved candidate from the queue into the shipped catalog. It is the promotion half: systematically elevate a candidate through a blocking leak-audit gate, classify it as isolated or structural, route to the correct path, and stop at the human gate before commit. All catalog edits happen in the working tree only. The skill NEVER commits, opens a PR, or pushes — that irreversible, outward-facing act is the human's. Like `contribute`, this is contributor tooling: it runs against a local clone of the plugin repository and edits that repo's catalog files — not your own project.
 
-## vs the contribute skill
+## Boundaries
 
-`deliberate-engineering-contribute` is the **capture** half — it turns generalizable engineering judgment from a session into a clean candidate file and deposits it in `candidates/`. This skill is the **promote** half — it takes a candidate from the queue, runs the gated promotion (leak audit, classification, catalog fit, review), and moves it into the shipped catalog or recommends the proper design cycle. Two skills, one gated pipeline. The differentiator: This is the promotion step of the author contribution flow — it drives a candidate into the shared catalog (working tree only, gated). It is not the contribute skill, which captures candidates.
-
-## vs the adopter capture skill
-
-`deliberate-engineering-capture` grows the **adopter's personal override file** — `~/.claude/deliberate-engineering/overrides.md`, local and private. This skill edits the **shared catalog** — the shipped plugin content. Opposite write-targets. The differentiator: This is the promotion step of the author contribution flow — it drives a candidate into the shared catalog (working tree only, gated). It is not the adopter capture skill, which writes your personal override file.
-
-## On demand only
-
-This skill never self-triggers. It runs only when invoked — via `/deliberate-engineering:promote` or an explicit natural-language request (e.g., "promote candidate X to the catalog" or "drive this candidate into the catalog"). Absence of invocation means total silence. The author decides when a candidate is ready for promotion; the skill does not decide for them.
+- **vs `contribute` (the capture half)** — `contribute` turns session judgment into a clean candidate in `candidates/`; this is the **promote** half — it takes a candidate from the queue, runs the gated promotion (leak audit, classify, catalog fit, review), and edits the catalog or recommends a design cycle. One gated pipeline, two skills.
+- **vs `deliberate-engineering-capture` (the adopter side)** — capture grows your *personal, private* override file; this edits the *shared, shipped* catalog. Opposite write-targets.
+- **On demand only** — never self-triggers; runs only via `/deliberate-engineering:promote` or an explicit request (e.g. "promote candidate X to the catalog"). No invocation → total silence.
 
 ## Flow overview
 
