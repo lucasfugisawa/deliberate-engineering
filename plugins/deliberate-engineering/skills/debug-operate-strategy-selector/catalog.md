@@ -62,7 +62,7 @@ It is also **distinct from verification.** Verification *confirms an expectation
 
 ### 6. Revert over roll-forward; don't wait for the author
 
-- **How it works:** When the shared baseline — the mainline, the deployed state everyone depends on — is broken, restoring the known-good state outranks crafting a forward fix. A revert is fast, well-understood, and reversible; a forward fix is a fresh untested change made under stress. And any engineer can and should restore the baseline: a broken baseline blocks everyone, so waiting for the original author to wake up or weigh in costs the whole team. Restore first; understand later.
+- **How it works:** When the shared baseline — the mainline, the deployed state everyone depends on — is broken, restoring the known-good state outranks crafting a forward fix. A revert is fast, well-understood, and reversible; a forward fix is a fresh untested change made under stress. And any engineer can and should restore the baseline: a broken baseline blocks everyone, so waiting for the original author to wake up or weigh in costs the whole team. Restore first; understand later. For an AI agent, Rule 1 still governs the *trigger*: prepare the exact revert and hand it to the on-call responder to execute fast — "don't wait for the author" means don't block on the *original author*, not that the agent pushes to a shared baseline autonomously.
 - **Objective:** Get the shared baseline back to known-good in the shortest, lowest-risk way, ahead of the slower satisfaction of a "proper" fix.
 - **When most valuable:** A regression in a shared/mainline baseline that blocks others; any degraded state where a known-good prior version exists to fall back to.
 

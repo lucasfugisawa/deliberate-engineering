@@ -2,6 +2,15 @@
 
 All notable changes to the `deliberate-engineering` plugin are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/), and the project aims at [Semantic Versioning](https://semver.org/) (pre-1.0: minor covers features and breaking changes, patch covers fixes).
 
+## [0.4.1] — 2026-07-03
+
+### Fixed
+- **Four catalog lenses were unreachable from their own selectors** — the same drift class as the v0.4.0 lens-7 fix, surfaced by a full-plugin review: review #55 (blast-radius / change-impact), verify #22 (match-verification-scope-to-the-claim), verify #23 (differential verification), and debug #17 (contain the blast radius) each existed in a catalog but no selector's Step 3 routed to them, so an agent following the selector never picked them. Each is now routed from its selector.
+- **Architecture doc shipped a stale override-file path** — `~/.claude/deliberate-engineering-overrides.md` (the pre-0.2.0 flat path) instead of the relocated `~/.claude/deliberate-engineering/overrides.md`; an adopter who followed it wrote overrides to a path the read-side never consults, a silent no-op. Also corrected two pointers to a non-existent README section ("Override a lens or rule" → "Make it yours").
+- **Override safety guard could be bypassed by header string.** The elevated-autonomy acknowledgement fired only for targets literally named `Rule 1`/`Rule 2`; a gate-loosening `add — rules` (or `add — <catalog>`) entry — which the v0.4.0 capture calibration signal can propose — slipped through as a common one-line note. The guard now keys on the override's *content* (does it relax a Rule 1/Rule 2 gate?), not the header string.
+- **Incident-path Rule 1 reconciliation** — debug #6 ("restore first; don't wait for the author") now clarifies that Rule 1 still governs the *trigger* for an AI agent: prepare the revert and hand it to the on-call responder; "don't wait for the author" means don't block on the *original author*, not that the agent pushes to a shared baseline autonomously.
+- **Documentation nits** — corrected the `deliberate-engineering-state` working-note example (wrong lens glosses + a reference to a non-existent "contribution" catalog); aligned the structural-change design-cycle wording (the promote skill now says "build," matching CONTRIBUTING); removed an orphan `[0.2.1]` CHANGELOG link; trimmed one intra-paragraph duplication in the router.
+
 ## [0.4.0] — 2026-07-03
 
 ### Added
@@ -38,9 +47,9 @@ All notable changes to the `deliberate-engineering` plugin are recorded here. Th
 ### Added
 - First public release. A standing-rules skill (eight rules), a front-door router (`:start`), four phase selectors backed by four read-on-demand catalogs (`:plan`, `:review`, `:verify`, `:debug`), one cross-cutting communication selector (`:communicate`), a personal override layer with an adopter capture tool (`:capture`), and an author contribution flow (`:contribute`, `:promote`). Includes the live-recalibration router step and the catalog lens-quality pass shipped on 2026-06-29 prior to versioned releases.
 
+[0.4.1]: https://github.com/lucasfugisawa/deliberate-engineering/releases/tag/v0.4.1
 [0.4.0]: https://github.com/lucasfugisawa/deliberate-engineering/releases/tag/v0.4.0
 [0.3.0]: https://github.com/lucasfugisawa/deliberate-engineering/releases/tag/v0.3.0
-[0.2.1]: https://github.com/lucasfugisawa/deliberate-engineering/releases/tag/v0.2.1
 [0.2.0]: https://github.com/lucasfugisawa/deliberate-engineering/releases/tag/v0.2.0
 
 <!-- 0.1.0 predates tagged releases (v0.2.0 is the first git tag), so it has no release link. -->

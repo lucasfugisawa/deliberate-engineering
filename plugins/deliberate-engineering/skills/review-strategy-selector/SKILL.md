@@ -49,7 +49,7 @@ Open the catalog **groups** matching your non-trivial axes and pick lenses. Read
 - **Migrations / backfills / destructive (Reversibility)** → 23 concurrency, 24 reversibility/rollback, 28 data integrity, 31 operability/rollout, 16 coverage analysis.
 - **Ambiguous intent (Requirement clarity)** → 15 assumption/invariant audit, 32 cross-document consistency, 13 validation against real data, 50 spec self-review.
 - **Implementation reviewed against a spec/intent** → 52 spec-conformance audit (alignment-not-correctness, drift taxonomy, discovery-only), with 25.
-- **Wide blast radius (Size/scope)** → 29 contract/API, 32 cross-service consistency, 18 test-quality, 34 readability.
+- **Wide blast radius (Size/scope)** → 55 blast-radius/change-impact (map every caller/consumer the change reaches), 29 contract/API, 32 cross-service consistency, 18 test-quality, 34 readability.
 - **External-dependency / error paths** → 21 silent-failure hunting, 22 error-handling adequacy.
 - **Frontend / mobile / infra / data / experiments** → the matching Part-D / Part-E group; open only the relevant subsection.
 

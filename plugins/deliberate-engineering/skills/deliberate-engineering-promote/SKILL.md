@@ -31,7 +31,7 @@ After the leak-audit gate passes, classify the candidate into one of two routes:
 
 **Isolated:** the candidate adds a new lens to an existing catalog, or modifies an existing lens in place. The catalog file structure, the numbering system, and the group divisions stay unchanged. This is the common case — one lens in, one lens out, append-only.
 
-**Structural:** the candidate requires a new catalog file, a reorganization of an existing catalog, a change to the numbering or grouping system, or a modification to the standing rules. Structural changes touch the plugin's architecture, not just its content, and they demand a full design cycle (brainstorm, spec, plan, review).
+**Structural:** the candidate requires a new catalog file, a reorganization of an existing catalog, a change to the numbering or grouping system, or a modification to the standing rules. Structural changes touch the plugin's architecture, not just its content, and they demand a full design cycle (brainstorm, spec, plan, build).
 
 On ambiguity — the candidate could be read either way, or you cannot tell which route applies — default to structural. Do NOT edit when in doubt; ask the author which route applies and wait for confirmation. The conservative default is structural (do not edit) to prevent silent catalog corruption.
 
@@ -65,7 +65,7 @@ On removal failure (permissions, file lock, anything), do NOT fail silently. Fla
 
 ## The structural route — do not edit, recommend
 
-For a structural candidate — one that requires a new catalog, a reorganization, a numbering change, or a rule modification — do NOT edit the catalog. The structural route is a stop-and-recommend: summarize the candidate, explain why it is structural (cite the specific reason: new catalog needed, reorg required, rule change), and recommend the proper design cycle. Structural changes are too invasive for an append-only skill to handle safely — they need the full brainstorm/spec/plan/review cycle that applies to any plugin architecture change.
+For a structural candidate — one that requires a new catalog, a reorganization, a numbering change, or a rule modification — do NOT edit the catalog. The structural route is a stop-and-recommend: summarize the candidate, explain why it is structural (cite the specific reason: new catalog needed, reorg required, rule change), and recommend the proper design cycle. Structural changes are too invasive for an append-only skill to handle safely — they need the full brainstorm/spec/plan/build cycle that applies to any plugin architecture change.
 
 The candidate file stays pending. The author takes the recommendation, runs the design cycle, and manually applies the structural change (or decides to drop it). The promote skill does not touch the catalog on the structural route — it only provides the analysis and the recommendation.
 
@@ -127,7 +127,7 @@ For a structural promotion:
 
 1. **Gate result:** leak-audit passed.
 2. **Classification:** structural — cite the specific reason (new catalog needed, reorg required, rule change, numbering change).
-3. **Recommendation:** summarize the candidate and recommend the brainstorm/spec/plan/review cycle for structural changes.
+3. **Recommendation:** summarize the candidate and recommend the brainstorm/spec/plan/build cycle for structural changes.
 4. **Candidate disposition:** stays pending in `candidates/`.
 5. **Human gate reminder:** structural changes require a full design cycle; this skill does not edit the catalog on the structural route.
 
