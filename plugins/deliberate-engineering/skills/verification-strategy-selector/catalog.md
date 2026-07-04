@@ -1,6 +1,6 @@
 # Verification Strategy Catalog
 
-This catalog contains 23 verification strategies organized into five groups plus composition patterns. Each strategy is a way to establish that something is *actually* true — by confronting it with reality (a run, a query, the live system) rather than by reading the artifact and judging it plausible. The selector skill references these by number to build a verification plan tuned to what is being verified and how irreversible the consequence of being wrong is.
+This catalog contains 24 verification strategies organized into five groups plus composition patterns. Each strategy is a way to establish that something is *actually* true — by confronting it with reality (a run, a query, the live system) rather than by reading the artifact and judging it plausible. The selector skill references these by number to build a verification plan tuned to what is being verified and how irreversible the consequence of being wrong is.
 
 ## What verification is — and how it differs from review
 
@@ -161,6 +161,12 @@ The review catalog's Part B (empirical validation, real-data validation, source-
 - **How it works:** Define monitoring you can re-run repeatably over hours/days, built around expected state transitions at known boundaries, and re-check it as more volume accumulates — a clean result at low volume isn't proof. Treat an *absence* of expected traffic/events as itself worth investigating, not as silence to ignore.
 - **Objective:** Catch the defect that only appears at volume, and the failure that hides as "nothing happened."
 - **When most valuable:** Low-initial-traffic features; event-driven flows; anything verified shortly after deploy.
+
+### 24. Verify the change's closeout obligations were discharged
+
+- **How it works:** A green post-deploy check confirms the feature works — it does not confirm the change is *done*. A ship usually creates closeout obligations: a temporary flag to actually remove (not just mark), the code that flag now strands, docs the change invalidated, a delayed usage or support signal that only surfaces days later. Treat "done" as including these, and confirm each with the same evidence standard as the feature itself — the flag is gone from the running config, the stranded path is deleted, the docs match shipped reality — rather than trusting they'll be tidied "later."
+- **Objective:** Close the gap between "it works in production" and "it's actually finished," where the obligations a launch creates quietly harden into permanent debt because nothing verified they were discharged.
+- **When most valuable:** After shipping any flagged, staged, or temporary change; migrations with an old path to retire; anything whose rollout created cleanup that outlives the deploy. (The *doing* of the closeout lives at other moments — review #35 removes dead code, planning gates a flag's removal date; this verifies, post-launch, that those obligations were met. Kin to debug Part E #14–16, which learns from a *failure*; this closes out a *success*.)
 
 ---
 
