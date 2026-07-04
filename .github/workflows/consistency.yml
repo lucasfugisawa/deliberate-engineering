@@ -1,0 +1,24 @@
+name: consistency
+
+# Catalog-consistency harness. The catalog files are the single source of
+# truth for lens counts and numbers; every count claim stated elsewhere (a
+# catalog's own intro, the README's "What's inside" block, the architecture
+# doc) must agree, and no lens number may appear twice. This fails loudly when
+# a claim drifts from the source of truth — the class of defect where a lens
+# was added append-only but a routing table or a doc count went stale.
+#
+# No judgment, no version decision — pure invariants (Rule 1 stays the
+# maintainer's). Runnable locally: ./scripts/check-consistency.sh
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  consistency:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run the consistency harness
+        run: ./scripts/check-consistency.sh
