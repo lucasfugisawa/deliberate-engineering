@@ -7,21 +7,11 @@ description: "Use on demand to capture what you did this session into durable ov
 
 The adopter write side of the override layer. Where `deliberate-engineering-overrides` reads the personal override file and honors it at runtime, this skill helps you grow that file from what you actually did. It watches for two signals — deviations from the catalog (you skipped or corrected a lens/rule) and patterns beyond it (you brought a recurring practice the catalog lacks) — proposes override entries, and on approval appends them to `~/.claude/deliberate-engineering/overrides.md`.
 
-## vs the override read side
+## Boundaries
 
-`deliberate-engineering-overrides` is the **read side** — it consults the file, honors the overrides, and declares them. This skill is the **write side** — it proposes entries based on observed signals and appends approved entries to the file. The read side runs whenever a selector or the rules skill applies content; the write side runs on demand only. Different moments, different directions, same file.
-
-## vs the author contribution tools
-
-The `contribute` and `promote` tools are for growing the **shared catalog** — proposing a lens for inclusion in the plugin's shipped content. That is a product act with leak audit and review. This skill grows the **adopter's personal override file** — `~/.claude/deliberate-engineering/overrides.md` — which stays local and private. Opposite targets. The differentiator: This is the adopter's write side — it grows YOUR personal override file. It is not the author contribution tools (contribute/promote), which propose lenses for the shared catalog.
-
-## On demand only
-
-This skill never self-triggers. It runs only when invoked — via `/deliberate-engineering:capture` or an explicit natural-language request. Absence of invocation means total silence. It does not insert itself into every session, does not run as a background observer, does not propose overrides unprompted. The adopter decides when to make a session's practice durable; the skill does not decide for them.
-
-## When to use
-
-Use this skill when you want to make the practice from this session durable — turning what you did into an override that will apply in future sessions. Trigger it via `/deliberate-engineering:capture` or by asking explicitly (e.g., "capture what we did as an override" or "add this to my overrides"). If you never invoke it, it does nothing.
+- **vs `deliberate-engineering-overrides` (the read side)** — that skill consults the file and honors overrides at runtime; this skill *proposes and appends* entries from observed signals. Different directions, same file.
+- **vs `contribute`/`promote` (the author tools)** — those grow the *shared, shipped* catalog (a product act, with leak audit); this grows your *personal, private* override file at `~/.claude/deliberate-engineering/overrides.md`. Opposite targets.
+- **On demand only** — never self-triggers; runs only via `/deliberate-engineering:capture` or an explicit request (e.g. "capture what we did as an override," "add this to my overrides"). No invocation → total silence; it never proposes overrides unprompted.
 
 ## What it observes
 

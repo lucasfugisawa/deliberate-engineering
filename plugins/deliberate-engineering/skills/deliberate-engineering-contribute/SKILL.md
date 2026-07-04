@@ -9,21 +9,11 @@ The author write side of the judgment catalog. Where `deliberate-engineering-cap
 
 This is contributor tooling: it runs against a local clone of the `deliberate-engineering` plugin repository and writes to that repo's `candidates/` queue — not your own project. If you are tuning the plugin for your own work rather than contributing lenses back, use `deliberate-engineering-capture` and your overrides file instead.
 
-## vs the adopter capture skill
+## Boundaries
 
-`deliberate-engineering-capture` is for the **adopter** — it grows `~/.claude/deliberate-engineering/overrides.md`, your personal override file, from deviations and patterns you brought to this session. That file stays local and private. This skill is for the **author** — it proposes lenses for the shared catalog, which ships in the public plugin. Opposite write-targets. The differentiator: This is the author/contributor write side — it proposes lenses for the shared catalog via the candidates/ queue. It is not the adopter capture skill, which grows your own personal override file.
-
-## vs the promote skill
-
-This skill **captures** — it turns generalizable judgment into a clean candidate file and deposits it in `candidates/`. The `promote` skill **elevates** — it takes a candidate from the queue, runs the gated promotion (leak audit, catalog fit, review), and moves it into the shipped catalog. Two steps, two skills, one gated pipeline. This skill writes candidates; it never writes the catalog, never commits, never opens a PR, never pushes.
-
-## On demand only
-
-This skill never self-triggers. It runs only when invoked — via `/deliberate-engineering:contribute` or an explicit natural-language request. Absence of invocation means total silence. It does not insert itself into every session, does not run as a background observer, does not propose candidates unprompted. The author decides when session judgment is worth catalog content; the skill does not decide for them.
-
-## When to use
-
-Use this skill when you want to turn generalizable engineering judgment from this session into a candidate for the shared catalog. Trigger it via `/deliberate-engineering:contribute` or by asking explicitly (e.g., "capture this as a catalog candidate" or "propose this tactic for the catalog"). If you never invoke it, it does nothing.
+- **vs `deliberate-engineering-capture` (the adopter side)** — capture grows your *personal, private* override file from the deviations and patterns you brought; this proposes lenses for the *shared, shipped* catalog. Opposite write-targets.
+- **vs `promote`** — this **captures**: it turns judgment into a clean candidate file in `candidates/`. `promote` **elevates**: leak-audit, classify, edit the catalog. This skill writes candidates only — never the catalog, never a commit, PR, or push.
+- **On demand only** — never self-triggers; runs only via `/deliberate-engineering:contribute` or an explicit request (e.g. "capture this as a catalog candidate," "propose this tactic for the catalog"). No invocation → total silence; it never proposes candidates unprompted.
 
 ## What it observes
 
@@ -43,9 +33,7 @@ What does **not** produce a candidate: a one-session tactic with no sign of reus
 
 The central act and the hard anti-leak rule. Extract the employer-neutral principle and **DISCARD** the specifics before writing. No real employer name, service name, person name, ticket ID, vendor name, org structure, incident number, or real quantity ever reaches disk. A candidate that cannot be generalized without reintroducing the specific is **DROPPED** at capture — this skill writes NO "half-clean" candidate. This is a hard DROP, never a best-effort sanitize.
 
-Worked transformation (use a neutral phrasing — do not name a real service): "in payments service X, migration Y broke because Z" becomes "when migrating a schema with legacy readers, verify each reader before repointing." The specific is gone; the principle survives.
-
-The primary anti-leak defense is generalization at capture, not scrubbing after the fact. If the principle cannot stand without the specific, it is not catalog material — drop it and say so.
+Worked transformation (use a neutral phrasing — do not name a real service): "in payments service X, migration Y broke because Z" becomes "when migrating a schema with legacy readers, verify each reader before repointing." The specific is gone; the principle survives. The defense is generalization at capture, not scrubbing after the fact: if the principle can't stand without the specific, drop it and say so.
 
 ## The candidate file format
 
