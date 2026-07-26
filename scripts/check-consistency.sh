@@ -163,13 +163,12 @@ echo "== Check 7 — the standing-rule count agrees everywhere it is claimed =="
 RULES="$SKILLS/deliberate-engineering-rules/SKILL.md"
 rules_actual=$(grep -cE '^## Rule [0-9]+ ' "$RULES")
 
-# Each claim site states the count in words; compare every one to the number of
-# "## Rule N" headings the skill actually defines. Same drift class as the lens
-# counts above — a rule was added but a prose count or an enumeration went stale.
+# Same drift class as the lens counts above — a rule was added but a prose
+# count or an enumeration went stale.
 check_rule_claim() { # <file> <label> <case-insensitive regex> <awk field holding the count token>
   local tok n
   tok=$(grep -oiE "$3" "$1" | head -1 | awk "{print \$$4}" || true)
-  tok=$(printf '%s' "$tok" | tr '[:upper:]' '[:lower:]') # sentence-initial "Eight" -> "eight" for to_int
+  tok=$(printf '%s' "$tok" | tr '[:upper:]' '[:lower:]') # sentence-initial capital -> lowercase for to_int
   n=$(to_int "$tok")
   if [ -z "$n" ]; then
     fail "$2: could not parse a standing-rule count claim"

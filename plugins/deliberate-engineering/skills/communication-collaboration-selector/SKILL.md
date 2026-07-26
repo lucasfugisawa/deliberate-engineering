@@ -19,7 +19,7 @@ The reference for every lens cited below is `catalog.md` in this directory (a ha
 
 ## When NOT to pile on
 
-This is calibration, not always-more. A one-line note to a peer with equal context, or an internal comment among engineers who share the vocabulary, needs no ceremony. When you deliberately keep it light, **say so** — a stated light-touch decision is calibration; silence is not.
+This is calibration, not always-more. A one-line note whose every reference the reader can already resolve needs no ceremony. When you deliberately keep it light, **say so** — a stated light-touch decision is calibration; silence is not.
 
 ## Step 1 — Classify on two axes: audience and artifact
 
