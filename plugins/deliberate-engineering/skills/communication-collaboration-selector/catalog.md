@@ -12,7 +12,7 @@ Communication is engineering *outward*: the same deliberate judgment applied to 
 
 ### 1. PR/MR description — the case for the change, not its changelog
 
-- **How it works:** Write the description as the high-level *what* plus the business *why*, then add what the reviewer needs: suggested review focus, QA/testing notes, security considerations, and merge/deploy ordering (see lens 2 for how to *structure* dependent PRs). Do not restate the diff line by line — the diff is the log.
+- **How it works:** Write the description as the high-level *what* plus the business *why*, then add what the reviewer needs: suggested review focus, QA/testing notes, security considerations, and merge/deploy ordering (see lens 2 for how to *structure* dependent PRs). Do not restate the diff line by line — the diff is the log. State that case in terms the reviewer can resolve unaided — no spec item numbers, no internal codenames (lens 5; Rule 9 for the same discipline in the shipped artifact).
 - **Objective:** Let a reviewer grasp the change's intent, risk, and how to review it without reverse-engineering it from the code.
 - **When most valuable:** Any PR/MR; most of all when the change is large, risky, or crosses ownership boundaries.
 - **Tags:** Artifacts: PR/MR. Audiences: engineering (primary); product/business (the business *why* rises when a stakeholder reads the PR).
@@ -38,12 +38,12 @@ Communication is engineering *outward*: the same deliberate judgment applied to 
 - **When most valuable:** Any communication that crosses an audience boundary; handoffs from one role to another.
 - **Tags:** Artifacts: any communication. Audiences: all (this lens is the audience axis operationalized).
 
-### 5. No internal IDs in outward communication
+### 5. No unresolvable context in outward communication
 
-- **How it works:** Reference only identifiers the reader can actually resolve — a publicly accessible ticket, say — or a brief description of the referenced item. Never use internal-only planning IDs or references the audience cannot reach.
-- **Objective:** The reader can follow every reference without privileged access.
-- **When most valuable:** Any communication leaving the team or org boundary; anything an external or cross-team audience reads.
-- **Tags:** Artifacts: any outward communication. Audiences: product, business, outside-the-team (does not apply between peers with equal access). Kin: the rules skill governs internal IDs in shipped *code* artifacts (commits, PRs, code comments); this lens is the broader case — any outward communication.
+- **How it works:** Reference only what the reader of *this artifact* can resolve unaided — a ticket they can open, or the thing itself described in a line. Internal planning IDs ("item 1.3", "REQ-7", "phase 2"), pointers to a spec or design doc they cannot open, and project-internal codenames or jargon all fail the test. Apply the test to the reader, not to the org chart: a teammate with identical access still cannot resolve a number that lives only in your spec.
+- **Objective:** The reader can follow every reference and every term without privileged access or a private glossary.
+- **When most valuable:** Any communication whose reader lacks your planning context — which includes most PRs, not only what crosses a team or org boundary.
+- **Tags:** Artifacts: any outward communication. Audiences: all — the ruler is resolvability by the reader, not their distance from the team. Kin: Rule 9 governs the same discipline inside shipped code artifacts (code comments, commit messages, PR descriptions); this lens is the broader case — any outward communication.
 
 ### 6. Present alternatives with the reasoning exposed
 
@@ -63,4 +63,4 @@ Communication is engineering *outward*: the same deliberate judgment applied to 
 
 ## Composition note
 
-These lenses combine. Lens 4 (speak the reader's language) modulates the *form* of every other lens — a PR description (1) or an alternatives writeup (6) is phrased differently for an engineering versus a business reader. Lens 5 (no internal IDs) is a constraint that rides on top of any outward-facing lens. Apply the lens that matches the artifact, then let audience set the register.
+These lenses combine. Lens 4 (speak the reader's language) modulates the *form* of every other lens — a PR description (1) or an alternatives writeup (6) is phrased differently for an engineering versus a business reader. Lens 5 (no unresolvable context) is a constraint that rides on top of any outward-facing lens. Apply the lens that matches the artifact, then let audience set the register.

@@ -2,6 +2,22 @@
 
 All notable changes to the `deliberate-engineering` plugin are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/), and the project aims at [Semantic Versioning](https://semver.org/) (pre-1.0: minor covers features and breaking changes, patch covers fixes).
 
+## [0.5.0] — 2026-07-26
+
+### Added
+- **Rule 9 — ship nothing the reader can't resolve.** A shipped artifact (code comment, commit message, PR/MR description) must be readable by someone holding that artifact and nothing else: no internal planning IDs, no pointers to a spec or design doc the reader can't open, no project-internal codename or jargon. Prompted by internal planning context leaking into PR descriptions and comments, where the reviewer — who never read the spec — cannot resolve it. The standing core moves 8 → 9.
+- **Consistency harness — standing-rule count check.** `scripts/check-consistency.sh` now asserts that the rule count claimed in the rules skill, the README (twice), and the architecture doc (twice) matches the rules the skill actually defines, and that no rule number repeats. The harness previously guarded lens counts only, leaving the rule-count drift class — which shipped once already when Rule 7 landed — unguarded.
+
+### Changed
+- **Rule 5 now governs comment form, not just content.** Default to one line; a comment that ran to several is usually one that says too much, so cut the text before reflowing it. Width defers to whatever the repository actually uses (its formatter, its linter, the surrounding code) rather than an imported 80-column habit.
+- **The authoring convention no longer endorses narrow comments.** It previously stated that fixed-column hard-wrapping *suits* code comments — licensing the exact fragmentation Rule 5 now discourages. Comment length and width have a single owner: Rule 5.
+- **Review lens 34 sharpened and re-routed.** Comment judgment was half a clause inside a broad readability lens; it is now a named test with three parts (must the comment exist, is it as tight as it can be, do its references resolve). Routing moved off the "wide blast radius" axis — where it was the only entry point — to any diff that adds or edits source, because this defect class does not correlate with risk. At the trivial-and-safe band it collapses to a scan.
+- **Communication lens 5 keys on reader resolvability, not audience distance.** It previously excluded "peers with equal access", using audience as a proxy for whether a reference resolves — so a PR read by a teammate, the most common leak path, fell outside it. Retitled from "No internal IDs" to cover unresolvable *context* (jargon and codenames, not only numbers), and its selector trigger widened to match.
+- **Communication lens 1 (PR/MR description) now states the resolvability bar explicitly.** The case for the change must be stated in terms the reviewer can resolve unaided — no spec item numbers, no internal codenames — cross-referencing lens 5 and Rule 9.
+
+### Fixed
+- **Communication lens 5 pointed at a rule that did not exist.** Its Kin line claimed the rules skill governed internal IDs in shipped code artifacts; no such rule existed, so the delegation was a dead end. It now points at Rule 9.
+
 ## [0.4.2] — 2026-07-03
 
 ### Changed

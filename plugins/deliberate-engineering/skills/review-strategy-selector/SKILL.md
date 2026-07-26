@@ -36,7 +36,7 @@ Assess each axis. These, not line count, set the depth.
 
 ## Step 2 — Map to a depth band
 
-- **Trivial-and-safe** → minimal: baseline (1) only, plus a stated rationale for stopping (see "When NOT to pile on"). A solo in-context pass is fine here, **but the reuse-vs-recompute declaration (Rule 3) is mandatory** — if this re-runs an earlier pass, say whether you recomputed or reused, and why.
+- **Trivial-and-safe** → minimal: baseline (1) plus a 34 *scan* — did this diff introduce a comment that shouldn't exist, or a reference the reader can't resolve? — and a stated rationale for stopping (see "When NOT to pile on"). A solo in-context pass is fine here, **but the reuse-vs-recompute declaration (Rule 3) is mandatory** — if this re-runs an earlier pass, say whether you recomputed or reused, and why.
 - **Standard** → a small set of targeted lenses (typically 2–4) for the non-trivial axes; **dispatch each substantive lens to a fresh-context subagent** as the default unit of work so the lens recomputes rather than recalls, and each returns its evidence artifact (Task: see "Compose the passes"). Close with fresh eyes (3).
 - **Risky / irreversible / ambiguous / money-or-data** → full adversarial depth in fresh-context fan-out: per-PR as the default unit, **per-(PR × lens) for the critical lenses (25, 28, 26)**; adversarial majority-refute (2, 9) on top; close with a fresh-eyes pass (3) run as a *literally separate* fresh-context agent, not an in-context re-read.
 
@@ -45,11 +45,12 @@ Assess each axis. These, not line count, set the depth.
 Open the catalog **groups** matching your non-trivial axes and pick lenses. Read only those sections.
 
 - **Always, first (Requirement)** → 25 functional correctness / requirement conformance — does it do what was actually asked? The most important lens.
+- **Any diff that adds or edits source (not keyed to an axis)** → 34 readability/maintainability — comment necessity and concision, plus the reader-resolvability check (Rule 9) on every comment the diff introduces. This defect class does not correlate with risk; it rides along in trivial changes as readily as in critical ones, which is why it is routed here rather than under an axis.
 - **Money / data / production (Risk)** → 26 security, 27 performance, 28 data integrity, 30 observability; add 2 adversarial, 20 pre-mortem.
 - **Migrations / backfills / destructive (Reversibility)** → 23 concurrency, 24 reversibility/rollback, 28 data integrity, 31 operability/rollout, 16 coverage analysis.
 - **Ambiguous intent (Requirement clarity)** → 15 assumption/invariant audit, 32 cross-document consistency, 13 validation against real data, 50 spec self-review.
 - **Implementation reviewed against a spec/intent** → 52 spec-conformance audit (alignment-not-correctness, drift taxonomy, discovery-only), with 25.
-- **Wide blast radius (Size/scope)** → 55 blast-radius/change-impact (map every caller/consumer the change reaches), 29 contract/API, 32 cross-service consistency, 18 test-quality, 34 readability.
+- **Wide blast radius (Size/scope)** → 55 blast-radius/change-impact (map every caller/consumer the change reaches), 29 contract/API, 32 cross-service consistency, 18 test-quality.
 - **External-dependency / error paths** → 21 silent-failure hunting, 22 error-handling adequacy.
 - **Frontend / mobile / infra / data / experiments** → the matching Part-D / Part-E group; open only the relevant subsection.
 

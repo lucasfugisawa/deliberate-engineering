@@ -38,7 +38,7 @@ flowchart TD
     class comms comms
 ```
 
-- **The rules are the constitution.** Eight standing postures held across every phase and never switched off during engineering work. They set *how you behave*; everything below sets *where you start and what you do*.
+- **The rules are the constitution.** Nine standing postures held across every phase and never switched off during engineering work. They set *how you behave*; everything below sets *where you start and what you do*.
 - **The router is the front door** (`/deliberate-engineering:start`). It classifies the work, names the phase sequence and the ceremony each phase earns, and routes — recommending, never forcing. The only hard stop is the Rule 1 human gate on an irreversible or outward-facing action.
 - **The four phases share one pattern:** classify the work, then read only the lenses that fit from that phase's catalog (never the whole catalog at once). Planning decides what to build; review reasons about the artifact; verification confronts reality; debug/operate takes over when a live system misbehaves and no reliable expectation holds.
 - **The method is delegated.** `superpowers` (TDD, systematic debugging, plan execution) and the Workflow tool (orchestration) own *how* the work is carried out. The plugin owns the judgment — which phase, which lenses, how much ceremony — and hands the mechanism to the engine.
@@ -98,7 +98,7 @@ You arrived with work to do. The front door is `/deliberate-engineering:start`: 
 - `/deliberate-engineering:debug` — diagnose a live system that's misbehaving when no reliable expectation holds.
 - `/deliberate-engineering:communicate` — cross-cutting, not a phase: when the next artifact is a communication (a PR description, a review comment, a stakeholder message, a writeup of alternatives), classify it by audience and artifact and apply the matching lenses. Consult it from inside any phase.
 
-One mental model runs across all of them: risk, reversibility, requirement clarity, and reach decide the depth — not line count. The plugin recommends a depth and a set of lenses *with its reasoning*, and you stay in control. Nothing is forced except one thing: it stops at a human gate before any irreversible or outward-facing action — a merge, a deploy, a push, a posted message. The eight standing rules hold underneath every phase the whole time.
+One mental model runs across all of them: risk, reversibility, requirement clarity, and reach decide the depth — not line count. The plugin recommends a depth and a set of lenses *with its reasoning*, and you stay in control. Nothing is forced except one thing: it stops at a human gate before any irreversible or outward-facing action — a merge, a deploy, a push, a posted message. The nine standing rules hold underneath every phase the whole time.
 
 ### Adapt — make it think like you
 
