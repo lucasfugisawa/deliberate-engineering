@@ -248,9 +248,9 @@ Strategies **compose**. The strongest pattern is to *rotate the lens each pass* 
 
 ### 34. Readability / maintainability review
 
-- **How it works:** Focus on clarity, names, unit size/responsibility, adherence to codebase conventions. Includes comment/documentation accuracy: comments and docstrings must faithfully describe the code, with no stale or misleading statements (comment rot).
-- **Objective:** Reduce maintenance cost and the chance of future bugs; keep documentation from misleading the future reader.
-- **When most valuable:** Code read far more than written; bases with many contributors; after generating bulky documentation.
+- **How it works:** Focus on clarity, names, unit size/responsibility, adherence to codebase conventions. Judge every comment the diff introduces against three tests: does it need to exist at all (or is it narrating what the code already says); is it as short as it can be (a comment fragmented across several narrow lines is usually one that says too much, not one that needs reflowing); and is every term and reference in it resolvable by a reader who has only this repository — no spec item numbers, no internal codenames (Rule 9). Documentation accuracy rides along: comments and docstrings must faithfully describe the code, with no stale or misleading statements (comment rot).
+- **Objective:** Reduce maintenance cost and the chance of future bugs; keep documentation from misleading the future reader, and keep the author's private planning context out of what ships.
+- **When most valuable:** Any diff that adds or edits source — this defect class does not scale with risk. Most of all in code read far more than written, bases with many contributors, and after generating bulky documentation.
 
 ### 35. Simplification / YAGNI review
 
@@ -358,7 +358,7 @@ Strategies **compose**. The strongest pattern is to *rotate the lens each pass* 
 
 - **How it works:** Read the spec or doc as its eventual reader, who lacks the context you have now: hunt unresolved placeholders (TBD/TODO), claims that contradict each other across sections, sentences that admit two readings, and scope that has silently grown or shrunk from what was agreed.
 - **Objective:** Ship a spec a stranger can execute from — clear, complete, internally consistent, and scoped to the agreement.
-- **When most valuable:** When finalizing any spec/plan, especially before handing it to someone (or an agent) without the original context. (Distinct from #34, which judges code-comment accuracy, and #52, which judges built code against agreed intent; this judges the planning doc itself.)
+- **When most valuable:** When finalizing any spec/plan, especially before handing it to someone (or an agent) without the original context. (Distinct from #34, which judges the comments inside the code — whether they should exist, how tight they are, and whether their references resolve — and #52, which judges built code against agreed intent; this judges the planning doc itself.)
 
 ### 51. Architecture critic (adversarial)
 
