@@ -6,7 +6,7 @@ All notable changes to the `deliberate-engineering` plugin are recorded here. Th
 
 ### Added
 - **Rule 9 — ship nothing the reader can't resolve.** A shipped artifact (code comment, commit message, PR/MR description) must be readable by someone holding that artifact and nothing else: no internal planning IDs, no pointers to a spec or design doc the reader can't open, no project-internal codename or jargon. Prompted by internal planning context leaking into PR descriptions and comments, where the reviewer — who never read the spec — cannot resolve it. The standing core moves 8 → 9.
-- **Consistency harness — standing-rule count check.** `scripts/check-consistency.sh` now asserts that the rule count claimed in the rules skill, the README (twice), and the architecture doc matches the rules the skill actually defines, and that no rule number repeats. The harness previously guarded lens counts only, leaving the rule-count drift class — which shipped once already when Rule 7 landed — unguarded.
+- **Consistency harness — standing-rule count check.** `scripts/check-consistency.sh` now asserts that the rule count claimed in the rules skill, the README (twice), and the architecture doc (twice) matches the rules the skill actually defines, and that no rule number repeats. The harness previously guarded lens counts only, leaving the rule-count drift class — which shipped once already when Rule 7 landed — unguarded.
 
 ### Changed
 - **Rule 5 now governs comment form, not just content.** Default to one line; a comment that ran to several is usually one that says too much, so cut the text before reflowing it. Width defers to whatever the repository actually uses (its formatter, its linter, the surrounding code) rather than an imported 80-column habit.
