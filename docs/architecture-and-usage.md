@@ -38,7 +38,7 @@ flowchart TD
     class comms comms
 ```
 
-- **The rules are the constitution.** Eight standing postures held across every phase and never switched off during engineering work. They set *how you behave*; everything below sets *where you start and what you do*.
+- **The rules are the constitution.** Nine standing postures held across every phase and never switched off during engineering work. They set *how you behave*; everything below sets *where you start and what you do*.
 - **The router is the front door** (`/deliberate-engineering:start`). It classifies the work, names the phase sequence and the ceremony each phase earns, and routes — recommending, never forcing. The only hard stop is the Rule 1 human gate on an irreversible or outward-facing action.
 - **The four phases share one pattern:** classify the work, then read only the lenses that fit from that phase's catalog (never the whole catalog at once). Planning decides what to build; review reasons about the artifact; verification confronts reality; debug/operate takes over when a live system misbehaves and no reliable expectation holds.
 - **The method is delegated.** `superpowers` (TDD, systematic debugging, plan execution) and the Workflow tool (orchestration) own *how* the work is carried out. The plugin owns the judgment — which phase, which lenses, how much ceremony — and hands the mechanism to the engine.

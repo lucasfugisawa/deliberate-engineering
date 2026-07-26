@@ -169,6 +169,7 @@ rules_actual=$(grep -cE '^## Rule [0-9]+ ' "$RULES")
 check_rule_claim() { # <file> <label> <case-insensitive regex> <awk field holding the count token>
   local tok n
   tok=$(grep -oiE "$3" "$1" | head -1 | awk "{print \$$4}" || true)
+  tok=$(printf '%s' "$tok" | tr '[:upper:]' '[:lower:]') # sentence-initial "Eight" -> "eight" for to_int
   n=$(to_int "$tok")
   if [ -z "$n" ]; then
     fail "$2: could not parse a standing-rule count claim"
@@ -183,6 +184,7 @@ check_rule_claim "$RULES"  "rules skill sharpened-core line" 'these [0-9a-z]+ ar
 check_rule_claim "$README" "README what's-inside"            '[0-9a-z]+ standing rules held across'   1
 check_rule_claim "$README" "README always-on core"           'the [0-9a-z]+ rules are the small'      2
 check_rule_claim "$ARCH"   "arch doc"                        'the [0-9a-z]+ standing rules hold'      2
+check_rule_claim "$ARCH"   "arch doc constitution line"      '[0-9a-z]+ standing postures held'       1
 
 rule_dups=$(grep -oE '^## Rule [0-9]+ ' "$RULES" | grep -oE '[0-9]+' | sort -n | uniq -d || true)
 if [ -n "$rule_dups" ]; then
