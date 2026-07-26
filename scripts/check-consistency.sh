@@ -159,6 +159,38 @@ else
   ok "arch doc communication: $arch_comm == $c"
 fi
 
+echo "== Check 7 — the standing-rule count agrees everywhere it is claimed =="
+RULES="$SKILLS/deliberate-engineering-rules/SKILL.md"
+rules_actual=$(grep -cE '^## Rule [0-9]+ ' "$RULES")
+
+# Each claim site states the count in words; compare every one to the number of
+# "## Rule N" headings the skill actually defines. Same drift class as the lens
+# counts above — a rule was added but a prose count or an enumeration went stale.
+check_rule_claim() { # <file> <label> <case-insensitive regex> <awk field holding the count token>
+  local tok n
+  tok=$(grep -oiE "$3" "$1" | head -1 | awk "{print \$$4}" || true)
+  n=$(to_int "$tok")
+  if [ -z "$n" ]; then
+    fail "$2: could not parse a standing-rule count claim"
+  elif [ "$n" != "$rules_actual" ]; then
+    fail "$2: says $n standing rules but the skill defines $rules_actual"
+  else
+    ok "$2: $n == $rules_actual"
+  fi
+}
+
+check_rule_claim "$RULES"  "rules skill sharpened-core line" 'these [0-9a-z]+ are the sharpened core' 2
+check_rule_claim "$README" "README what's-inside"            '[0-9a-z]+ standing rules held across'   1
+check_rule_claim "$README" "README always-on core"           'the [0-9a-z]+ rules are the small'      2
+check_rule_claim "$ARCH"   "arch doc"                        'the [0-9a-z]+ standing rules hold'      2
+
+rule_dups=$(grep -oE '^## Rule [0-9]+ ' "$RULES" | grep -oE '[0-9]+' | sort -n | uniq -d || true)
+if [ -n "$rule_dups" ]; then
+  fail "rules skill: duplicate rule number(s): $(echo "$rule_dups" | tr '\n' ' ')"
+else
+  ok "rules skill: all rule numbers unique"
+fi
+
 echo
 if [ "$fails" -ne 0 ]; then
   echo "Consistency check FAILED — $fails drift(s) found."
