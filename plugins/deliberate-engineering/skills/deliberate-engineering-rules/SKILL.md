@@ -90,11 +90,19 @@ Confidence in an output — your own, a subagent's, a test's, a teammate's — i
 
 **How to apply.** Run the lenses until they go dry, and treat *dry* as the signal — findings stopped appearing — not the first clean pass. Extract the assumptions a result rests on and ground each one before you trust what stands on them. Keep confidence proportional to the strength of the evidence and the stability of the review, never to plausibility or to the pressure to close. When review has not yet stabilized or an assumption is still ungrounded, say so and keep the result provisional rather than vouching for it.
 
+## Rule 9 — Ship nothing the reader can't resolve
+
+A shipped artifact — a code comment, a commit message, a PR/MR description — must be readable by someone holding that artifact and nothing else. No internal planning IDs ("item 1.3", "REQ-7", "phase 2"), no pointers to a spec or design doc the reader can't open, no project-internal codename or jargon. Reference only what the reader can actually reach: a ticket they can open, or the thing itself, described in a line.
+
+**Why.** The person reviewing your PR did not read your spec. A reference they can't resolve isn't shorthand — it's a hole only you can fill, and it hands your context debt to every later reader. Planning artifacts also churn: item numbers get renumbered and codenames get retired, so the reference dies even for the people who could once resolve it.
+
+**How to apply.** Before an artifact leaves your hands, read it as someone with no access to your planning context: does every reference and every term resolve? Where one doesn't, replace it with what it points to — state the constraint, name the behavior, describe the requirement — rather than deleting the sentence and losing the information. A link the reader can open is fine; the internal number alone is not. Do this while writing, not as a cleanup pass: once the reference is in the artifact it reads as legitimate shorthand to everyone downstream, including you.
+
 ---
 
 ## Holding the rules
 
-These eight are the sharpened core. They are deliberately few so they are actually held, not skimmed. When a rule and an explicit user instruction conflict, the user wins — these are defaults for deliberate practice, not overrides of the person you work for.
+These nine are the sharpened core. They are deliberately few so they are actually held, not skimmed. When a rule and an explicit user instruction conflict, the user wins — these are defaults for deliberate practice, not overrides of the person you work for.
 
 An operator can also make a deviation durable and addressable via `deliberate-engineering-overrides` (e.g. `rule 2 — modify`): when a standing rule has an operator override, honor it and declare the deviation — and when the override loosens a safety rule (Rule 1 or 2), acknowledge the elevated autonomy explicitly.
 
@@ -102,7 +110,7 @@ Hold them as guidance, not law. These rules — and the catalogs they sit beside
 
 Calibration is a live hypothesis, not a one-time call. The same proportion-to-risk judgment that sets ceremony at the start is re-run whenever a discovery moves the axes — risk, reversibility, reach, clarity — across a band you would have classified differently, or invalidates the reason you skipped a phase. When it does, adjust in either direction and say so: a skipped phase can be re-entered, an over-heavy plan lightened, a change that turned out to touch money or data escalated. This is Rule 8's shape applied to ceremony rather than trust — the call is earned against the evidence as it arrives, not fixed at the first guess. The discipline is the declaration: a recalibration you name is deliberate practice; a silent drift in either direction is the autopilot this layer rejects.
 
-The common thread, again: **act in proportion to risk, reversibility, and blast radius.** Every rule above is that one principle applied to a specific moment — who pulls the trigger, what you may touch, what you'll vouch for, what you advise, what you leave behind in the code, what survives the context boundary, what you'll admit you don't know, and when you may trust an output.
+The common thread, again: **act in proportion to risk, reversibility, and blast radius.** Every rule above is that one principle applied to a specific moment — who pulls the trigger, what you may touch, what you'll vouch for, what you advise, what you leave behind in the code, what survives the context boundary, what you'll admit you don't know, when you may trust an output, and what context you may assume your reader already has.
 
 ## Authoring conventions
 

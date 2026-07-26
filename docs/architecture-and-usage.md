@@ -98,7 +98,7 @@ You arrived with work to do. The front door is `/deliberate-engineering:start`: 
 - `/deliberate-engineering:debug` — diagnose a live system that's misbehaving when no reliable expectation holds.
 - `/deliberate-engineering:communicate` — cross-cutting, not a phase: when the next artifact is a communication (a PR description, a review comment, a stakeholder message, a writeup of alternatives), classify it by audience and artifact and apply the matching lenses. Consult it from inside any phase.
 
-One mental model runs across all of them: risk, reversibility, requirement clarity, and reach decide the depth — not line count. The plugin recommends a depth and a set of lenses *with its reasoning*, and you stay in control. Nothing is forced except one thing: it stops at a human gate before any irreversible or outward-facing action — a merge, a deploy, a push, a posted message. The eight standing rules hold underneath every phase the whole time.
+One mental model runs across all of them: risk, reversibility, requirement clarity, and reach decide the depth — not line count. The plugin recommends a depth and a set of lenses *with its reasoning*, and you stay in control. Nothing is forced except one thing: it stops at a human gate before any irreversible or outward-facing action — a merge, a deploy, a push, a posted message. The nine standing rules hold underneath every phase the whole time.
 
 ### Adapt — make it think like you
 
