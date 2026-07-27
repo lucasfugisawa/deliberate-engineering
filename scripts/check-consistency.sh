@@ -4,11 +4,11 @@
 # The catalogs are the single source of truth for lens counts and numbers.
 # Every count claim stated elsewhere (a catalog's own intro, the README's
 # "What's inside" block, the architecture doc) must agree with what the
-# catalog files actually contain — and no lens number may appear twice.
+# catalog files actually contain, and no lens number may appear twice.
 #
 # This guards the class of drift that shipped once already: a lens was added
 # to a catalog append-only, but a routing table and a doc count went stale.
-# It only fails loudly when a claim and the source of truth disagree — no
+# It only fails loudly when a claim and the source of truth disagree: no
 # judgment, no false positives. Run it locally before pushing, or in CI.
 #
 # Exit 0 = all invariants hold; exit 1 = at least one drift found.
@@ -51,7 +51,7 @@ declare -A CATALOG=(
   [communication]="$SKILLS/communication-collaboration-selector/catalog.md"
 )
 
-echo "== Check 1 — each catalog's intro count matches its actual lens count =="
+echo "== Check 1: each catalog's intro count matches its actual lens count =="
 for name in "${!CATALOG[@]}"; do
   f="${CATALOG[$name]}"
   actual=$(lens_count "$f")
@@ -67,7 +67,7 @@ for name in "${!CATALOG[@]}"; do
   fi
 done
 
-echo "== Check 2 — no duplicate lens numbers within a catalog =="
+echo "== Check 2: no duplicate lens numbers within a catalog =="
 for name in "${!CATALOG[@]}"; do
   f="${CATALOG[$name]}"
   dups=$(grep -oE '^### [0-9]+\.' "$f" | grep -oE '[0-9]+' | sort -n | uniq -d || true)
@@ -85,12 +85,12 @@ d=$(lens_count "${CATALOG[debug-operate]}")
 c=$(lens_count "${CATALOG[communication]}")
 total=$((r + v + p + d))
 
-echo "== Check 3 — README 'What's inside' per-catalog counts match =="
-readme_count() { grep -oE "\*\*$1 — [0-9]+ strategies\*\*" "$README" | grep -oE '[0-9]+' | head -1; }
+echo "== Check 3: README 'What's inside' per-catalog counts match =="
+readme_count() { grep -oE "\*\*$1: [0-9]+ strategies\*\*" "$README" | grep -oE '[0-9]+' | head -1; }
 while IFS='|' read -r label actual; do
   claim=$(readme_count "$label")
   if [ -z "$claim" ]; then
-    fail "README: no '$label — N strategies' claim found"
+    fail "README: no '$label: N strategies' claim found"
   elif [ "$claim" != "$actual" ]; then
     fail "README: '$label' says $claim but catalog has $actual"
   else
@@ -103,11 +103,11 @@ Planning|$p
 Debug/Operate|$d
 EOF
 
-echo "== Check 4 — README per-group parentheticals sum to the catalog total =="
+echo "== Check 4: README per-group parentheticals sum to the catalog total =="
 # Each "What's inside" bullet lists group sizes in parentheses; they must
 # sum to that catalog's total. Extract the bullet line, sum its (N) tokens.
 group_sum() {
-  grep -E "^\- \*\*$1 — [0-9]+ strategies\*\*" "$README" \
+  grep -E "^\- \*\*$1: [0-9]+ strategies\*\*" "$README" \
     | grep -oE '\([0-9]+\)' | grep -oE '[0-9]+' | paste -sd+ - | bc
 }
 while IFS='|' read -r label actual; do
@@ -126,7 +126,7 @@ Planning|$p
 Debug/Operate|$d
 EOF
 
-echo "== Check 5 — README 'N strategies total' == sum of the four phase catalogs =="
+echo "== Check 5: README 'N strategies total' == sum of the four phase catalogs =="
 readme_total=$(grep -oE '[0-9]+ strategies total' "$README" | grep -oE '[0-9]+' | head -1)
 if [ -z "$readme_total" ]; then
   fail "README: no 'N strategies total' claim found"
@@ -136,7 +136,7 @@ else
   ok "README total: $readme_total == $total"
 fi
 
-echo "== Check 6 — communication lens count agrees across README and the arch doc =="
+echo "== Check 6: communication lens count agrees across README and the arch doc =="
 # README: "the cross-cutting communication catalog adds <word/number> lenses"
 readme_comm_tok=$(grep -oiE 'communication catalog adds [0-9a-z]+ lenses' "$README" | awk '{print $(NF-1)}')
 readme_comm=$(to_int "$readme_comm_tok")
@@ -159,11 +159,11 @@ else
   ok "arch doc communication: $arch_comm == $c"
 fi
 
-echo "== Check 7 — the standing-rule count agrees everywhere it is claimed =="
+echo "== Check 7: the standing-rule count agrees everywhere it is claimed =="
 RULES="$SKILLS/deliberate-engineering-rules/SKILL.md"
-rules_actual=$(grep -cE '^## Rule [0-9]+ ' "$RULES")
+rules_actual=$(grep -cE '^## Rule [0-9]+[ :]' "$RULES")
 
-# Same drift class as the lens counts above — a rule was added but a prose
+# Same drift class as the lens counts above: a rule was added but a prose
 # count or an enumeration went stale.
 check_rule_claim() { # <file> <label> <case-insensitive regex> <awk field holding the count token>
   local tok n
@@ -185,7 +185,7 @@ check_rule_claim "$README" "README always-on core"           'the [0-9a-z]+ rule
 check_rule_claim "$ARCH"   "arch doc"                        'the [0-9a-z]+ standing rules hold'      2
 check_rule_claim "$ARCH"   "arch doc constitution line"      '[0-9a-z]+ standing postures held'       1
 
-rule_dups=$(grep -oE '^## Rule [0-9]+ ' "$RULES" | grep -oE '[0-9]+' | sort -n | uniq -d || true)
+rule_dups=$(grep -oE '^## Rule [0-9]+[ :]' "$RULES" | grep -oE '[0-9]+' | sort -n | uniq -d || true)
 if [ -n "$rule_dups" ]; then
   fail "rules skill: duplicate rule number(s): $(echo "$rule_dups" | tr '\n' ' ')"
 else
@@ -194,7 +194,7 @@ fi
 
 echo
 if [ "$fails" -ne 0 ]; then
-  echo "Consistency check FAILED — $fails drift(s) found."
+  echo "Consistency check FAILED: $fails drift(s) found."
   exit 1
 fi
-echo "Consistency check OK — review=$r verification=$v planning=$p debug=$d communication=$c (total=$total)."
+echo "Consistency check OK: review=$r verification=$v planning=$p debug=$d communication=$c (total=$total)."

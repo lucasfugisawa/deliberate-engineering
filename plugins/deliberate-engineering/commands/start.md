@@ -1,6 +1,6 @@
 ---
-description: Triage the work at hand — classify it, name the phase sequence and ceremony it earns, and route to the right deliberate phase
-argument-hint: Optional: what you're about to work on, e.g. a feature, a PR, "an incident", a path
+description: "Triage the work at hand: classify it, name the phase sequence and ceremony it earns, and route to the right deliberate phase"
+argument-hint: 'Optional: what you''re about to work on, e.g. a feature, a PR, "an incident", a path'
 ---
 
 # Deliberate Triage

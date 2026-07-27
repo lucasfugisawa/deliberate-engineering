@@ -1,7 +1,7 @@
 <!--
 Make the case, not just the changelog. A reviewer should understand WHY this
 change should exist before they read a single diff line. (This template mirrors
-the plugin's own communication lenses — see the communication-collaboration-selector.)
+the plugin's own communication lenses: see the communication-collaboration-selector.)
 -->
 
 ## What & why

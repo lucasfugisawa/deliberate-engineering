@@ -1,43 +1,43 @@
 ---
 name: deliberate-engineering-contribute
-description: "Use on demand to turn generalizable engineering judgment from this session into clean catalog candidates. Observes review tactics, verification modes, planning disciplines, and debugging strategies, extracts employer-neutral principles, and on approval deposits pending candidate files in candidates/ for later promotion. This is the author/contributor write side — it proposes lenses for the shared catalog via the candidates/ queue. It is not the adopter capture skill, which grows your own personal override file. Stays silent unless invoked."
+description: "Use on demand to turn generalizable engineering judgment from this session into clean catalog candidates. Observes review tactics, verification modes, planning disciplines, and debugging strategies, extracts employer-neutral principles, and on approval deposits pending candidate files in candidates/ for later promotion. This is the author/contributor write side: it proposes lenses for the shared catalog via the candidates/ queue. It is not the adopter capture skill, which grows your own personal override file. Stays silent unless invoked."
 ---
 
 # Deliberate Engineering Contribute
 
-The author write side of the judgment catalog. Where `deliberate-engineering-capture` grows the adopter's personal override file from what they did, this skill proposes generalizable lenses for the shared catalog. It observes engineering judgment worth catalog content — a review tactic, a verification mode, a planning discipline, a debugging strategy — extracts the employer-neutral principle, and on approval deposits a pending candidate file in the `candidates/` queue at the repo root. A sibling skill, `promote`, later drives approved candidates from the queue into the shipped catalog.
+The author write side of the judgment catalog. Where `deliberate-engineering-capture` grows the adopter's personal override file from what they did, this skill proposes generalizable lenses for the shared catalog. It observes engineering judgment worth catalog content (a review tactic, a verification mode, a planning discipline, a debugging strategy), extracts the employer-neutral principle, and on approval deposits a pending candidate file in the `candidates/` queue at the repo root. A sibling skill, `promote`, later drives approved candidates from the queue into the shipped catalog.
 
-This is contributor tooling: it runs against a local clone of the `deliberate-engineering` plugin repository and writes to that repo's `candidates/` queue — not your own project. If you are tuning the plugin for your own work rather than contributing lenses back, use `deliberate-engineering-capture` and your overrides file instead.
+This is contributor tooling: it runs against a local clone of the `deliberate-engineering` plugin repository and writes to that repo's `candidates/` queue, not your own project. If you are tuning the plugin for your own work rather than contributing lenses back, use `deliberate-engineering-capture` and your overrides file instead.
 
 ## Boundaries
 
-- **vs `deliberate-engineering-capture` (the adopter side)** — capture grows your *personal, private* override file from the deviations and patterns you brought; this proposes lenses for the *shared, shipped* catalog. Opposite write-targets.
-- **vs `promote`** — this **captures**: it turns judgment into a clean candidate file in `candidates/`. `promote` **elevates**: leak-audit, classify, edit the catalog. This skill writes candidates only — never the catalog, never a commit, PR, or push.
-- **On demand only** — never self-triggers; runs only via `/deliberate-engineering:contribute` or an explicit request (e.g. "capture this as a catalog candidate," "propose this tactic for the catalog"). No invocation → total silence; it never proposes candidates unprompted.
+- **vs `deliberate-engineering-capture` (the adopter side)**: capture grows your *personal, private* override file from the deviations and patterns you brought; this proposes lenses for the *shared, shipped* catalog. Opposite write-targets.
+- **vs `promote`**. This **captures**: it turns judgment into a clean candidate file in `candidates/`. `promote` **elevates**: leak-audit, classify, edit the catalog. This skill writes candidates only: never the catalog, never a commit, PR, or push.
+- **On demand only**: never self-triggers; runs only via `/deliberate-engineering:contribute` or an explicit request (e.g. "capture this as a catalog candidate," "propose this tactic for the catalog"). No invocation → total silence; it never proposes candidates unprompted.
 
 ## What it observes
 
-Generalizable engineering judgment worth catalog content — **not** personal deviations or adopter-specific overrides (that is the capture skill's domain). What rises to catalog level:
+Generalizable engineering judgment worth catalog content, **not** personal deviations or adopter-specific overrides (that is the capture skill's domain). What rises to catalog level:
 
-1. **Review tactics** — a repeatable strategy for catching a class of defect, a forgotten integration, a deployment risk. Something that applies across codebases, expressed without the specific.
+1. **Review tactics**: a repeatable strategy for catching a class of defect, a forgotten integration, a deployment risk. Something that applies across codebases, expressed without the specific.
 
-2. **Verification modes** — a test design, a staged-promotion pattern, a rollout discipline. A way of proving correctness or safety that is not tied to one employer's infrastructure.
+2. **Verification modes**: a test design, a staged-promotion pattern, a rollout discipline. A way of proving correctness or safety that is not tied to one employer's infrastructure.
 
-3. **Planning disciplines** — a scoping heuristic, a dependency-sequencing rule, a migration backward-compatibility check. A judgment that shapes the approach before any code is written.
+3. **Planning disciplines**: a scoping heuristic, a dependency-sequencing rule, a migration backward-compatibility check. A judgment that shapes the approach before any code is written.
 
-4. **Debugging strategies** — a diagnostic discipline, an incident-response tactic, a root-cause discipline. A recurring mode of reasoning under failure.
+4. **Debugging strategies**: a diagnostic discipline, an incident-response tactic, a root-cause discipline. A recurring mode of reasoning under failure.
 
 What does **not** produce a candidate: a one-session tactic with no sign of reuse; a judgment so specific to one employer/service/vendor that generalization destroys the principle; or a personal preference (that is an override, not a catalog entry).
 
 ## Generalize at capture
 
-The central act and the hard anti-leak rule. Extract the employer-neutral principle and **DISCARD** the specifics before writing. No real employer name, service name, person name, ticket ID, vendor name, org structure, incident number, or real quantity ever reaches disk. A candidate that cannot be generalized without reintroducing the specific is **DROPPED** at capture — this skill writes NO "half-clean" candidate. This is a hard DROP, never a best-effort sanitize.
+The central act and the hard anti-leak rule. Extract the employer-neutral principle and **DISCARD** the specifics before writing. No real employer name, service name, person name, ticket ID, vendor name, org structure, incident number, or real quantity ever reaches disk. A candidate that cannot be generalized without reintroducing the specific is **DROPPED** at capture: this skill writes NO "half-clean" candidate. This is a hard DROP, never a best-effort sanitize.
 
-Worked transformation (use a neutral phrasing — do not name a real service): "in payments service X, migration Y broke because Z" becomes "when migrating a schema with legacy readers, verify each reader before repointing." The specific is gone; the principle survives. The defense is generalization at capture, not scrubbing after the fact: if the principle can't stand without the specific, drop it and say so.
+Worked transformation (use a neutral phrasing, do not name a real service): "in payments service X, migration Y broke because Z" becomes "when migrating a schema with legacy readers, verify each reader before repointing." The specific is gone; the principle survives. The defense is generalization at capture, not scrubbing after the fact: if the principle can't stand without the specific, drop it and say so.
 
 ## The candidate file format
 
-Each candidate is one markdown file with frontmatter and two prose sections. The format is frozen — the `promote` skill consumes it verbatim:
+Each candidate is one markdown file with frontmatter and two prose sections. The format is frozen. The `promote` skill consumes it verbatim:
 
 ```markdown
 ---
@@ -57,16 +57,16 @@ When a change is gated behind a flag, confirm the flag has an owner, a removal d
 Flags without an owner or a removal date accumulate as silent risk; a default-on flag turns an incomplete rollout into a live incident. This lens makes the hygiene explicit at review time.
 ```
 
-Frontmatter carries `target` (review / verify / planning / debug), `operation` (add / modify), `modifies` (lens number if modify, else null), `status` (pending at capture), `date`. Body = the generalized principle + the rationale. All employer-neutral. All prose — no parser.
+Frontmatter carries `target` (review / verify / planning / debug), `operation` (add / modify), `modifies` (lens number if modify, else null), `status` (pending at capture), `date`. Body = the generalized principle + the rationale. All employer-neutral. All prose, no parser.
 
 ## The conversation protocol
 
 For each candidate, present:
 
-1. **The generalized principle** — the lens content as it would enter the catalog, fully employer-neutral. The specific is gone.
-2. **Target catalog and operation** — which catalog (review / verify / planning / debug) and whether this is `add` (a new lens) or `modify` (an amendment to an existing lens, with the lens number).
-3. **Rationale** — why this judgment matters, in one or two sentences.
-4. **Confirmation that generalization preserved the principle and lost the specific** — explicitly state this for each candidate, so the author knows the transformation was sound.
+1. **The generalized principle**: the lens content as it would enter the catalog, fully employer-neutral. The specific is gone.
+2. **Target catalog and operation**: which catalog (review / verify / planning / debug) and whether this is `add` (a new lens) or `modify` (an amendment to an existing lens, with the lens number).
+3. **Rationale**: why this judgment matters, in one or two sentences.
+4. **Confirmation that generalization preserved the principle and lost the specific**: explicitly state this for each candidate, so the author knows the transformation was sound.
 
 A worked candidate presentation:
 
@@ -74,7 +74,7 @@ A worked candidate presentation:
 > 
 > **Generalized principle:** When a change is gated behind a feature flag, confirm the flag has an owner, a removal date, and a default-off safe state before merging.
 > 
-> **Target:** review — add
+> **Target:** review (add)
 > 
 > **Rationale:** Flags without an owner or a removal date accumulate as silent risk; a default-on flag turns an incomplete rollout into a live incident. This lens makes the hygiene explicit at review time.
 > 
@@ -88,9 +88,9 @@ A worked candidate presentation:
 
 For each approved candidate:
 
-1. Generate a slug from the principle heading — lowercase, hyphens for spaces, otherwise alphanumeric.
-2. Write the candidate file to `candidates/<slug>.md` at the root of your local checkout of the plugin repository — a path relative to that checkout, never an absolute path tied to one machine. If the directory does not exist, create it and add a `README.md` with a brief explanation of the queue.
-3. On slug collision, differentiate the slug with a numeric suffix (e.g., `feature-flag-hygiene-2.md`) — never overwrite.
+1. Generate a slug from the principle heading: lowercase, hyphens for spaces, otherwise alphanumeric.
+2. Write the candidate file to `candidates/<slug>.md` at the root of your local checkout of the plugin repository, a path relative to that checkout, never an absolute path tied to one machine. If the directory does not exist, create it and add a `README.md` with a brief explanation of the queue.
+3. On slug collision, differentiate the slug with a numeric suffix (e.g., `feature-flag-hygiene-2.md`), never overwrite.
 4. **NEVER commit, NEVER open a PR, NEVER push.** This skill deposits candidates in the queue; it does not elevate them to the catalog. Promotion is a separate, gated step.
 
 After writing, declare what was written: the slug, the file path, and the reminder that promotion is a separate step handled by the `promote` skill.
@@ -105,9 +105,9 @@ If no judgment from this session is generalizable or worth catalog content, say 
 
 Report:
 
-1. The candidates shown — for each, the generalized principle, the target catalog, the operation, the rationale, and the confirmation that generalization preserved the principle and lost the specific.
+1. The candidates shown: for each, the generalized principle, the target catalog, the operation, the rationale, and the confirmation that generalization preserved the principle and lost the specific.
 2. Which candidates were approved, edited, or rejected.
-3. What was written — for each approved candidate, state the slug, the file path (`candidates/<slug>.md`), and confirm that promotion is a separate gated step.
+3. What was written: for each approved candidate, state the slug, the file path (`candidates/<slug>.md`), and confirm that promotion is a separate gated step.
 4. If no candidates were identified, state that explicitly.
 
 The contract: the caller knows what judgment was observed, what principle was generalized, and exactly which candidate files were deposited in the queue (or that nothing was written).
