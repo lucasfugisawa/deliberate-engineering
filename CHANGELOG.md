@@ -2,6 +2,12 @@
 
 All notable changes to the `deliberate-engineering` plugin are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/), and the project aims at [Semantic Versioning](https://semver.org/) (pre-1.0: minor covers features and breaking changes, patch covers fixes).
 
+## [0.7.2] - 2026-08-20
+
+### Changed
+- **The markdown soft-wrap convention now names the artifacts where it was failing, and owns them.** The authoring convention told the agent to soft-wrap Markdown prose but scoped it to files ("READMEs, specs, plans, docs"), so the places the habit actually broke, a PR or MR description and an issue or ticket body (neither of which is a file), fell outside what it named, and at the soft convention tier it did not counter the base model's terminal-wrap prior. It now covers every Markdown artifact the agent writes and not only files, states plainly that Markdown is not terminal output, distinguishes the two ways the habit hurts (a comment-style field renders each newline as a hard break into a ragged column, while a version-controlled file renders fine but still reflows fixed-width lines into a noisy diff), and declares itself the single owner of Markdown prose-wrapping for the agent's own output, holding whether or not a voice profile is loaded. The deliberate exceptions are unchanged: code wraps as the surrounding code does, a fenced block bound for an already-wrapped file keeps that wrapping, and comment width stays Rule 5's. The diagnosis (a reading of the three homes, not a live firing test) put the cause in the convention's scope and wording rather than its tier, so the fix stays a convention and does not inflate the standing rules.
+- **The operator-facing convention gains a clarity-over-compression clause.** Talking to the operator still defaults to concise and judgment-not-mechanics, but concision is no longer the master at a decision point: when the operator needs to understand something or decide between options, the agent now prefers a clear, lightly didactic explanation to a compressed one, scoped narrowly to that moment so ordinary messages stay as tight as before. The clause also forbids invented jargon in either language, mirroring the voice profile's rule against coining a term where a plain clause would do, with the English compound modifier calqued into Portuguese named as the tell.
+
 ## [0.7.0] - 2026-08-20
 
 ### Added
