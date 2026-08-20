@@ -2,6 +2,14 @@
 
 All notable changes to the `deliberate-engineering` plugin are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/), and the project aims at [Semantic Versioning](https://semver.org/) (pre-1.0: minor covers features and breaking changes, patch covers fixes).
 
+## [0.7.3] - 2026-08-20
+
+### Added
+- **Planning lens 20: record a decision only when it is costly to recover.** A capture-phase lens (Part E) for *when* a choice earns a durable decision record (an ADR, a decision-doc entry): only when all three hold, that it is hard to reverse, surprising without context, and the outcome of a real trade-off. If any one is missing, skip the record, so the rationale that matters is captured without a sediment of records for choices that never needed one. It triages decision *recording* where lens 18 triages decision *timing* by reversibility, and complements lenses 15 and 16, which shape a planning artifact rather than decide whether a decision earns a standalone record at all. Numbered append-only (it keeps 20 while sitting beside 14 to 16 under Part E, per the stable-number invariant), and the planning selector's full-depth mapping and select-lenses list now cite it.
+
+### Changed
+- **Counts updated for the new planning lens.** The planning catalog intro (19 → 20) and the README "What's inside" (Planning: 20 strategies, its capture-the-plan group 3 → 4, and 116 strategies total across the four phase catalogs).
+
 ## [0.7.2] - 2026-08-20
 
 ### Changed
