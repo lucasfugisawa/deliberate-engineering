@@ -1,6 +1,6 @@
 # Planning Strategy Catalog
 
-This catalog contains 19 planning strategies organized into six groups plus composition patterns. Each strategy is a lens of *judgment applied to planning*: deciding what to build, how much process the work calls for, how to slice and sequence it, and how to capture it. The selector skill references these by number to build a planning approach tuned to the work's clarity, risk, and reach.
+This catalog contains 20 planning strategies organized into six groups plus composition patterns. Each strategy is a lens of *judgment applied to planning*: deciding what to build, how much process the work calls for, how to slice and sequence it, and how to capture it. The selector skill references these by number to build a planning approach tuned to the work's clarity, risk, and reach.
 
 ## What this catalog is, and is not
 
@@ -137,6 +137,12 @@ It sits *before* code exists. Where review judges an artifact and verification c
 - **How it works:** Set a planning doc's altitude to the decision it must support, and hold it there: a doc meant to get an *approach* approved carries the shape and the trade-offs, not line-level implementation. Push that detail down to where the work is actually specified. Present top-down, with each detail living next to the item it concerns rather than re-explained at several altitudes, and pick the representation (prose / table / diagram) that fits each point.
 - **Objective:** Match a plan's level of detail to the decision it supports, so a reader is neither drowned in implementation nor starved of what they need to decide.
 - **When most valuable:** Plans and proposals that mix an approach to approve with implementation to execute; any planning doc that keeps drifting between "why" and "how." (Distinct from lens 15, which governs an artifact's *self-containment*; the *audience register* (how to phrase a doc for a given reader) belongs to the communication catalog, not here.)
+
+### 20. Record a decision only when it is costly to recover
+
+- **How it works:** Write a durable decision record (an ADR, a decision-doc entry) for a choice only when all three hold: it is hard to reverse (changing your mind later carries real cost), it is surprising without context (a future reader will look at the result and wonder "why this way?"), and it is the outcome of a real trade-off (there were genuine alternatives and you picked one for stated reasons). If any one is missing, skip the record: an easily-reversed choice you will simply reverse, an unsurprising one nobody will question, and a no-alternative choice records only "we did the obvious thing." Keep the record to the decision and its rationale, not the implementation around it.
+- **Objective:** Capture the rationale that would otherwise be lost to "it was obvious at the time," without accreting a sediment of records for choices that never needed one, which is what buries the few that matter.
+- **When most valuable:** Architectural shape, integration patterns, technology choices carrying lock-in, and deliberate deviations from the obvious path; any choice a future reader would otherwise "fix" without knowing it was intentional. (Kin to lens 18, which triages decision *timing* by reversibility; this triages decision *recording*. Distinct from lenses 15 and 16, which shape a planning artifact's self-containment and altitude; this decides a decision earns a standalone record at all.)
 
 ---
 

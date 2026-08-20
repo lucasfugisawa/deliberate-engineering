@@ -39,7 +39,7 @@ These set how much of the catalog you apply, and in which direction.
 
 - **Trivial-and-safe** → minimal: calibrate (10), confirm there's no hidden reach, do it, and state the light-ceremony decision. See "When NOT to over-plan."
 - **Standard** → scope to the real requirement (Part A), ground against the real codebase (5), and capture the plan with recommendations (14), a lightweight pass over the axes that scored non-trivial.
-- **Ambiguous / risky / irreversible / wide reach** → full depth: clear the fog and triage the open questions first (17, 18) and gate readiness before committing (19), resolve scope hard (Part A incl. the correctness counter-rule 3), spike any feasibility unknown (8), inventory and blast-radius the reach (6, 7), gate before code (9), decompose and sequence (11, 12), keep a multi-deploy schema/data change backward-compatible (13), and capture a self-contained dual-audience artifact (15, 16).
+- **Ambiguous / risky / irreversible / wide reach** → full depth: clear the fog and triage the open questions first (17, 18) and gate readiness before committing (19), resolve scope hard (Part A incl. the correctness counter-rule 3), spike any feasibility unknown (8), inventory and blast-radius the reach (6, 7), gate before code (9), decompose and sequence (11, 12), keep a multi-deploy schema/data change backward-compatible (13), capture a self-contained dual-audience artifact (15, 16), and record a decision costly to recover (20).
 
 ## Step 3: Select lenses from the catalog
 
@@ -56,6 +56,7 @@ Open only the parts matching your non-trivial axes:
 - **Multi-step / spans services / can't ship atomically** → 12 sequence-to-avoid-intermediate-states.
 - **Schema or data change to a live system / deploys separately from code** → 13 migration-backward-compatibility.
 - **Will be handed off or outlive the conversation** → 15 self-contained-dual-audience, 16 document-altitude.
+- **A hard-to-reverse, surprising choice with real alternatives** → 20 record-the-decision (an ADR / decision-doc entry with its rationale).
 
 **Worked example (plan a source-of-truth field migration):** Ambiguous-ish, high risk, hard to reverse, wide reach. Selected: **10** (full ceremony: it's risky and irreversible), **2 + 3** (strip anything speculative, but keep every step the migration needs to be correct), **7** (enumerate every downstream reader before calling it small), **6** (a classified inventory of all affected sites as the first deliverable), **9** (approve the approach before any code), **12** (sequence so no intermediate state is half-migrated and broken), **13** (expand→adopt→contract so the old code still reads and writes valid rows at every deploy step), **15** (a self-contained spec for the human and the executing agent), each fork carrying **14** a recommendation. Skipped frontend/altitude-heavy lenses, logged as not applicable.
 
