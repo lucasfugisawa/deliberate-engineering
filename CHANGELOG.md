@@ -2,6 +2,11 @@
 
 All notable changes to the `deliberate-engineering` plugin are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/), and the project aims at [Semantic Versioning](https://semver.org/) (pre-1.0: minor covers features and breaking changes, patch covers fixes).
 
+## [0.7.4] - 2026-08-20
+
+### Removed
+- **The "Prior art & influences" citation of third-party skill-catalog projects.** The README no longer names specific third-party skill-catalog projects; the section keeps the companion-engine and general-practice influences. Neutrality housekeeping, no behavior change.
+
 ## [0.7.3] - 2026-08-20
 
 ### Added

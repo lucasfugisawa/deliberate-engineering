@@ -199,7 +199,6 @@ Both steps are independent, and undoing this never touches your code or your rep
 This plugin stands on the shoulders of:
 
 - **[superpowers](https://github.com/obra/superpowers)** (Jesse Vincent): the recommended companion engine this layer delegates method to (TDD, systematic debugging, plan execution); the judgment layer degrades gracefully without it.
-- **[addyosmani/agent-skills](https://github.com/addyosmani/agent-skills)** and **[mattpocock/skills](https://github.com/mattpocock/skills)**: pioneering work in curated skill catalogs for AI-assisted development. They also exemplify the vertical, domain-deep catalogs that complement this horizontal layer, the kind of depth the *Scope & boundaries* section points you to bring yourself.
 - **General engineering practice**: review strategies, threat modeling, FMEA, and deliberate practice.
 
 We study, we don't copy. Where design converges with existing work, we give credit. The catalog structure and composition patterns are original synthesis; the individual lenses draw from established engineering discipline.
