@@ -1,0 +1,57 @@
+---
+name: deliberate-engineering-conductor
+description: "Use when a cluster of irreversible steps must fire in a fixed, gated order and you are conducting it, usually within one session: a merge cascade, a deploy chain, a batch of production data mutations, a teardown. \"Irreversible\" is meant in Rule 1's sense, outward-facing and costly to undo, so a merge cascade qualifies even when git can technically revert it; the contract's point-of-no-return field marks where rollback becomes truly impossible. It provides the CONDUCTOR contract, a runbook that re-derives world state before every gate, keeps the gate state in a per-item station table rather than in memory, bounds each irreversible step with a dry-run and a blast-radius limit before it fires and a post-state read after, and queues each irreversible action for the operator to execute. It is a sibling of deliberate-engineering-orchestrate, which dispatches units of work across sessions, whereas this conducts ordered steps in a cluster; the router routes to it when a rollout concentrates into one. NOT for a single irreversible step, where Rule 1's human gate already suffices; NOT for dispatching a program of work across sessions, which is orchestrate. The agent conducts; the operator pulls every irreversible trigger."
+---
+
+# Deliberate Engineering Conductor
+
+The deliberate layer of *running an irreversibility cluster without losing the thread*. When irreversibility concentrates, a merge cascade, a deploy chain, a batch of production data mutations, a teardown, the risk is no longer "which session runs this" but "these steps must fire in a fixed order, each gated behind a verification of the last, against a plan that was frozen and re-verified, with the operator holding every irreversible trigger." This skill gives that its contract: a single conductor doc that is the live cockpit for the cluster until it closes.
+
+It is an **orchestrator of steps, not an engine**: it decides the gate graph, the order, the between-step checks, and the division of labor, and it delegates the mechanism (the actual merge, deploy, or mutation) to the operator and to whatever tooling runs it. Decide and hand the trigger over; never pull it.
+
+## The family closes by altitude
+
+Three skills conduct, and they split by altitude, not by artifact:
+
+- **`deliberate-engineering-router`** conducts *phases within* one session (plan, review, verify, debug).
+- **`deliberate-engineering-orchestrate`** conducts *units of work across* sessions: decompose a program, dispatch each unit to a fresh session, verify the return, disposition it, track the program.
+- **This skill** conducts *steps across an irreversibility cluster*: a fixed-order, gated sequence of irreversible actions, usually in one session.
+
+**Why a sibling and not part of orchestrate.** The axis that separates them is not session count but whether work is *dispatched*: `orchestrate` decomposes a program and hands units to fresh worker sessions; a conductor has no dispatched workers at all, one operator conducting an ordered cluster (typically in a single session, though it survives across sessions on its residue). And `orchestrate` deliberately anti-fires on single-session work (a boundary verified narrow on purpose in its firing test), so housing the conductor inside it would leave it unreachable in exactly its usual scenario, or force widening a verified-narrow description. In this plugin the description is the disclosure mechanism, so a contract parked behind the wrong description is inert in practice.
+
+**The anti-proliferation clause.** Conductor-shaped skills are added per *altitude of conducting*, never per artifact or per domain. With phases, units, and steps, the altitudes we will build are closed by decision, not by exhaustion: the one plausible higher altitude, a cross-program portfolio conductor, is a deliberate non-goal rather than an oversight. A new domain (a database cluster, a specific deploy target) does not earn a new skill; it fills the contract's fields.
+
+## It rides on the rules; it does not restate them
+
+The conductor is the moment every standing rule fires at once, and it **cites** them rather than re-encoding them: Rule 1 keeps the human's hand on every irreversible trigger (merge, release, deploy, data mutation, teardown); Rule 3's re-derive-in-fresh-context is why a gate never runs against remembered state; Rule 6 is why the conductor is a durable cockpit that survives compaction and hands off cleanly; Rule 8's earned-convergence is why a between-step check is trusted only on evidence, not on a plausible first look. The genuinely new material is small: the contract, the baton-pass rule, and the station-table-not-memory discipline.
+
+## When a cluster earns a standalone conductor: the baton-pass
+
+Not every irreversible sequence needs its own doc. The rule is the baton-pass, discovered in the field, not designed:
+
+- A **small cascade** runs fine from a tracker's operator queue, or inline within a phase: two or three ordered steps with a check between do not earn a separate cockpit.
+- A **cluster earns its own conductor** only when the gate graph outgrows a tracker section: enough ordered steps, cross-step deploy gates, rollback caveats, and between-step checks that a queue can no longer hold them without losing a gate.
+- While a conductor is live it is the **single cockpit** for its cluster. One live cockpit at a time: if a program tracker (`orchestrate`) was carrying the work, it goes quiet and holds a pointer to the conductor in the same commit the conductor is born; at closure the conductor gets its frozen banner and the baton returns to the tracker. A retired cockpit gets a closure marker, never a stale header left to rot.
+
+## The contract
+
+`templates.md` beside this skill carries the CONDUCTOR contract, read on demand when you conduct. Like the orchestration contracts it prescribes the **fields, not the layout**, and it is **cluster-kind-agnostic**: a git merge cascade, a batch data mutation, and a teardown fill the same fields with their own stations, so the git vocabulary is one example set, never the schema. It has a **required core** (role split, re-derive-before-every-gate, the done inventory with a keystone and a point-of-no-return, gated groups with a verified recovery path and an emergency abort, the per-item station table, the pre-write dry-run and blast-radius bound, the between-step verification battery, the operator wave queue, honesty rails, session residue with re-run safety, and the closure marker) plus **two bookend sections whose necessity follows the cluster's nature**: a pre-flight launch gate (required once the cluster has a point of no return, optional otherwise) and a post-state check (core for a data mutation, a lighter watch for a reversible rollout).
+
+Two disciplines are the point. First, **gates live in a checkbox state table, not in memory or a prose note**, because in the field the one gate recorded only as a reminder was the one that slipped. Second, **the irreversible step is bounded before it fires and verified after**: a dry-run or shadow read of what it would touch, against a pre-declared blast-radius bound, then a post-state read that it landed. It cites the lenses rather than restating them, at the field where each applies: the verification pre-write, ordering, environment-crossing, mutation, and closeout lenses, and the planning sequencing and blast-radius lenses. The specific numbers, each glossed, live at their field in `templates.md`, so the citation set has one home rather than two.
+
+## Integrations (one line each)
+
+- **The router's honesty ruler** points at scattered lenses (planning #12/#13, the verification rollout lenses, Rule 1) for the release/rollout ground it has no catalog for; the conductor is now the real destination for a rollout that has become an irreversibility cluster.
+- **`orchestrate`** gains a baton line: when a cluster of irreversible steps concentrates inside a program, hand it to a conductor; the program tracker keeps the pointer and takes the baton back at closure.
+
+## The boundary: judgment contracts only
+
+This adds judgment contracts and nothing else: the transferable fields and disciplines a conductor carries. It does **not** add scaffolding, directory taxonomies, a materialized workspace, or schedule / risk-register machinery. The filled-in conductor doc, the numbered directories, the concrete deploy graph for a specific system: those are machinery and stay out of the plugin, exactly as the orchestration workspace does. The judgment is horizontal and belongs here; the workspace that instantiates it is the operator's own.
+
+## Honest limitation
+
+The contract's field set was seeded from a field record of *reversible* multi-repo git rollouts, one kind of cluster. The pilot that would have hardened it against a *different* kind, a data mutation or a teardown with a real point of no return, was deliberately not run, so an adversarial critique stood in for it: it found the field set systematically missing the destructive, irreversible hemisphere, and those fields, the PONR marker, the pre-write dry-run and blast-radius bound, the verified recovery path, the emergency abort, and re-run safety, were added by generalizing from the lenses rather than from a second live program of that kind. The residual limitation is honest: that hardening is critique-derived, not piloted on a destructive cluster, so a real one may still surface a field a critic could not. Treat a field that does not fit your cluster as a prompt to generalize it, not a mandate, in the fields-you-need spirit the orchestration contracts take.
+
+## Output
+
+Report, as judgment rather than mechanics: when a cluster has earned a standalone conductor (and when it has not, staying in the tracker queue instead); the gate graph and the order, with the reason the order is fixed; at each step, the between-step verdict against its expected value before advancing; and every irreversible action queued for the operator, where you stop and hand the trigger over (Rule 1). On interruption, the session residue; at completion, the closure marker and the baton returned.
