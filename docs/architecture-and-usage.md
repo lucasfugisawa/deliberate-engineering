@@ -24,7 +24,7 @@ flowchart TD
     verify["verification-strategy-selector<br/>:verify<br/>is it true against reality, and what's the evidence?"]
     debug["debug-operate-strategy-selector<br/>:debug<br/>a live system misbehaves, no reliable expectation"]
     catalog[("that phase's catalog<br/>read on demand: only the lenses that fit")]
-    engine["superpowers / Workflow<br/>the method engine"]
+    engine["the method engine<br/>(superpowers, Workflow, or built-in)"]
 
     work --> axes
     axes --> plan
@@ -51,7 +51,7 @@ flowchart TD
 ```
 
 - **The four phases share one pattern:** classify the work, then read only the lenses that fit from that phase's catalog (never the whole catalog at once). Planning decides what to build; review reasons about the artifact; verification confronts reality; debug/operate takes over when a live system misbehaves and no reliable expectation holds.
-- **The method is delegated.** `superpowers` (TDD, systematic debugging, plan execution) and the Workflow tool (orchestration) own *how* the work is carried out. The plugin owns the judgment (which phase, which lenses, how much ceremony) and hands the mechanism to the engine.
+- **The method is delegated.** A workflow engine owns *how* the work is carried out: `superpowers` (TDD, systematic debugging, plan execution) is the one recommended and the Workflow tool handles orchestration, but the layer delegates to whatever engine is present, falling back to the agent's built-in abilities when none is. The plugin owns the judgment (which phase, which lenses, how much ceremony) and hands the mechanism to the engine.
 
 ### Communication and voice
 
@@ -147,7 +147,23 @@ One mental model runs across all of them: risk, reversibility, requirement clari
 
 The plugin is opinionated, and it's meant to become yours. A personal file at `~/.claude/deliberate-engineering/overrides.md` takes precedence over the shipped content, addressed by stable identifiers: `review #N`, `verify #N`, `planning #N`, `debug #N`, or `rule N`. Three operations: `disable` turns a lens or rule off; `modify` appends your annotation alongside the shipped text; `add` defines your own. The agent always declares when an override changed what it did (nothing happens silently), and you can even loosen a safety rule, which it honors while calling out the raised autonomy.
 
-You can write that file by hand (the README's *Make it yours* section shows the format), or let the agent help: run `/deliberate-engineering:capture` (or just ask) and it distills the session you just had (the lenses you skipped or corrected, the practices the catalog lacks) into ready-to-paste blocks. On demand only, append-only, written only on your approval. This grows *your* file; it is the adopter's side, distinct from the author tools below.
+You can write that file by hand, or let the agent help: run `/deliberate-engineering:capture` (or just ask) and it distills the session you just had (the lenses you skipped or corrected, the practices the catalog lacks) into ready-to-paste blocks. On demand only, append-only, written only on your approval. This grows *your* file; it is the adopter's side, distinct from the author tools below.
+
+**Example override file:**
+
+```markdown
+## review #35: disable
+
+**Why:** We run this lens manually in a separate security pass; not needed in the main review.
+
+## add: review
+
+**Name:** API backward-compatibility check (no breaking signature changes without major version bump)
+
+**When:** The change modifies a public API surface (REST endpoints, library exports, gRPC contracts)
+
+**Apply:** Review the diff for any breaking changes (removed endpoints, changed request/response shapes, deleted fields). If a breaking change is present and the version is not a major bump, flag it. Non-breaking additions (new optional fields, new endpoints) are fine.
+```
 
 Overrides are one of two personal layers under `~/.claude/deliberate-engineering/`, both opt-in, both absent by default. The override file changes *what the agent does*; the voice profile changes *how what it writes sounds*. The profile is a directory at `~/.claude/deliberate-engineering/voice/`: `core.md` for what's true of your writing everywhere, `registers/<lang>.md` for what changes with the language, `archetypes/<type>.md` for what changes with the kind of communication (a DM is not a design doc). `deliberate-engineering-voice` reads it after the communication lenses have shaped the message and applies it as the surface layer, loading at most three files per draft (the core, the matching register, the matching archetype) and falling back to two, declared, when one has no match. Precedence runs explicit instruction > voice profile > default style; where a lens and the profile genuinely conflict, the lens wins on substance and the profile wins on surface. It names the files it loaded when it fires, it never licenses breaking a standing rule (the Rule 1 gate and the Rule 9 resolvability bar hold regardless of how you write), and it does nothing and says nothing when the directory is absent. The plugin ships the mechanism, the contract, a template, a bootstrap method, and a guided build path (`deliberate-engineering-voice-build`, the `/deliberate-engineering:voice-build` command, which runs that method from collection to a finished profile and keeps the interview and the blind A/B human); no profile content ships, and the directory stays out of every repository. The README's *Sound like yourself* section is the overview; `contract.md` next to the skill is the full layout.
 
@@ -163,5 +179,5 @@ Both tools edit only the working tree and always stop before commit, PR, or push
 ### Where to go next
 
 - Install, uninstall, and the optional always-on recipe live in the [README](../README.md).
-- The exact override-file format and an example are in the README's *Make it yours* section.
+- The exact override-file format and an example are in *Adapt: make it think like you* above.
 - Why the plugin stays horizontal and where it stops is the README's *Scope & boundaries* section.

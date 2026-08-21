@@ -17,7 +17,7 @@ One mental model runs across the whole lifecycle. **Risk, reversibility, require
 | **Verify** | `verification-strategy-selector` | Is it true against reality, and what's my evidence? |
 | **Debug/Operate** | `debug-operate-strategy-selector` | A live system is misbehaving and I have no reliable expectation. Now what? |
 
-Planning decides what to build; review reasons about the artifact; verification confronts reality; and debug/operate takes over when a live system misbehaves and no reliable expectation holds.
+Planning decides what to build; review reasons about the artifact; verification confronts reality; and debug/operate takes over when a live system misbehaves and no reliable expectation holds. Two siblings handle scale beyond a single pass, `:orchestrate` across many sessions and `:conductor` across a cluster of irreversible steps, and a cross-cutting communication layer tunes what you write for its reader (see [What's inside](#whats-inside)).
 
 ## See it in action
 
@@ -53,9 +53,7 @@ New lenses, rules, and fixes ship as version bumps. To receive them automaticall
 
 With auto-update off, you can still update manually from the same `/plugin` menu whenever a new version is available.
 
-**Recommended companion:** install [`superpowers`](https://github.com/obra/superpowers) (Jesse Vincent) alongside it. `deliberate-engineering` owns the *judgment* and delegates the *method* (TDD, systematic debugging, plan execution) to `superpowers`. Without it the judgment layer still works: it classifies the work, calibrates the ceremony, and applies the rules and lenses; it simply delegates execution to whatever engine you have, including Claude Code's built-in abilities.
-
-It ships as a Claude Code plugin: the honest scope is Claude Code today; it doesn't claim to run on other agents or IDEs. It complements review tooling such as `pr-review-toolkit` (it decides *which* tactics a change calls for and can invoke those agents as tactics) and coexists with other workflow plugins such as `feature-dev` (when several engines are present it decides which to invoke and removes nothing).
+**Recommended companion:** install [`superpowers`](https://github.com/obra/superpowers) (Jesse Vincent) alongside it. `deliberate-engineering` owns the *judgment* and delegates the *method* (TDD, systematic debugging, plan execution) to whatever workflow engine you have; `superpowers` is the one I recommend. With no dedicated engine the judgment layer still works: it classifies the work, calibrates the ceremony, and applies the rules and lenses, then delegates execution to whatever is present, down to Claude Code's built-in abilities.
 
 ### Optional: make the deliberate layer always-on
 
@@ -87,6 +85,8 @@ EOF
 **Prefer to paste it by hand?** Copy everything from `<!-- deliberate-engineering:begin -->` through `<!-- deliberate-engineering:end -->` in the block above into your `~/.claude/CLAUDE.md`. **Already have an older block?** The snippet is guarded on that begin marker, so it appends nothing when a block is already present: it will not update one. If your file carries an earlier version, replace the content between the two markers by hand.
 
 This is your machine's choice, never a requirement of the plugin: it only changes *when* the router and rules fire on your machine. To undo it, see [Uninstall](#uninstall).
+
+The nine rules are the small always-on core; everything else, the lenses and catalogs, loads just-in-time when the work calls for it, never as a wall of text in your context.
 
 ## Getting started
 
@@ -156,7 +156,7 @@ flowchart TD
 - **`deliberate-engineering-conductor`** (`:conductor`): the sibling for an irreversibility cluster (a merge cascade, a deploy chain, a batch of production data mutations, a teardown). It runs the cluster from a contract that re-derives world state before every gate, bounds each irreversible step with a dry-run and a blast-radius limit, and queues each irreversible action for you to trigger. The agent conducts; you pull every trigger (Rule 1).
 - **Four phase selectors + catalogs**: `:plan`, `:review`, `:verify`, `:debug`. Each classifies the work, then pulls only the matching lenses from its catalog (read on demand, never all at once).
 - **`communication-collaboration-selector`** (`:communicate`): cross-cutting, not a phase: when the artifact is a *communication* (a PR description, a review comment, a stakeholder message, a writeup of alternatives), it classifies by audience and artifact and applies the matching lenses. Consult it from inside any phase.
-- **`deliberate-engineering-voice`**: the read side of an optional personal voice profile. It applies as the surface layer over whatever the communication selector decided (the lenses decide what the message must accomplish, the profile decides how it sounds), loads only what the draft needs, names the files it loaded, and does nothing when the profile directory is absent. See [Sound like yourself](#sound-like-yourself).
+- **`deliberate-engineering-voice`**: the read side of an optional personal voice profile. It applies as the surface layer over whatever the communication selector decided (the lenses decide what the message must accomplish, the profile decides how it sounds), loads only what the draft needs, names the files it loaded, and does nothing when the profile directory is absent. Build a profile with the guided **`:voice-build`** flow. See [Sound like yourself](#sound-like-yourself).
 - **Make it yours**: a personal override layer lets your own practice take precedence over any shipped lens or rule; `/deliberate-engineering:capture` distills a session into ready-to-paste override blocks. See [Make it yours](#make-it-yours).
 - **`deliberate-engineering-state`**: a consulted-only skill that owns a per-work-unit working-note, so process state (phase sequence, current phase, chosen rituals, open pendings, and the decisions and why) survives across sessions. The router and Rule 6 delegate to it to rehydrate on resume and checkpoint as work proceeds.
 - **For contributors**: `/deliberate-engineering:contribute` and `:promote` grow the *shared* catalog from a local clone of this repo (generalize-at-capture, a blocking leak-audit, append-only numbering, and a stop before publish). This is the author side, distinct from your personal overrides; see [`CONTRIBUTING.md`](CONTRIBUTING.md).
@@ -173,33 +173,17 @@ flowchart TD
 
 ## Make it yours
 
-The plugin is opinionated, and it's meant to become yours. A personal file at `~/.claude/deliberate-engineering/overrides.md` takes precedence over the shipped lenses and rules, addressed by stable identifiers: `review #35`, `verify #14`, `planning #8`, `debug #12`, or `rule 2`. Three operations: `disable` turns a lens or rule off; `modify` appends your own note alongside the shipped text (the shipped text stays, your annotation is read with it); and `add` defines your own strategy or rule. The agent always declares when an override changed what it did (nothing happens silently), and you can even loosen a safety rule, which it honors while calling out the raised autonomy. The layer is opt-in: if the file doesn't exist, nothing changes.
+The plugin is opinionated, and it's meant to become yours. A personal override file takes precedence over any shipped lens or rule, addressed by stable id (`review #35`, `verify #14`, `rule 2`): disable one you don't want, annotate one with a note of your own, or add your own strategy or rule. The agent always declares when an override changed what it did, and you can even loosen a safety rule, which it honors while calling out the raised autonomy. It's opt-in: no file, no change.
 
-You can write that file by hand, or let `/deliberate-engineering:capture` (or just ask) distill the session you just had (the lenses you skipped or adjusted, the practice the catalog lacks) into ready-to-paste blocks, appended only on your approval.
+You don't have to write it by hand: `/deliberate-engineering:capture` (or just ask) distills the session you just had into ready-to-paste blocks, appended only on your approval.
 
-**Example override file:**
-
-```markdown
-## review #35: disable
-
-**Why:** We run this lens manually in a separate security pass; not needed in the main review.
-
-## add: review
-
-**Name:** API backward-compatibility check (no breaking signature changes without major version bump)
-
-**When:** The change modifies a public API surface (REST endpoints, library exports, gRPC contracts)
-
-**Apply:** Review the diff for any breaking changes (removed endpoints, changed request/response shapes, deleted fields). If a breaking change is present and the version is not a major bump, flag it. Non-breaking additions (new optional fields, new endpoints) are fine.
-```
-
-For the override format in full and the adopter and author flows end to end, see **[Architecture & usage](docs/architecture-and-usage.md)**.
+For the exact override format, an example, and the adopter and author flows end to end, see **[Architecture & usage](docs/architecture-and-usage.md)**.
 
 ## Sound like yourself
 
-The lenses tune a message to its reader. What they can't do is make it sound like *you*: by default every PR description, review comment, ticket, message and email comes out in the same LLM register. An optional voice profile at `~/.claude/deliberate-engineering/voice/` fixes that, and it's opt-in exactly the way overrides are: no directory, no change in behavior.
+The lenses tune a message to its reader. What they can't do is make it sound like *you*: by default every PR description, review comment, ticket, message and email comes out in the same LLM register. An optional voice profile at `~/.claude/deliberate-engineering/voice/` helps it sound a lot more like you, and it's opt-in exactly the way overrides are: no directory, no change in behavior.
 
-The profile is a small directory, not a prompt. `core.md` holds what's true of your writing everywhere; `registers/<lang>.md` holds what changes with the language; `archetypes/<type>.md` holds what changes with the kind of artifact (a DM is not a design doc). At most three files load on any given draft: the core, the matching register, the matching archetype. It falls back to two when one of them has no match (core plus register, or core plus archetype), and says which fallback it took. Precedence is what you'd expect: an explicit instruction beats the profile, the profile beats the default register, and where a lens and the profile disagree the lens wins on substance while the profile wins on surface.
+The profile is a small directory of your own writing patterns, not a prompt. It shapes only the *surface*, how the message sounds, never what a lens decided the message must accomplish; where the two meet, the lens wins on substance and the profile on voice.
 
 Two documents ship with the skill, plus a skeleton to copy:
 
@@ -210,15 +194,13 @@ And you don't have to run that method by hand: **[the guided build path](plugins
 
 Nothing personal ships here. The plugin carries the mechanism, the contract, the template and the method; every profile, including mine, is private content on its author's own machine.
 
-## Why a plugin, not a `CLAUDE.md`?
-
-You could paste a few rules into your `CLAUDE.md`, and the always-on recipe above is exactly that for the always-on part. The plugin adds what a static file can't: it **classifies each change first** and reads only the lenses that fit (progressive disclosure: the catalogs load on demand, never as a wall of text in your context); it exposes **addressable, overridable** lenses and rules (`review #35`, `rule 2`) you can disable, annotate, or extend from your own file, and grow with `:capture`; and it ships a router that engages the right depth *just-in-time* instead of as standing instructions you pay for on every task. The nine rules are the small always-on core; everything else loads when the work calls for it.
-
 ## Scope & boundaries
 
 `deliberate-engineering` is a **horizontal** layer: the judgment that holds across every domain (how to classify risk, calibrate ceremony, verify claims, and decide deliberately). It deliberately stops where domain *depth* begins, and that boundary is the design, not a gap. Process judgment is the same whether you're shipping an API, a database schema, or a mobile screen, so this layer stays transferable across all of them, and folding in any one domain's depth would only make it less so.
 
 So it does not carry domain-specific knowledge: API design, data modeling, performance tuning, observability, security hardening, mobile, front-end, and the rest. At the edge where that depth matters, it does the honest thing: it names what it doesn't carry and points you to bring your own domain expertise, rather than fake a competence it doesn't have. That is the same discipline the rules ask of the agent (Rule 7: name the edge of what you know), turned on the plugin itself.
+
+The same honesty applies to its platform reach: it ships as a Claude Code plugin, and that is the honest scope today. It doesn't claim to run on other agents or IDEs, and it removes nothing, coexisting with whatever review and workflow tooling you already run.
 
 ## Uninstall
 
@@ -226,15 +208,6 @@ Both steps are independent, and undoing this never touches your code or your rep
 
 1. **Disable or remove the plugin** via `/plugin`: that's the whole product.
 2. **If** you added the optional always-on block to your personal `~/.claude/CLAUDE.md`, delete it: everything from `<!-- deliberate-engineering:begin -->` through `<!-- deliberate-engineering:end -->`, inclusive. Removing it is unrelated to disabling the plugin; the router and rules then load only on description match, like any normal skill.
-
-## Prior art & influences
-
-This plugin stands on the shoulders of:
-
-- **[superpowers](https://github.com/obra/superpowers)** (Jesse Vincent): the recommended companion engine this layer delegates method to (TDD, systematic debugging, plan execution); the judgment layer degrades gracefully without it.
-- **General engineering practice**: review strategies, threat modeling, FMEA, and deliberate practice.
-
-We study, we don't copy. Where design converges with existing work, we give credit. The catalog structure and composition patterns are original synthesis; the individual lenses draw from established engineering discipline.
 
 ## License
 
