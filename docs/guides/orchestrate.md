@@ -10,7 +10,7 @@ Use it when the program's units will genuinely execute in **separate sessions**.
 
 ## The mental model
 
-One session orchestrates; it does not execute. It plans, decomposes, dispatches, verifies what comes back, and keeps the tracker true. Workers execute exactly one unit each and end. **You are the mechanical relay between them**: sessions do not message each other, by design, so every handoff and every report crosses through your hands, which is exactly what keeps you able to watch and intervene.
+One session orchestrates; it does not execute. It plans, decomposes, dispatches, verifies what comes back, and keeps the tracker true. Workers execute exactly one unit each and end. By default **you are the mechanical relay between them**: sessions do not message each other, by design, so every handoff and every report crosses through your hands, and you stay able to watch and intervene. The relay is a candidate to shed as trust converges; the judgment and the gates never are.
 
 ```mermaid
 sequenceDiagram
@@ -32,19 +32,19 @@ sequenceDiagram
 
 ## The walkthrough
 
-1. **[You]** Set up a home for the program's state: a dedicated private git repo works best, started flat (`tracker.md`, `handoffs/`, `reports/`). The tracker is the single authoritative record; one commit per disposition becomes the audit trail.
-2. **[You]** Invoke `/deliberate-engineering:orchestrate` against the program.
+1. **[You]** Create a dedicated private git repo as the home for the program's state. The orchestration session creates `tracker.md`, `handoffs/`, and `reports/` in it as the program needs them (start flat: no pre-built folder taxonomy, structure only when a folder overflows). Scrub or gitignore any credential before committing, especially once the repo is synced. The tracker is the single authoritative record; one commit per disposition becomes the audit trail.
+2. **[You]** Open the orchestration session in the tracker repo and invoke `/deliberate-engineering:orchestrate`, describing the program in the same message: the goal, the units you already see, where the work lives.
 3. **[Agent]** Plans and decomposes into units, writes the tracker with a recovery anchor (the always-current pointer that lets any fresh session resume the orchestrator role).
-4. **[Agent]** Per unit, makes the dispatch decision out loud: trivial or tightly coupled units run **inline**; the default for real units is a **fresh, human-watched session**; a narrow, explicitly-earned band goes to a background subagent. You approve the dispatch.
+4. **[Agent]** Per unit, makes the dispatch decision out loud: trivial or tightly coupled units run **inline**; the default for real units is a **fresh, human-watched session**; a narrow, explicitly-earned band goes to a background subagent, with the earning conditions declared out loud. You approve the dispatch.
 5. **[Agent]** Authors the handoff: a self-contained prompt, premise frozen against a live read of the world at dispatch time, saved under `handoffs/`. It must be resolvable by a session holding only the handoff, so it carries everything the worker needs.
-6. **[You]** Open a fresh session and hand it the handoff: point it at the handoff file, or paste the content. Watch it work; intervene when needed.
-7. **[Agent, worker]** Executes the one unit (running its own phases and gates as the work demands) and produces a **work report**: what was done, the evidence, what was deliberately not done. Save it under `reports/`. The worker is then done; follow-ups become new handoffs, never a reopened session.
+6. **[You]** Open a fresh session where the unit's work lives (the handoff names it) and hand it the handoff: point it at the handoff file by path, or paste the content. Watch it work; intervene when needed.
+7. **[Agent, worker]** Executes the one unit (running its own phases and gates as the work demands) and produces a **work report**: what was done, the evidence, what was deliberately not done. You are the relay: file it under `reports/` in the tracker repo, or ask the worker to write it there when it knows the path. The worker is then done; follow-ups become new handoffs, never a reopened session.
 8. **[You]** Bring the report back to the orchestration session (point at the file or paste it).
 9. **[Agent]** Verifies the report's claims against primary evidence (re-verifying contested or high-stakes claims in a separate context), dispositions it (accept / reject / follow-up), updates the tracker, and commits the disposition.
-10. **[You]** Work the operator queue: everything outward or irreversible (post, merge, tag, deploy) waits there for your trigger, per Rule 1.
-11. Repeat 4–10 until the program closes. Gaps you caught along the way can flow into [capture](capture.md) (your overrides) or the [contribution queue](../../CONTRIBUTING.md).
+10. **[You]** Work the operator queue: everything outward or irreversible (post, merge, tag, deploy) waits there for your trigger (Rule 1: the human's hand stays on every irreversible or outward-facing action).
+11. Repeat 4–10 until the program closes; several units can be in flight at once (each worker is its own session), with reports returning and being dispositioned one at a time. Gaps you caught along the way can flow into [capture](capture.md) (your overrides) or the [contribution queue](../../CONTRIBUTING.md).
 
-**Resuming:** the orchestration session itself is disposable. Any fresh session pointed at the tracker re-reads the recovery anchor and becomes the orchestrator; a long-lived orchestration session is an optimization, never a requirement.
+**Resuming:** the orchestration session itself is disposable. To resume, open a fresh session in the tracker repo, invoke `/deliberate-engineering:orchestrate`, and tell it to resume from the tracker: it re-reads the recovery anchor before doing anything else. A long-lived orchestration session is an optimization, never a requirement.
 
 ## Artifacts
 
@@ -65,6 +65,6 @@ The plugin ships the templates for all three documents (see the skill's `templat
 
 ## Where to go next
 
-- The full field-level contracts (handoff, report, tracker): the skill's own `templates.md` under `plugins/deliberate-engineering/skills/deliberate-engineering-orchestrate/`
+- The full field-level contracts (handoff, report, tracker): [the skill's own `templates.md`](../../plugins/deliberate-engineering/skills/deliberate-engineering-orchestrate/templates.md)
 - An irreversibility cluster inside your program → [Conduct](conduct.md)
 - Back to [the guide index](README.md)

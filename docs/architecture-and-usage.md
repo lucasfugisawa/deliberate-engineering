@@ -131,10 +131,10 @@ flowchart LR
 
 The step-by-step walkthroughs live in the **[guides](guides/README.md)**; start from the by-situation index there. The short map, by intent:
 
-- **Use** — [The deliberate flow](guides/deliberate-flow.md): the everyday journey through `/deliberate-engineering:start`, the four phases (`:plan`, `:review`, `:verify`, `:debug`), and the cross-cutting `:communicate`, with a per-command reference table.
-- **Scale** — [Orchestrate](guides/orchestrate.md) runs a program too large for one session as dispatched units with one authoritative tracker; [Conduct](guides/conduct.md) runs a cluster of irreversible steps in a fixed, gated order where you pull every trigger.
-- **Adapt** — [Capture](guides/capture.md) turns a session's corrections into your personal overrides; [Voice-build](guides/voice-build.md) builds your voice profile from your own writing. The formats they rely on are in the sections below.
-- **Contribute** — the author flow (a lens for everyone) lives in [CONTRIBUTING.md](../CONTRIBUTING.md).
+- **Use**: [The deliberate flow](guides/deliberate-flow.md): the everyday journey through `/deliberate-engineering:start`, the four phases (`:plan`, `:review`, `:verify`, `:debug`), and the cross-cutting `:communicate`, with a per-command reference table.
+- **Scale**: [Orchestrate](guides/orchestrate.md) runs a program too large for one session as dispatched units with one authoritative tracker; [Conduct](guides/conduct.md) runs a cluster of irreversible steps in a fixed, gated order where you pull every trigger.
+- **Adapt**: [Capture](guides/capture.md) turns a session's corrections into your personal overrides; [Voice-build](guides/voice-build.md) builds your voice profile from your own writing. The formats they rely on are in the sections below.
+- **Contribute**: the author flow (a lens for everyone) lives in [CONTRIBUTING.md](../CONTRIBUTING.md).
 
 One mental model runs across all of them: risk, reversibility, requirement clarity, and reach decide the depth, not line count. The plugin recommends a depth and a set of lenses *with its reasoning*, and you stay in control. Nothing is forced except one thing: it stops at a human gate before any irreversible or outward-facing action (a merge, a deploy, a push, a posted message). The nine standing rules hold underneath every phase the whole time.
 

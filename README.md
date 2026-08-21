@@ -94,7 +94,7 @@ Not sure where to begin? Run `/deliberate-engineering:start` and describe the wo
 
 ### Documentation map
 
-- **[Guides](docs/guides/README.md)**: step-by-step walkthroughs, indexed by situation — [the deliberate flow](docs/guides/deliberate-flow.md) (the everyday journey), [orchestrate](docs/guides/orchestrate.md) (a program across sessions), [conduct](docs/guides/conduct.md) (an irreversibility cluster), [capture](docs/guides/capture.md) (your overrides), [voice-build](docs/guides/voice-build.md) (your voice profile).
+- **[Guides](docs/guides/README.md)**: step-by-step walkthroughs, indexed by situation: [the deliberate flow](docs/guides/deliberate-flow.md) (the everyday journey), [orchestrate](docs/guides/orchestrate.md) (a program across sessions), [conduct](docs/guides/conduct.md) (an irreversibility cluster), [capture](docs/guides/capture.md) (your overrides), [voice-build](docs/guides/voice-build.md) (your voice profile).
 - **[Architecture & usage](docs/architecture-and-usage.md)**: the concepts and how the pieces fit together, with diagrams.
 - **[CONTRIBUTING](CONTRIBUTING.md)**: the author flow, contributing a lens to the shared catalog.
 - **[CHANGELOG](CHANGELOG.md)**: what shipped, version by version.

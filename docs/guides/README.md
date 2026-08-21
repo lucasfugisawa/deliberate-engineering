@@ -17,13 +17,13 @@ Task-oriented walkthroughs: what you actually do, step by step, when driving eac
 
 ## The guides, by intent
 
-- **Use** — [The deliberate flow](deliberate-flow.md): how a normal session runs through `:start`, the four phases (`:plan`, `:review`, `:verify`, `:debug`), and the cross-cutting `:communicate`. Mostly self-firing; this guide is the journey and the map.
-- **Scale** — [Orchestrate](orchestrate.md) for a program dispatched across sessions; [Conduct](conduct.md) for an irreversibility cluster. The two flow-heavy siblings: each is a flow you drive start to finish, and each gets a full walkthrough with the manual steps made explicit.
-- **Adapt** — [Capture](capture.md) turns a session's corrections into personal overrides; [Voice-build](voice-build.md) builds your voice profile from your own writing. Both opt-in, both local, both keep the final say with you.
-- **Contribute** — growing the *shared* catalog (a lens for everyone) is the author flow, and it lives in [CONTRIBUTING.md](../../CONTRIBUTING.md).
+- **Use**: [The deliberate flow](deliberate-flow.md): how a normal session runs through `:start`, the four phases (`:plan`, `:review`, `:verify`, `:debug`), and the cross-cutting `:communicate`. Mostly self-firing; this guide is the journey and the map.
+- **Scale**: [Orchestrate](orchestrate.md) for a program dispatched across sessions; [Conduct](conduct.md) for an irreversibility cluster. The two flow-heavy siblings: each is a flow you drive start to finish, and each gets a full walkthrough with the manual steps made explicit.
+- **Adapt**: [Capture](capture.md) turns a session's corrections into personal overrides; [Voice-build](voice-build.md) builds your voice profile from your own writing. Both opt-in, both local, both keep the final say with you.
+- **Contribute**: growing the *shared* catalog (a lens for everyone) is the author flow, and it lives in [CONTRIBUTING.md](../../CONTRIBUTING.md).
 
 ## Everything else
 
-- [Architecture & usage](../architecture-and-usage.md): the concepts — the constitution, the front door and its siblings, the four phases, communication and voice, the extensibility cycle, with diagrams.
+- [Architecture & usage](../architecture-and-usage.md): the concepts: the constitution, the front door and its siblings, the four phases, communication and voice, the extensibility cycle, with diagrams.
 - [README](../../README.md): what the plugin is, what's inside, install, uninstall.
 - [CHANGELOG](../../CHANGELOG.md): what shipped, version by version.

@@ -12,7 +12,7 @@ For research, prose, ad-hoc analysis, and disposable no-consumer scripts, the pl
 
 You bring work; the router classifies it before anything acts. Say you ask for "implement field X on the billing model":
 
-1. **[You]** Describe the work — through `/deliberate-engineering:start` if you want the front door explicitly, or just by asking; the router also fires on its own when the work is broad or ambiguous.
+1. **[You]** Describe the work: through `/deliberate-engineering:start` if you want the front door explicitly, or just by asking; the router also fires on its own when the work is broad or ambiguous.
 2. **[Agent]** Classifies genre (new thing? change? incident? review? design?) and the four axes: risk, reversibility, requirement clarity, reach. Announces the phase sequence and the ceremony it earns, and, the most valuable part, what it is deliberately skipping and why. For the billing example: plan → build → review → verify, full ceremony, nothing skipped, and a stop before anything irreversible.
 3. **[Agent]** Runs each phase through its selector, which reads only the lenses that fit this case from its catalog: `:plan` decides what is worth building and how much process; the build is delegated to your workflow engine; `:review` applies the review lenses the change calls for; `:verify` confronts the result with reality and brings evidence.
 4. **[Agent]** When the next artifact is a communication (a PR description, a review comment, a message), consults `:communicate` from inside whatever phase it is in: audience and artifact pick the lenses, and your [voice profile](voice-build.md), if present, shapes how it sounds.
@@ -37,7 +37,7 @@ Two rules of thumb the plugin holds throughout: **risk and uncertainty set the d
 
 ## What runs underneath
 
-The nine standing rules hold under every phase (the human gate, verify-before-endorse, recommend-with-rationale, checkpoint durable state, and the rest); your [overrides](capture.md) take precedence over any shipped lens or rule; and `deliberate-engineering-state` keeps a working-note so the phase sequence and pendings survive across sessions — all consulted automatically, none of them yours to drive.
+The nine standing rules hold under every phase (the human gate, verify-before-endorse, recommend-with-rationale, checkpoint durable state, and the rest); your [overrides](capture.md) take precedence over any shipped lens or rule; and `deliberate-engineering-state` keeps a working-note so the phase sequence and pendings survive across sessions: all consulted automatically, none of them yours to drive.
 
 ## Where to go next
 
