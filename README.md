@@ -32,7 +32,7 @@ For a typo fix it does the opposite, and says so: "trivial and safe, single phas
 
 ## Install
 
-Inside Cloude Code:
+Inside Claude Code:
 ```claude
 /plugin marketplace add lucasfugisawa/deliberate-engineering
 /plugin install deliberate-engineering@deliberate-engineering
@@ -59,29 +59,7 @@ It ships as a Claude Code plugin: the honest scope is Claude Code today; it does
 
 ### Optional: make the deliberate layer always-on
 
-Skills load when the model judges them relevant to the task. If you want the layer engaged on *every* engineering session (routing through `/deliberate-engineering:start` with the standing rules underneath, the way I run it), add a short block to your personal `~/.claude/CLAUDE.md`:
-
-```markdown
-<!-- deliberate-engineering:begin -->
-## Deliberate-engineering (always-on for engineering work)
-On software-engineering tasks (writing, reviewing, debugging, planning,
-migrating, shipping, or operating code with real consumers, risk, or
-irreversibility), begin by invoking `/deliberate-engineering:start` (the
-`deliberate-engineering-router`) to classify the work and route to the right
-phase, not just on description match. The `deliberate-engineering-rules` skill
-is the always-on constitution underneath: it holds on every engineering task
-regardless of phase, and the router cites it rather than replacing it. When
-the next thing you produce is an engineering communication (a PR
-description, a review comment, a work item, a message, an email), consult
-`communication-collaboration-selector` and, with it,
-`deliberate-engineering-voice`; engineering communications only, never your
-own replies to me in this conversation. Skip the router and the rules for
-research, prose, ad-hoc analysis, disposable no-consumer scripting, and
-non-technical work.
-<!-- deliberate-engineering:end -->
-```
-
-Or append it idempotently from your shell (bash/zsh, macOS/Linux). Safe to run more than once; it won't duplicate the block:
+Skills load when the model judges them relevant to the task. If you want the layer engaged on *every* engineering session (routing through `/deliberate-engineering:start` with the standing rules underneath, the way I run it), add a short block to your personal `~/.claude/CLAUDE.md`. Append it idempotently from your shell (bash/zsh, macOS/Linux); it's safe to run more than once and won't duplicate the block:
 
 ```bash
 grep -q 'deliberate-engineering:begin' ~/.claude/CLAUDE.md 2>/dev/null || cat >> ~/.claude/CLAUDE.md <<'EOF'
@@ -106,7 +84,7 @@ non-technical work.
 EOF
 ```
 
-**Already have an older block?** The snippet is guarded on the `deliberate-engineering:begin` marker, so it appends nothing when a block is already there: it will not update one. If your `~/.claude/CLAUDE.md` carries an earlier version, replace the content between the two markers by hand with the block above.
+**Prefer to paste it by hand?** Copy everything from `<!-- deliberate-engineering:begin -->` through `<!-- deliberate-engineering:end -->` in the block above into your `~/.claude/CLAUDE.md`. **Already have an older block?** The snippet is guarded on that begin marker, so it appends nothing when a block is already present: it will not update one. If your file carries an earlier version, replace the content between the two markers by hand.
 
 This is your machine's choice, never a requirement of the plugin: it only changes *when* the router and rules fire on your machine. To undo it, see [Uninstall](#uninstall).
 
@@ -120,15 +98,67 @@ For the full picture (how the pieces fit together and how to drive each flow, in
 
 A standing-rules skill, a front-door router with two siblings (an across-session orchestrator and an irreversibility-cluster conductor), four phase selectors backed by four read-on-demand catalogs, one cross-cutting communication selector, a personal override layer, an optional voice profile layer with a guided path to build one, a process-state working-note, and an author contribution flow, plus twelve commands.
 
-- **`deliberate-engineering-rules`**: nine standing rules held across every phase: keep the human's hand on irreversible and outward-facing actions; stay read-only on systems you don't own; verify claims against primary evidence before endorsing; recommend with a reasoned pick, not a bare menu; keep comments load-bearing; checkpoint durable state before compacting; name the edge of what you know rather than fabricate certainty; treat trust in an output as earned by convergence (when review stabilizes and assumptions hold), not granted on a single pass; and ship nothing the reader can't resolve, keeping internal IDs and spec jargon out of comments, commits, and PR descriptions. Scoped to software work; quiet on research, prose, and ad-hoc analysis.
-- **`deliberate-engineering-router`** (`:start`): the front door: it classifies the work, names the phase sequence and the ceremony it earns, and routes to the matching selector. It recommends rather than forces: the only hard stop is the human gate on irreversible actions.
-- **`deliberate-engineering-orchestrate`** (`:orchestrate`): the router's across-session sibling, for a program too large for one session. It runs an orchestration session that decomposes the work into units, dispatches each to a fresh worker session (a background subagent only for a narrow, earned band), verifies each return against primary evidence in a separate context, dispositions it accept/reject/follow-up, and tracks the whole program in one authoritative place behind an always-current recovery anchor that lets any fresh session resume the orchestrator role. Manual-first and deliberately thin: it cites Rules 1/3/6/8/9 and reuses the selectors and state rather than restating them. Skip it for work that fits one session; that routes through the phases directly.
-- **`deliberate-engineering-conductor`** (`:conductor`): the sibling for an irreversibility cluster (a merge cascade, a deploy chain, a batch of production data mutations, a teardown). It runs the cluster from a CONDUCTOR contract that re-derives world state before every gate, keeps the gate state in a per-item station table rather than in memory, bounds each irreversible step with a dry-run and a blast-radius limit before it fires and a post-state read after, and queues each irreversible action for you to trigger. The agent conducts; you pull every trigger (Rule 1). Skip it for a single irreversible step, and for a program dispatched across sessions (that is orchestrate).
+```mermaid
+flowchart TD
+    rules["deliberate-engineering-rules<br/>the always-on constitution"]
+
+    subgraph front["Front door"]
+        start(["/deliberate-engineering:start<br/>classify the work and route"])
+        orch(["/deliberate-engineering:orchestrate<br/>a program across sessions"])
+        cond(["/deliberate-engineering:conductor<br/>an irreversibility cluster"])
+    end
+
+    subgraph phases["The four deliberate phases"]
+        plan[":plan"]
+        review[":review"]
+        verify[":verify"]
+        debug[":debug"]
+    end
+
+    subgraph commsbox["Communication, cross-cutting"]
+        communicate[":communicate<br/>by audience and artifact"]
+        voice["deliberate-engineering-voice<br/>optional voice profile, surface layer"]
+    end
+
+    yours["overrides + :capture<br/>make it yours"]
+    author["contribute + promote<br/>grow the shared catalog"]
+    state["deliberate-engineering-state<br/>process memory across sessions"]
+    gate{{"human gate: every irreversible or<br/>outward-facing action (Rule 1)"}}
+
+    rules -.->|holds under every phase| front
+    start --> phases
+    phases -.->|when the artifact is a communication| communicate
+    communicate -.-> voice
+    yours -.->|takes precedence at runtime| phases
+    state -.->|rehydrates and checkpoints| phases
+    author -.->|grows the shared catalogs| phases
+    phases --> gate
+
+    classDef constitution fill:#e8e0ff,stroke:#7c5cff,stroke-width:2px;
+    classDef router fill:#fff0d9,stroke:#e0962e,stroke-width:2px;
+    classDef phase fill:#e0f0ff,stroke:#3b82c4,stroke-width:1px;
+    classDef comms fill:#fff0d9,stroke:#e0962e,stroke-width:1px,stroke-dasharray:4 2;
+    classDef voice fill:#f5eaf5,stroke:#9c5c9c,stroke-width:1px,stroke-dasharray:4 2;
+    classDef personal fill:#e0f0ff,stroke:#3b82c4,stroke-width:1px,stroke-dasharray:4 2;
+    classDef gate fill:#ffe0e0,stroke:#cc4444,stroke-width:2px;
+    class rules constitution
+    class start,orch,cond router
+    class plan,review,verify,debug phase
+    class communicate comms
+    class voice voice
+    class yours,author,state personal
+    class gate gate
+```
+
+- **`deliberate-engineering-rules`**: nine standing rules held across every phase: the human keeps the trigger on irreversible and outward-facing actions, claims are checked against primary evidence before they're endorsed, recommendations arrive as a reasoned pick rather than a bare menu, durable state is checkpointed before compacting, and nothing ships the reader can't resolve. Scoped to software work; quiet on research, prose, and ad-hoc analysis.
+- **`deliberate-engineering-router`** (`:start`): the front door: it classifies the work, names the phase sequence and the ceremony it earns, and routes to the matching selector. It recommends rather than forces; the only hard stop is the human gate on irreversible actions.
+- **`deliberate-engineering-orchestrate`** (`:orchestrate`): the router's across-session sibling, for a program too large for one session. It decomposes the work into units, dispatches each to a fresh worker session, verifies every return against primary evidence in a separate context, and tracks the whole program behind an always-current recovery anchor any fresh session can resume from. Deliberately thin; skip it for work that fits one session.
+- **`deliberate-engineering-conductor`** (`:conductor`): the sibling for an irreversibility cluster (a merge cascade, a deploy chain, a batch of production data mutations, a teardown). It runs the cluster from a contract that re-derives world state before every gate, bounds each irreversible step with a dry-run and a blast-radius limit, and queues each irreversible action for you to trigger. The agent conducts; you pull every trigger (Rule 1).
 - **Four phase selectors + catalogs**: `:plan`, `:review`, `:verify`, `:debug`. Each classifies the work, then pulls only the matching lenses from its catalog (read on demand, never all at once).
-- **`communication-collaboration-selector`** (`:communicate`): cross-cutting, not a phase: when the artifact you're producing is a *communication* (a PR description, a review comment, a stakeholder message, a writeup of alternatives), it classifies by audience and artifact (not the four phase axes) and applies the matching lenses. Consult it from inside any phase.
-- **`deliberate-engineering-voice`**: the read side of an optional personal voice profile. When `~/.claude/deliberate-engineering/voice/` exists, it loads only what the artifact needs (the core, the register for the language, the archetype for the type) and applies it as the surface layer over whatever the communication selector already decided: the lenses decide what the message must accomplish, the profile decides how it sounds. When it fires it names the files it loaded, and it does nothing at all when the directory is absent. See [Sound like yourself](#sound-like-yourself).
+- **`communication-collaboration-selector`** (`:communicate`): cross-cutting, not a phase: when the artifact is a *communication* (a PR description, a review comment, a stakeholder message, a writeup of alternatives), it classifies by audience and artifact and applies the matching lenses. Consult it from inside any phase.
+- **`deliberate-engineering-voice`**: the read side of an optional personal voice profile. It applies as the surface layer over whatever the communication selector decided (the lenses decide what the message must accomplish, the profile decides how it sounds), loads only what the draft needs, names the files it loaded, and does nothing when the profile directory is absent. See [Sound like yourself](#sound-like-yourself).
 - **Make it yours**: a personal override layer lets your own practice take precedence over any shipped lens or rule; `/deliberate-engineering:capture` distills a session into ready-to-paste override blocks. See [Make it yours](#make-it-yours).
-- **`deliberate-engineering-state`**: a consulted-only skill that owns a per-work-unit working-note, so process state (the phase sequence, current phase, chosen rituals, open pendings, and the decisions and why) survives across sessions. The router and Rule 6 delegate to it to rehydrate on resume and checkpoint as work proceeds; it delegates to your tracker or workflow engine when one already holds the work.
+- **`deliberate-engineering-state`**: a consulted-only skill that owns a per-work-unit working-note, so process state (phase sequence, current phase, chosen rituals, open pendings, and the decisions and why) survives across sessions. The router and Rule 6 delegate to it to rehydrate on resume and checkpoint as work proceeds.
 - **For contributors**: `/deliberate-engineering:contribute` and `:promote` grow the *shared* catalog from a local clone of this repo (generalize-at-capture, a blocking leak-audit, append-only numbering, and a stop before publish). This is the author side, distinct from your personal overrides; see [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 <details>

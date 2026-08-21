@@ -4,53 +4,85 @@ This is the map and the manual for `deliberate-engineering`: what the pieces are
 
 ## How it fits together
 
-The plugin is a thin layer of judgment over a workflow engine. Two views: the lifecycle flow (how engineering work moves through it) and the extensibility cycle (how you personalize it and grow the shared catalogs).
+The plugin is a thin layer of judgment over a workflow engine. The README's *What's inside* map shows the whole surface at a glance; this section explains each piece in turn and zooms into the parts a picture serves best: the four deliberate phases, communication and voice, and the extensibility cycle.
 
-### The lifecycle flow
-
-```mermaid
-flowchart TD
-    rules["deliberate-engineering-rules<br/>the always-on constitution"]
-    start(["/deliberate-engineering:start<br/>the front-door router"])
-    orchestrate(["/deliberate-engineering:orchestrate<br/>the across-session sibling: orchestrates units across sessions"])
-    subgraph phases["the four deliberate phases: classify, then select the lenses that fit"]
-        plan["planning-strategy-selector<br/>:plan"]
-        review["review-strategy-selector<br/>:review"]
-        verify["verification-strategy-selector<br/>:verify"]
-        debug["debug-operate-strategy-selector<br/>:debug"]
-    end
-    engine["superpowers / Workflow<br/>the method engine"]
-    comms["communication-collaboration-selector<br/>cross-cutting: consulted by nature, not a phase"]
-    voice["deliberate-engineering-voice<br/>optional surface layer, silent with no profile"]
-
-    rules -.->|posture under every phase| start
-    rules -.->|holds across sessions too| orchestrate
-    start --> phases
-    orchestrate -.->|dispatches each unit to a fresh session,<br/>each running the phases| phases
-    phases -.->|own the judgment,<br/>delegate the method| engine
-    phases -.->|when the artifact is a communication| comms
-    comms -.->|lenses decide substance,<br/>the profile decides surface| voice
-
-    classDef constitution fill:#e8e0ff,stroke:#7c5cff,stroke-width:2px;
-    classDef router fill:#fff0d9,stroke:#e0962e,stroke-width:2px;
-    classDef phase fill:#e0f0ff,stroke:#3b82c4,stroke-width:1px;
-    classDef engine fill:#e6f5e6,stroke:#4a9d4a,stroke-width:2px;
-    classDef comms fill:#fff0d9,stroke:#e0962e,stroke-width:1px,stroke-dasharray:4 2;
-    classDef voice fill:#f5eaf5,stroke:#9c5c9c,stroke-width:1px,stroke-dasharray:4 2;
-    class rules constitution
-    class start,orchestrate router
-    class plan,review,verify,debug phase
-    class engine engine
-    class comms comms
-    class voice voice
-```
+### The front door and the constitution
 
 - **The rules are the constitution.** Nine standing postures held across every phase and never switched off during engineering work. They set *how you behave*; everything below sets *where you start and what you do*.
 - **The router is the front door** (`/deliberate-engineering:start`). It classifies the work, names the phase sequence and the ceremony each phase earns, and routes (recommending, never forcing). The only hard stop is the Rule 1 human gate on an irreversible or outward-facing action.
 - **Orchestration is its across-session sibling** (`/deliberate-engineering:orchestrate`). When the work is a program too large for one session, it runs an orchestration session that decomposes the work into units, dispatches each to a fresh worker session (a background subagent only for a narrow, earned band), verifies each return against primary evidence in a separate context, dispositions it, and tracks the whole program behind an always-current recovery anchor that lets any fresh session resume the orchestrator. The router conducts phases *within* a session; this orchestrates units *across* sessions. It is deliberately thin: it cites the standing rules and reuses the selectors and the state working-note rather than restating them, and it stops at the same Rule 1 gate for every outward action a unit produces.
 - **Conduction is its sibling for irreversibility clusters** (`/deliberate-engineering:conductor`). When irreversibility concentrates into a cluster (a merge cascade, a deploy chain, a batch of production data mutations, a teardown), it runs the cluster from a CONDUCTOR contract: a fixed step order with a gate between each, world state re-derived before every gate, the gate state kept in a per-item station table rather than in memory, each irreversible step bounded by a dry-run and a blast-radius limit before it fires and verified after, and every irreversible trigger handed to the operator (Rule 1). The router conducts phases *within* a session, orchestrate units *across* sessions, and this conducts steps *across an irreversibility cluster*, usually in one. It cites the verification rollout and data-mutation lenses and the planning ordering lenses rather than restating them; a small cascade stays in a tracker queue, and a cluster earns its own cockpit only when the gate graph outgrows one.
+
+### The four phases
+
+```mermaid
+flowchart TD
+    work["a unit of engineering work"]
+    axes["classify by risk, reversibility,<br/>requirement clarity, and reach"]
+    plan["planning-strategy-selector<br/>:plan<br/>what's worth building, and how much process?"]
+    review["review-strategy-selector<br/>:review<br/>which lenses does this change call for?"]
+    verify["verification-strategy-selector<br/>:verify<br/>is it true against reality, and what's the evidence?"]
+    debug["debug-operate-strategy-selector<br/>:debug<br/>a live system misbehaves, no reliable expectation"]
+    catalog[("that phase's catalog<br/>read on demand: only the lenses that fit")]
+    engine["superpowers / Workflow<br/>the method engine"]
+
+    work --> axes
+    axes --> plan
+    axes --> review
+    axes --> verify
+    axes --> debug
+    plan --> catalog
+    review --> catalog
+    verify --> catalog
+    debug --> catalog
+    plan -.->|delegate the method| engine
+    review -.-> engine
+    verify -.-> engine
+    debug -.-> engine
+
+    classDef entry fill:#e8e0ff,stroke:#7c5cff,stroke-width:2px;
+    classDef phase fill:#e0f0ff,stroke:#3b82c4,stroke-width:1px;
+    classDef store fill:#e6f5e6,stroke:#4a9d4a,stroke-width:1px;
+    classDef engine fill:#e6f5e6,stroke:#4a9d4a,stroke-width:2px;
+    class work,axes entry
+    class plan,review,verify,debug phase
+    class catalog store
+    class engine engine
+```
+
 - **The four phases share one pattern:** classify the work, then read only the lenses that fit from that phase's catalog (never the whole catalog at once). Planning decides what to build; review reasons about the artifact; verification confronts reality; debug/operate takes over when a live system misbehaves and no reliable expectation holds.
 - **The method is delegated.** `superpowers` (TDD, systematic debugging, plan execution) and the Workflow tool (orchestration) own *how* the work is carried out. The plugin owns the judgment (which phase, which lenses, how much ceremony) and hands the mechanism to the engine.
+
+### Communication and voice
+
+```mermaid
+flowchart TD
+    phase["any phase: plan, review, verify, debug"]
+    artifact{"is the next artifact a communication?<br/>a PR description, review comment, message, writeup"}
+    comms["communication-collaboration-selector<br/>:communicate<br/>classify by audience and artifact,<br/>apply the matching lenses"]
+    substance["the lenses decide substance:<br/>what the message must accomplish"]
+    voice{"is there a voice profile?<br/>~/.claude/deliberate-engineering/voice/"}
+    silent["ship as-is; the layer stays silent"]
+    profile["deliberate-engineering-voice<br/>surface layer: loads only what the draft needs<br/>(core, register, archetype); names the files it loaded"]
+
+    phase --> artifact
+    artifact -->|no| phase
+    artifact -->|yes, by nature| comms
+    comms --> substance
+    substance --> voice
+    voice -->|no directory| silent
+    voice -->|profile present| profile
+
+    classDef entry fill:#e8e0ff,stroke:#7c5cff,stroke-width:2px;
+    classDef comms fill:#fff0d9,stroke:#e0962e,stroke-width:1px,stroke-dasharray:4 2;
+    classDef voice fill:#f5eaf5,stroke:#9c5c9c,stroke-width:1px,stroke-dasharray:4 2;
+    classDef plain fill:#eef2f7,stroke:#7c8aa0,stroke-width:1px;
+    class phase entry
+    class comms,substance comms
+    class voice,profile voice
+    class silent plain
+```
+
 - **Communication is cross-cutting, not a phase.** When the artifact you're producing is a communication (a PR description, a review comment, a stakeholder message, a writeup of alternatives), the router routes it *by nature* to `communication-collaboration-selector`, which classifies by audience and artifact (its own axes, not the four phase axes) and applies its seven lenses. You consult it from inside whatever phase you're in; it never becomes a fifth phase and adds no fifth axis. Once the lenses have shaped the message, the selector consults `deliberate-engineering-voice`, an optional surface layer that applies your personal voice profile over the result (the lenses decide what the message must accomplish, the profile decides how it sounds) and names the files it loaded; with no profile directory it does nothing and says nothing.
 
 ### The extensibility cycle
