@@ -65,7 +65,7 @@ One file per sample, or one file per stratum with samples separated by this head
 
 ## 2. Analysis dimensions
 
-Run each dimension as its own pass and record what supports every claim, as sample ids from the corpus format above. The pilot ran six of these in parallel, one analysis per dimension. The dimensions:
+Run each dimension as its own pass and record what supports every claim, as sample ids from the corpus format above. Six of these are independent and run in parallel (lexicon, syntax and rhythm, structure, tone, pragmatics, anti-patterns); the remaining two, cross-language and trajectory, are cross-cutting derivations that run over the others rather than in parallel with them. The dimensions:
 
 - **Lexicon.** Words and phrases with a rate meaningfully above baseline, and the ones conspicuously absent. Hedges, intensifiers, discourse markers, connectives, terms of address, profanity or its absence, emoji and reaction habits.
 - **Syntax and rhythm.** Sentence length distribution, meaning the shape rather than the mean: an author who alternates long and very short sentences has the same mean as one who writes uniformly medium ones, and they sound nothing alike. Clause structure, fragments, parentheticals, which punctuation marks appear and at what rate, capitalization habits.

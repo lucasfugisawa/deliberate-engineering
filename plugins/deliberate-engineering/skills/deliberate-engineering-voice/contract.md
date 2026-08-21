@@ -31,7 +31,7 @@ Rename `en.md` to a language you actually write in and `dm.md` to a communicatio
 
 > Copy the `template/` directory from the `deliberate-engineering-voice` skill into `~/.claude/deliberate-engineering/voice/`.
 
-Claude can resolve the installed skill path when you cannot. Either way the files arrive empty of rules, and the profile changes nothing until there are some: an empty `core.md` is an unwritten profile, not a broken one. `bootstrap.md` is the method for filling it, and `template/EXAMPLE-core.md` is a worked `core.md` for an invented persona, there to calibrate density, specificity and citation style. Do not copy that file into your profile; it describes someone who does not exist.
+Claude can resolve the installed skill path when you cannot. Either way the files arrive empty of rules, and the profile changes nothing until there are some: an empty `core.md` is an unwritten profile, not a broken one. `bootstrap.md` is the method for filling it (and `deliberate-engineering-voice-build`, the `/deliberate-engineering:voice-build` command, is the guided flow that runs that method for you), and `template/EXAMPLE-core.md` is a worked `core.md` for an invented persona, there to calibrate density, specificity and citation style. Do not copy that file into your profile; it describes someone who does not exist.
 
 **Expect "no archetype matched", and expect it often at first.** A fresh copy of the template carries a single archetype, so nearly every draft falls back to core plus register and says so. That is the supported state described below, not a fault: each declaration names the artifact type that had no archetype, which is exactly the queue for which one to write next.
 

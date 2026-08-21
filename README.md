@@ -118,7 +118,7 @@ For the full picture (how the pieces fit together and how to drive each flow, in
 
 ## What's inside
 
-A standing-rules skill, a front-door router and its across-session orchestration sibling, four phase selectors backed by four read-on-demand catalogs, one cross-cutting communication selector, a personal override layer, an optional voice profile layer, a process-state working-note, and an author contribution flow, plus ten commands.
+A standing-rules skill, a front-door router and its across-session orchestration sibling, four phase selectors backed by four read-on-demand catalogs, one cross-cutting communication selector, a personal override layer, an optional voice profile layer with a guided path to build one, a process-state working-note, and an author contribution flow, plus eleven commands.
 
 - **`deliberate-engineering-rules`**: nine standing rules held across every phase: keep the human's hand on irreversible and outward-facing actions; stay read-only on systems you don't own; verify claims against primary evidence before endorsing; recommend with a reasoned pick, not a bare menu; keep comments load-bearing; checkpoint durable state before compacting; name the edge of what you know rather than fabricate certainty; treat trust in an output as earned by convergence (when review stabilizes and assumptions hold), not granted on a single pass; and ship nothing the reader can't resolve, keeping internal IDs and spec jargon out of comments, commits, and PR descriptions. Scoped to software work; quiet on research, prose, and ad-hoc analysis.
 - **`deliberate-engineering-router`** (`:start`): the front door: it classifies the work, names the phase sequence and the ceremony it earns, and routes to the matching selector. It recommends rather than forces: the only hard stop is the human gate on irreversible actions.
@@ -174,6 +174,8 @@ Two documents ship with the skill, plus a skeleton to copy:
 
 - **[The contract](plugins/deliberate-engineering/skills/deliberate-engineering-voice/contract.md)**: what the directory may contain, what loads when, how big each file should be, and why archetypes are named for communication types rather than for the tools they travel through. The **[template](plugins/deliberate-engineering/skills/deliberate-engineering-voice/template/)** sits next to it.
 - **[The bootstrap guide](plugins/deliberate-engineering/skills/deliberate-engineering-voice/bootstrap.md)**: how to build one from scratch, covering the corpus of your own writing, the dimensions worth analyzing, the interview that separates deliberate habit from accident, and the blind A/B that tells you whether any of it worked. It carries the pilot's expensive lessons, including the adversarial audit that found half of its own findings overstated.
+
+And you don't have to run that method by hand: **[the guided build path](plugins/deliberate-engineering/skills/deliberate-engineering-voice-build/SKILL.md)**, `deliberate-engineering-voice-build` (the `/deliberate-engineering:voice-build` command), is a resumable flow that runs it for you, from identifying your communication archetypes through collection, analysis, and synthesis to a finished profile. It keeps the two steps that need your judgment in your hands, the interview and the blind A/B, and the corpus and the finished profile stay local, out of every repository.
 
 Nothing personal ships here. The plugin carries the mechanism, the contract, the template and the method; every profile, including mine, is private content on its author's own machine.
 

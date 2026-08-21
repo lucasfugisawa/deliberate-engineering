@@ -2,6 +2,16 @@
 
 All notable changes to the `deliberate-engineering` plugin are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/), and the project aims at [Semantic Versioning](https://semver.org/) (pre-1.0: minor covers features and breaking changes, patch covers fixes).
 
+## [0.8.0] - 2026-08-20
+
+### Added
+- **`deliberate-engineering-voice-build`: a guided on-ramp for building a voice profile.** The build-side counterpart to `deliberate-engineering-voice`: where the voice layer applies a finished profile, this skill and its `/deliberate-engineering:voice-build` command walk the operator from raw samples to a profile satisfying `contract.md`, turning the by-hand `bootstrap.md` method into a resumable, phase-entered flow. It helps the operator identify their own communication archetypes (teaching the concept first, since many people do not know it), collects samples typed by archetype and language, runs the analysis dimensions (six independent passes plus two cross-cutting derivations) and an adversarial recount, drives a findings-based interview and a blind A/B calibration, then synthesizes the profile files. The two steps that must stay human do: the interview (which catches a habit the operator disowns on sight) and the blind pick (recovered mechanically with a no-context blind agent in a fresh session). It delegates the method to `bootstrap.md` rather than restating it, keeps all durable state in a working-directory manifest (out of every repository, with the corpus) with `deliberate-engineering-state` as an optional echo, and keeps the corpus and the finished profile out of every repository by a best-effort, instruction-based check, since the plugin has no hooks to hard-enforce it. Mechanism only: no profile or corpus content ships.
+
+### Changed
+- **The apply-side voice layer now points at the build path.** `deliberate-engineering-voice`'s "silent when absent" guidance and `contract.md`'s "getting started" previously routed a would-be builder to the by-hand `bootstrap.md`; both now name the guided `/deliberate-engineering:voice-build` flow, with `bootstrap.md` remaining the underlying method.
+- **`bootstrap.md` clarifies its analysis-pass count.** It now states that six of its eight dimensions are independent and parallelize while cross-language and trajectory are cross-cutting derivations that run over the others, resolving a "six analyses" versus eight-dimension ambiguity.
+- **README and architecture doc** gain the build path (a "What's inside" entry, a "Sound like yourself" pointer, an architecture note), and the command count rises from ten to eleven.
+
 ## [0.7.4] - 2026-08-20
 
 ### Removed
