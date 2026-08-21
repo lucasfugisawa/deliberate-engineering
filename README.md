@@ -17,7 +17,7 @@ One mental model runs across the whole lifecycle. **Risk, reversibility, require
 | **Verify** | `verification-strategy-selector` | Is it true against reality, and what's my evidence? |
 | **Debug/Operate** | `debug-operate-strategy-selector` | A live system is misbehaving and I have no reliable expectation. Now what? |
 
-Planning decides what to build; review reasons about the artifact; verification confronts reality; and debug/operate takes over when a live system misbehaves and no reliable expectation holds. Two siblings handle scale beyond a single pass, `:orchestrate` across many sessions and `:conductor` across a cluster of irreversible steps, and a cross-cutting communication layer tunes what you write for its reader (see [What's inside](#whats-inside)).
+Planning decides what to build; review reasons about the artifact; verification confronts reality; and debug/operate takes over when a live system misbehaves and no reliable expectation holds. Two siblings handle scale beyond a single pass, `:orchestrate` across many sessions and `:conduct` across a cluster of irreversible steps, and a cross-cutting communication layer tunes what you write for its reader (see [What's inside](#whats-inside)).
 
 ## See it in action
 
@@ -105,7 +105,7 @@ flowchart TD
     subgraph front["Front door"]
         start(["/deliberate-engineering:start<br/>classify the work and route"])
         orch(["/deliberate-engineering:orchestrate<br/>a program across sessions"])
-        cond(["/deliberate-engineering:conductor<br/>an irreversibility cluster"])
+        cond(["/deliberate-engineering:conduct<br/>an irreversibility cluster"])
     end
 
     subgraph phases["The four deliberate phases"]
@@ -153,7 +153,7 @@ flowchart TD
 - **`deliberate-engineering-rules`**: nine standing rules held across every phase: the human keeps the trigger on irreversible and outward-facing actions, claims are checked against primary evidence before they're endorsed, recommendations arrive as a reasoned pick rather than a bare menu, durable state is checkpointed before compacting, and nothing ships the reader can't resolve. Scoped to software work; quiet on research, prose, and ad-hoc analysis.
 - **`deliberate-engineering-router`** (`:start`): the front door: it classifies the work, names the phase sequence and the ceremony it earns, and routes to the matching selector. It recommends rather than forces; the only hard stop is the human gate on irreversible actions.
 - **`deliberate-engineering-orchestrate`** (`:orchestrate`): the router's across-session sibling, for a program too large for one session. It decomposes the work into units, dispatches each to a fresh worker session, verifies every return against primary evidence in a separate context, and tracks the whole program behind an always-current recovery anchor any fresh session can resume from. Deliberately thin; skip it for work that fits one session.
-- **`deliberate-engineering-conductor`** (`:conductor`): the sibling for an irreversibility cluster (a merge cascade, a deploy chain, a batch of production data mutations, a teardown). It runs the cluster from a contract that re-derives world state before every gate, bounds each irreversible step with a dry-run and a blast-radius limit, and queues each irreversible action for you to trigger. The agent conducts; you pull every trigger (Rule 1).
+- **`deliberate-engineering-conduct`** (`:conduct`): the sibling for an irreversibility cluster (a merge cascade, a deploy chain, a batch of production data mutations, a teardown). It runs the cluster from a contract that re-derives world state before every gate, bounds each irreversible step with a dry-run and a blast-radius limit, and queues each irreversible action for you to trigger. The agent conducts; you pull every trigger (Rule 1).
 - **Four phase selectors + catalogs**: `:plan`, `:review`, `:verify`, `:debug`. Each classifies the work, then pulls only the matching lenses from its catalog (read on demand, never all at once).
 - **`communication-collaboration-selector`** (`:communicate`): cross-cutting, not a phase: when the artifact is a *communication* (a PR description, a review comment, a stakeholder message, a writeup of alternatives), it classifies by audience and artifact and applies the matching lenses. Consult it from inside any phase.
 - **`deliberate-engineering-voice`**: the read side of an optional personal voice profile. It applies as the surface layer over whatever the communication selector decided (the lenses decide what the message must accomplish, the profile decides how it sounds), loads only what the draft needs, names the files it loaded, and does nothing when the profile directory is absent. Build a profile with the guided **`:voice-build`** flow. See [Sound like yourself](#sound-like-yourself).

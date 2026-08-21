@@ -2,6 +2,13 @@
 
 All notable changes to the `deliberate-engineering` plugin are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/), and the project aims at [Semantic Versioning](https://semver.org/) (pre-1.0: minor covers features and breaking changes, patch covers fixes).
 
+## [0.10.0] - 2026-08-21
+
+### Changed
+- **Renamed the `conductor` skill and command to `conduct`.** The skill `deliberate-engineering-conductor` is now `deliberate-engineering-conduct`, and the command `/deliberate-engineering:conductor` is now `/deliberate-engineering:conduct`. This restores consistency with the verb-named sibling commands (`start`, `plan`, `review`, `verify`, `debug`, `orchestrate`, `capture`, `contribute`, `promote`): `conductor` was the only noun. The clarity stays in the description, which still leads with "Conduct an irreversibility cluster (a merge cascade, a deploy chain, a batch of production data mutations, a teardown)…", rather than in a longer name. The conduction *metaphor* is unchanged: "the agent conducts", the CONDUCTOR contract, and the conductor role language inside the skill stay as they were; only the identifier and the slash command changed. The skill's H1 title is now "Deliberate Engineering Conduction", parallel to "Deliberate Engineering Orchestration".
+
+  **Breaking, and intentionally without a compatibility alias.** `/deliberate-engineering:conductor` no longer exists; use `/deliberate-engineering:conduct`. The 0.9.0 name had no known consumers, so no deprecated alias ships. **Migration:** if you referenced `:conductor` anywhere, replace it with `:conduct`; the skill's behavior and contract are otherwise identical.
+
 ## [0.9.0] - 2026-08-20
 
 ### Added

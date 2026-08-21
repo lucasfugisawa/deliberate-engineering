@@ -1,9 +1,9 @@
 ---
-name: deliberate-engineering-conductor
+name: deliberate-engineering-conduct
 description: "Use when a cluster of irreversible steps must fire in a fixed, gated order and you are conducting it, usually within one session: a merge cascade, a deploy chain, a batch of production data mutations, a teardown. \"Irreversible\" is meant in Rule 1's sense, outward-facing and costly to undo, so a merge cascade qualifies even when git can technically revert it; the contract's point-of-no-return field marks where rollback becomes truly impossible. It provides the CONDUCTOR contract, a runbook that re-derives world state before every gate, keeps the gate state in a per-item station table rather than in memory, bounds each irreversible step with a dry-run and a blast-radius limit before it fires and a post-state read after, and queues each irreversible action for the operator to execute. It is a sibling of deliberate-engineering-orchestrate, which dispatches units of work across sessions, whereas this conducts ordered steps in a cluster; the router routes to it when a rollout concentrates into one. NOT for a single irreversible step, where Rule 1's human gate already suffices; NOT for dispatching a program of work across sessions, which is orchestrate. The agent conducts; the operator pulls every irreversible trigger."
 ---
 
-# Deliberate Engineering Conductor
+# Deliberate Engineering Conduction
 
 The deliberate layer of *running an irreversibility cluster without losing the thread*. When irreversibility concentrates, a merge cascade, a deploy chain, a batch of production data mutations, a teardown, the risk is no longer "which session runs this" but "these steps must fire in a fixed order, each gated behind a verification of the last, against a plan that was frozen and re-verified, with the operator holding every irreversible trigger." This skill gives that its contract: a single conductor doc that is the live cockpit for the cluster until it closes.
 
