@@ -1,3 +1,5 @@
+[deliberate-engineering](../README.md) › **Architecture & usage**
+
 # Architecture & usage
 
 This is the map and the manual for `deliberate-engineering`: what the pieces are, how they fit together, and how to drive each flow. It is written for two readers: the human adopting the plugin, and the agent running it (which reasons better from *what you're trying to do* than from a list of parts). For why the plugin is scoped the way it is, see the README's *Scope & boundaries*; for install and uninstall, see the [README](../README.md).
@@ -127,19 +129,12 @@ flowchart LR
 
 ## How to use it
 
-Three things you'll want to do, by intent.
+The step-by-step walkthroughs live in the **[guides](guides/README.md)**; start from the by-situation index there. The short map, by intent:
 
-### Use: drive the engineering flow
-
-You arrived with work to do. The front door is `/deliberate-engineering:start`: describe the work and it classifies it, names the phases it deserves and how much ceremony each earns, and routes you. When you already know where you are, call a phase directly:
-
-- `/deliberate-engineering:plan`: decide what's worth building and how much process it deserves, before code exists.
-- `/deliberate-engineering:review`: classify a change, then apply the review lenses it actually calls for.
-- `/deliberate-engineering:verify`: establish that something is true against reality, with evidence, not just plausible on paper.
-- `/deliberate-engineering:debug`: diagnose a live system that's misbehaving when no reliable expectation holds.
-- `/deliberate-engineering:communicate`: cross-cutting, not a phase: when the next artifact is a communication (a PR description, a review comment, a stakeholder message, a writeup of alternatives), classify it by audience and artifact and apply the matching lenses. Consult it from inside any phase.
-- `/deliberate-engineering:orchestrate`: not a phase either: when the work is a program too large for one session, run it as an orchestration session that decomposes the work into units, dispatches each to a fresh worker session, verifies what returns against primary evidence, and tracks it all in one place. The across-session sibling of `:start`; skip it for work that fits one session.
-- `/deliberate-engineering:conduct`: not a phase either: when a cluster of irreversible steps must fire in a fixed, gated order (a merge cascade, a deploy chain, a batch of production data mutations, a teardown), conduct it from a re-derived, gated runbook where you pull every irreversible trigger. A sibling of `:orchestrate` (orchestrate dispatches units across sessions; this conducts ordered steps across a cluster); skip it for a single step and for a program dispatched across sessions.
+- **Use** — [The deliberate flow](guides/deliberate-flow.md): the everyday journey through `/deliberate-engineering:start`, the four phases (`:plan`, `:review`, `:verify`, `:debug`), and the cross-cutting `:communicate`, with a per-command reference table.
+- **Scale** — [Orchestrate](guides/orchestrate.md) runs a program too large for one session as dispatched units with one authoritative tracker; [Conduct](guides/conduct.md) runs a cluster of irreversible steps in a fixed, gated order where you pull every trigger.
+- **Adapt** — [Capture](guides/capture.md) turns a session's corrections into your personal overrides; [Voice-build](guides/voice-build.md) builds your voice profile from your own writing. The formats they rely on are in the sections below.
+- **Contribute** — the author flow (a lens for everyone) lives in [CONTRIBUTING.md](../CONTRIBUTING.md).
 
 One mental model runs across all of them: risk, reversibility, requirement clarity, and reach decide the depth, not line count. The plugin recommends a depth and a set of lenses *with its reasoning*, and you stay in control. Nothing is forced except one thing: it stops at a human gate before any irreversible or outward-facing action (a merge, a deploy, a push, a posted message). The nine standing rules hold underneath every phase the whole time.
 
@@ -147,7 +142,7 @@ One mental model runs across all of them: risk, reversibility, requirement clari
 
 The plugin is opinionated, and it's meant to become yours. A personal file at `~/.claude/deliberate-engineering/overrides.md` takes precedence over the shipped content, addressed by stable identifiers: `review #N`, `verify #N`, `planning #N`, `debug #N`, or `rule N`. Three operations: `disable` turns a lens or rule off; `modify` appends your annotation alongside the shipped text; `add` defines your own. The agent always declares when an override changed what it did (nothing happens silently), and you can even loosen a safety rule, which it honors while calling out the raised autonomy.
 
-You can write that file by hand, or let the agent help: run `/deliberate-engineering:capture` (or just ask) and it distills the session you just had (the lenses you skipped or corrected, the practices the catalog lacks) into ready-to-paste blocks. On demand only, append-only, written only on your approval. This grows *your* file; it is the adopter's side, distinct from the author tools below.
+You can write that file by hand, or let the agent help: run `/deliberate-engineering:capture` (or just ask) and it distills the session you just had (the lenses you skipped or corrected, the practices the catalog lacks) into ready-to-paste blocks. On demand only, append-only, written only on your approval. This grows *your* file; it is the adopter's side, distinct from the author tools below. The walkthrough is the [capture guide](guides/capture.md).
 
 **Example override file:**
 
@@ -165,7 +160,7 @@ You can write that file by hand, or let the agent help: run `/deliberate-enginee
 **Apply:** Review the diff for any breaking changes (removed endpoints, changed request/response shapes, deleted fields). If a breaking change is present and the version is not a major bump, flag it. Non-breaking additions (new optional fields, new endpoints) are fine.
 ```
 
-Overrides are one of two personal layers under `~/.claude/deliberate-engineering/`, both opt-in, both absent by default. The override file changes *what the agent does*; the voice profile changes *how what it writes sounds*. The profile is a directory at `~/.claude/deliberate-engineering/voice/`: `core.md` for what's true of your writing everywhere, `registers/<lang>.md` for what changes with the language, `archetypes/<type>.md` for what changes with the kind of communication (a DM is not a design doc). `deliberate-engineering-voice` reads it after the communication lenses have shaped the message and applies it as the surface layer, loading at most three files per draft (the core, the matching register, the matching archetype) and falling back to two, declared, when one has no match. Precedence runs explicit instruction > voice profile > default style; where a lens and the profile genuinely conflict, the lens wins on substance and the profile wins on surface. It names the files it loaded when it fires, it never licenses breaking a standing rule (the Rule 1 gate and the Rule 9 resolvability bar hold regardless of how you write), and it does nothing and says nothing when the directory is absent. The plugin ships the mechanism, the contract, a template, a bootstrap method, and a guided build path (`deliberate-engineering-voice-build`, the `/deliberate-engineering:voice-build` command, which runs that method from collection to a finished profile and keeps the interview and the blind A/B human); no profile content ships, and the directory stays out of every repository. The README's *Sound like yourself* section is the overview; `contract.md` next to the skill is the full layout.
+Overrides are one of two personal layers under `~/.claude/deliberate-engineering/`, both opt-in, both absent by default. The override file changes *what the agent does*; the voice profile changes *how what it writes sounds*. The profile is a directory at `~/.claude/deliberate-engineering/voice/`: `core.md` for what's true of your writing everywhere, `registers/<lang>.md` for what changes with the language, `archetypes/<type>.md` for what changes with the kind of communication (a DM is not a design doc). `deliberate-engineering-voice` reads it after the communication lenses have shaped the message and applies it as the surface layer, loading at most three files per draft (the core, the matching register, the matching archetype) and falling back to two, declared, when one has no match. Precedence runs explicit instruction > voice profile > default style; where a lens and the profile genuinely conflict, the lens wins on substance and the profile wins on surface. It names the files it loaded when it fires, it never licenses breaking a standing rule (the Rule 1 gate and the Rule 9 resolvability bar hold regardless of how you write), and it does nothing and says nothing when the directory is absent. The plugin ships the mechanism, the contract, a template, a bootstrap method, and a guided build path (`deliberate-engineering-voice-build`, the `/deliberate-engineering:voice-build` command, which runs that method from collection to a finished profile and keeps the interview and the blind A/B human); no profile content ships, and the directory stays out of every repository. The README's *Sound like yourself* section is the overview; `contract.md` next to the skill is the full layout; the walkthrough is the [voice-build guide](guides/voice-build.md).
 
 ### Contribute: ship judgment to everyone
 
@@ -178,6 +173,7 @@ Both tools edit only the working tree and always stop before commit, PR, or push
 
 ### Where to go next
 
+- The step-by-step walkthroughs, by situation: the [guides index](guides/README.md).
 - Install, uninstall, and the optional always-on recipe live in the [README](../README.md).
 - The exact override-file format and an example are in *Adapt: make it think like you* above.
 - Why the plugin stays horizontal and where it stops is the README's *Scope & boundaries* section.

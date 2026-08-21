@@ -92,7 +92,12 @@ The nine rules are the small always-on core; everything else, the lenses and cat
 
 Not sure where to begin? Run `/deliberate-engineering:start` and describe the work: it's the front door. It classifies the work, names the phases and the ceremony they earn, and routes you to the right phase. When you already know where you are, call a phase directly: `:plan`, `:review`, `:verify`, `:debug`.
 
-For the full picture (how the pieces fit together and how to drive each flow, including personalizing and contributing), see **[Architecture & usage](docs/architecture-and-usage.md)**.
+### Documentation map
+
+- **[Guides](docs/guides/README.md)**: step-by-step walkthroughs, indexed by situation — [the deliberate flow](docs/guides/deliberate-flow.md) (the everyday journey), [orchestrate](docs/guides/orchestrate.md) (a program across sessions), [conduct](docs/guides/conduct.md) (an irreversibility cluster), [capture](docs/guides/capture.md) (your overrides), [voice-build](docs/guides/voice-build.md) (your voice profile).
+- **[Architecture & usage](docs/architecture-and-usage.md)**: the concepts and how the pieces fit together, with diagrams.
+- **[CONTRIBUTING](CONTRIBUTING.md)**: the author flow, contributing a lens to the shared catalog.
+- **[CHANGELOG](CHANGELOG.md)**: what shipped, version by version.
 
 ## What's inside
 
@@ -152,8 +157,8 @@ flowchart TD
 
 - **`deliberate-engineering-rules`**: nine standing rules held across every phase: the human keeps the trigger on irreversible and outward-facing actions, claims are checked against primary evidence before they're endorsed, recommendations arrive as a reasoned pick rather than a bare menu, durable state is checkpointed before compacting, and nothing ships the reader can't resolve. Scoped to software work; quiet on research, prose, and ad-hoc analysis.
 - **`deliberate-engineering-router`** (`:start`): the front door: it classifies the work, names the phase sequence and the ceremony it earns, and routes to the matching selector. It recommends rather than forces; the only hard stop is the human gate on irreversible actions.
-- **`deliberate-engineering-orchestrate`** (`:orchestrate`): the router's across-session sibling, for a program too large for one session. It decomposes the work into units, dispatches each to a fresh worker session, verifies every return against primary evidence in a separate context, and tracks the whole program behind an always-current recovery anchor any fresh session can resume from. Deliberately thin; skip it for work that fits one session.
-- **`deliberate-engineering-conduct`** (`:conduct`): the sibling for an irreversibility cluster (a merge cascade, a deploy chain, a batch of production data mutations, a teardown). It runs the cluster from a contract that re-derives world state before every gate, bounds each irreversible step with a dry-run and a blast-radius limit, and queues each irreversible action for you to trigger. The agent conducts; you pull every trigger (Rule 1).
+- **`deliberate-engineering-orchestrate`** (`:orchestrate`): the router's across-session sibling, for a program too large for one session. It decomposes the work into units, dispatches each to a fresh worker session, verifies every return against primary evidence in a separate context, and tracks the whole program behind an always-current recovery anchor any fresh session can resume from. Deliberately thin; skip it for work that fits one session. The walkthrough is the [orchestrate guide](docs/guides/orchestrate.md).
+- **`deliberate-engineering-conduct`** (`:conduct`): the sibling for an irreversibility cluster (a merge cascade, a deploy chain, a batch of production data mutations, a teardown). It runs the cluster from a contract that re-derives world state before every gate, bounds each irreversible step with a dry-run and a blast-radius limit, and queues each irreversible action for you to trigger. The agent conducts; you pull every trigger (Rule 1). The walkthrough is the [conduct guide](docs/guides/conduct.md).
 - **Four phase selectors + catalogs**: `:plan`, `:review`, `:verify`, `:debug`. Each classifies the work, then pulls only the matching lenses from its catalog (read on demand, never all at once).
 - **`communication-collaboration-selector`** (`:communicate`): cross-cutting, not a phase: when the artifact is a *communication* (a PR description, a review comment, a stakeholder message, a writeup of alternatives), it classifies by audience and artifact and applies the matching lenses. Consult it from inside any phase.
 - **`deliberate-engineering-voice`**: the read side of an optional personal voice profile. It applies as the surface layer over whatever the communication selector decided (the lenses decide what the message must accomplish, the profile decides how it sounds), loads only what the draft needs, names the files it loaded, and does nothing when the profile directory is absent. Build a profile with the guided **`:voice-build`** flow. See [Sound like yourself](#sound-like-yourself).
@@ -177,7 +182,7 @@ The plugin is opinionated, and it's meant to become yours. A personal override f
 
 You don't have to write it by hand: `/deliberate-engineering:capture` (or just ask) distills the session you just had into ready-to-paste blocks, appended only on your approval.
 
-For the exact override format, an example, and the adopter and author flows end to end, see **[Architecture & usage](docs/architecture-and-usage.md)**.
+The walkthrough is the **[capture guide](docs/guides/capture.md)**; the exact override format and an example are in [Architecture & usage](docs/architecture-and-usage.md).
 
 ## Sound like yourself
 
@@ -185,12 +190,7 @@ The lenses tune a message to its reader. What they can't do is make it sound lik
 
 The profile is a small directory of your own writing patterns, not a prompt. It shapes only the *surface*, how the message sounds, never what a lens decided the message must accomplish; where the two meet, the lens wins on substance and the profile on voice.
 
-Two documents ship with the skill, plus a skeleton to copy:
-
-- **[The contract](plugins/deliberate-engineering/skills/deliberate-engineering-voice/contract.md)**: what the directory may contain, what loads when, how big each file should be, and why archetypes are named for communication types rather than for the tools they travel through. The **[template](plugins/deliberate-engineering/skills/deliberate-engineering-voice/template/)** sits next to it.
-- **[The bootstrap guide](plugins/deliberate-engineering/skills/deliberate-engineering-voice/bootstrap.md)**: how to build one from scratch, covering the corpus of your own writing, the dimensions worth analyzing, the interview that separates deliberate habit from accident, and the blind A/B that tells you whether any of it worked. It carries the pilot's expensive lessons, including the adversarial audit that found half of its own findings overstated.
-
-And you don't have to run that method by hand: **[the guided build path](plugins/deliberate-engineering/skills/deliberate-engineering-voice-build/SKILL.md)**, `deliberate-engineering-voice-build` (the `/deliberate-engineering:voice-build` command), is a resumable flow that runs it for you, from identifying your communication archetypes through collection, analysis, and synthesis to a finished profile. It keeps the two steps that need your judgment in your hands, the interview and the blind A/B, and the corpus and the finished profile stay local, out of every repository.
+To build one, follow the **[voice-build guide](docs/guides/voice-build.md)**: `/deliberate-engineering:voice-build` is a guided, resumable flow that takes you from identifying your communication archetypes through collection, analysis, and synthesis to a finished profile, keeping the two steps that need your judgment (the style interview and the blind A/B) in your hands. The full format lives in the skill's [contract](plugins/deliberate-engineering/skills/deliberate-engineering-voice/contract.md); the underlying method in its [bootstrap guide](plugins/deliberate-engineering/skills/deliberate-engineering-voice/bootstrap.md).
 
 Nothing personal ships here. The plugin carries the mechanism, the contract, the template and the method; every profile, including mine, is private content on its author's own machine.
 
