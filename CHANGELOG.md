@@ -2,6 +2,15 @@
 
 All notable changes to the `deliberate-engineering` plugin are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/), and the project aims at [Semantic Versioning](https://semver.org/) (pre-1.0: minor covers features and breaking changes, patch covers fixes).
 
+## [0.9.0] - 2026-08-20
+
+### Added
+- **`deliberate-engineering-conductor`: a conductor for irreversibility clusters.** The sibling of the orchestrator for irreversibility clusters (orchestrate dispatches units across sessions; this conducts ordered steps across a cluster): a thin skill plus a `/deliberate-engineering:conductor` command and a CONDUCTOR contract in `templates.md`, for conducting a cluster of irreversible steps that must fire in a fixed, gated order (a merge cascade, a deploy chain, a batch of production data mutations, a teardown). The contract re-derives world state before every gate, keeps the gate state in a per-item station table rather than in memory (in the field, the one gate kept only as a reminder was the one that slipped), names a keystone and a distinct point of no return, bounds each irreversible step with a dry-run and a blast-radius limit before it fires and a post-state read after, carries a verified recovery path and an emergency abort distinct from a planned hold, and queues each irreversible action for the operator to trigger (Rule 1). It is a sibling, not part of orchestrate: the archetypal conduction is a single session, which orchestrate deliberately anti-fires on. It cites the verification rollout and data-mutation lenses (#8, #11, #13-15, #17, #18, #20, #21, #23, #24) and the planning ordering and blast-radius lenses (#7, #12, #13) rather than restating them, and adds an anti-proliferation clause (a conductor per altitude of conducting, never per artifact; phases, units, and steps close the family). Judgment contract only: no scaffolding, directory taxonomy, or schedule/risk-register machinery ships.
+- **The baton-pass between orchestrate and the conductor.** `orchestrate` gains a line handing a concentrated irreversibility cluster to the conductor (the tracker goes quiet and holds a pointer, and takes the baton back at closure; one live cockpit at a time), and the router's honesty ruler gains the conductor as a real destination for a rollout that has become an irreversibility cluster.
+
+### Changed
+- **README and architecture doc** gain the conductor as the third conducting sibling (a "What's inside" entry, an architecture note, a command-list entry), and the command count rises from eleven to twelve.
+
 ## [0.8.1] - 2026-08-20
 
 ### Fixed
