@@ -62,7 +62,7 @@ The order of application: the selector's lenses decide what the message must acc
 
 If `~/.claude/deliberate-engineering/voice/` does not exist, this skill does nothing and says nothing. Personalization is opt-in, exactly as override is.
 
-An absent profile is not an error and mid-draft is not the moment to build one. If the operator asks how, `bootstrap.md` in this directory is the method and `template/` is the skeleton.
+An absent profile is not an error and mid-draft is not the moment to build one. If the operator asks how, the guided path is `deliberate-engineering-voice-build` (the `/deliberate-engineering:voice-build` command), which walks the build and resumes across sessions; `bootstrap.md` in this directory is the underlying method it runs, and `template/` is the skeleton.
 
 ## The declaration protocol
 
