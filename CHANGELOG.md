@@ -2,6 +2,12 @@
 
 All notable changes to the `deliberate-engineering` plugin are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/), and the project aims at [Semantic Versioning](https://semver.org/) (pre-1.0: minor covers features and breaking changes, patch covers fixes).
 
+## [0.8.1] - 2026-08-20
+
+### Fixed
+- **`deliberate-engineering-state` under-fired because its write was a skippable recommendation.** A persistence discipline whose trigger is "remember to consult it" is inert in practice: it produced three notes in about two months, and never during the project it would have served most, while an event-updated tracker absorbed the bulk of a comparable program's commits. The state write is now a definite step tied to the checkpoint events the agent can see (a phase transition, a dispatch or disposition, a pre-compaction checkpoint, and session end), in the three homes that own the single-session path (Rule 6, the router's live note, and the state skill), bringing it up to the event-bound standard `deliberate-engineering-orchestrate` already meets. The firmness attaches only to the write: recommend-never-force still governs how much process a change earns and which lenses it calls for, never whether you keep your place across the context boundary. No new mechanism, no hook, no state machine; the note format and the delegate-to-tracker stance are unchanged.
+- **The `deliberate-engineering-state` first-run location probe.** It resolved its write location with `git check-ignore .deliberate`, which exits 1 for a not-yet-created directory even when `.deliberate/` is gitignored, so the very first write of a work unit wrongly fell back to the global directory. It now probes a child path (`git check-ignore .deliberate/probe`), which reports correctly.
+
 ## [0.8.0] - 2026-08-20
 
 ### Added
