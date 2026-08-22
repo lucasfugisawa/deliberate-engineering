@@ -90,7 +90,7 @@ It sits *before* code exists. Where review judges an artifact and verification c
 
 - **How it works:** Scale process to the actual risk and reach of the change. Complex/risky/irreversible work earns a full spec and repeated deep review; a trivial config or schema-only fix may skip the spec and lean on CI. Calibrate to who *really* consumes the change, not to how the spec is literally worded.
 - **Objective:** Avoid both over-processing the trivial and under-processing the dangerous.
-- **When most valuable:** At the start of every task, to set the planning depth. **The ruler is risk and reach, not size.**
+- **When most valuable:** At the start of every task, to set the ceremony band. **The ruler is risk and reach, not size.**
 
 ---
 

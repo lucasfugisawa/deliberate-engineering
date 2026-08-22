@@ -1,6 +1,6 @@
 ---
 name: verification-strategy-selector
-description: "Use when you need to establish that something is actually true in reality, not just plausible on paper: verifying a claim, number, or assumption against primary evidence; getting a change ready to merge; promoting across environments; confirming production behavior after a deploy; or mutating production data safely. Classifies what's being verified and how irreversible being wrong is, then selects the right strategies from the catalog. Distinct from code review: review asks 'does this look correct?', verification asks 'is it correct, and what's my evidence?'"
+description: "Use when you need to establish that something is actually true in reality, not just plausible on paper: verifying a claim, number, or assumption against primary evidence; getting a change ready to merge; promoting across environments; confirming production behavior after a deploy; or mutating production data safely. Classifies what's being verified and how irreversible being wrong is, then selects the right strategies from the catalog. Distinct from code review: review asks 'does this look correct?', verification asks 'is it correct, and what's my evidence?' On a multi-phase or multi-session work unit it writes a short live note through `deliberate-engineering-state`, which lands in the repository under `.deliberate/state/` (and may add that path to `.gitignore`) or under `~/.claude/` when it cannot."
 ---
 
 # Verification Strategy Selector
@@ -36,7 +36,7 @@ Verification has a cost and a symmetric failure mode to over-review: running pro
 
 **The route-selector** (*nominal*: a kind, not a degree; it picks which catalog Part you open, and carries no intensity):
 
-- **Evidence type**: Is this an *epistemic* claim (a number, a behavior assertion, an assumption about the data/schema)? A *pre-merge* readiness question? A *post-deploy* reality check? An *operational mutation*? Each maps to a catalog part (A / B / C / D / E).
+- **Evidence type**: Is this an *epistemic* claim (a number, a behavior assertion, an assumption about the data/schema)? A *pre-merge* readiness question? A question of whether this is safe to *promote across an environment boundary*? A *post-deploy* reality check? An *operational mutation*? Each maps to a catalog part in that order (A / B / C / D / E).
 
 **The three depth axes** (*ordinal*, each runs low→high; together they set how deep you go inside that Part):
 
@@ -46,7 +46,7 @@ Verification has a cost and a symmetric failure mode to over-review: running pro
 
 **The ruler is the cost of a wrong "it's fine," not the size of the change.** That ruler is what this selector shares with the rest of the plugin; the classification above is verification's own and deliberately not the router's four routing axes, because a claim reaches this skill *with* its expectation already stated, so requirement clarity is settled before verification begins. A router classification does not stand in for this one.
 
-## Step 2: Map to a depth band
+## Step 2: Map to a ceremony band
 
 The two classifications are **orthogonal**: the *evidence type* route-selector picks **which catalog Part(s)** apply; *irreversibility* (depth axis 1) picks **how deep within them** you go. Pick the Part by what you're verifying, then set the depth by the cost of being wrong.
 
@@ -66,7 +66,9 @@ Open only the parts matching your classification:
 
 **Worked example (confirming a shipped backfill did what was intended):** Post-deploy + operated on real data; high irreversibility. Selected: **16** (query production for the actual post-state, capture real rows), **17** (each query annotated with its expected result: "should now be 0 remaining"), **18** (verify the intended rows changed AND nothing unrelated did, watching for named side effects), **19** (re-run as volume accumulates; absence of expected updates is itself a flag), and because it mutated data, confirm the **20** audit trail reconciles. Closed with **5** (independent second pass). Skipped Part B/C: already merged and promoted; logged as not applicable.
 
-**Operator overrides.** Before applying the selected lenses, consult `deliberate-engineering-overrides`: if any selected lens has an operator override (disable / modify / add), honor it and declare the deviation in the Output.
+**Entering here directly.** These lenses are the same whether you arrived through `/deliberate-engineering:start` or called this phase yourself, but four things the router would have carried do not come with a direct call, so carry them here. The nine standing rules in `deliberate-engineering-rules` hold regardless, including the human gate on anything irreversible or outward-facing. Write your place at each checkpoint through `deliberate-engineering-state` (Rule 6), so a compaction or a new session resumes from what happened rather than from recall. Re-classify out loud if the work turns out heavier or lighter than it looked, and say what moved. And when the next thing you produce is a communication rather than code, consult `communication-collaboration-selector` before writing it.
+
+**Operator overrides.** Before applying the selected lenses, consult `deliberate-engineering-overrides`: honor any override on a lens you selected (disable / modify), and ask it for any operator-authored `add:` entry for this catalog, which carries no shipped number and so is invisible to a lookup keyed on your selection. Declare every deviation in the Output.
 
 ## Step 4: Compose the verification
 
@@ -90,4 +92,4 @@ When the **`debug-operate-strategy-selector`** is co-active, the order is the ot
 
 ## Output
 
-Report, briefly: the classification (evidence type, irreversibility, environment, stake), the depth band, the strategies selected (by number) and why, anything deliberately skipped and why, and the verification result: each finding tied to its concrete evidence (the query, the run, the captured payload), with expectations stated before actuals.
+Report, briefly: the classification (evidence type, irreversibility, environment, stake), the ceremony band, the strategies selected (by number) and why, anything deliberately skipped and why, and the verification result: each finding tied to its concrete evidence (the query, the run, the captured payload), with expectations stated before actuals.

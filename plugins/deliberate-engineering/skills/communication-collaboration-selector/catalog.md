@@ -6,7 +6,7 @@ Lens **numbers are stable identifiers, not reading order**: a lens keeps its num
 
 ## Master Principle
 
-Communication is engineering *outward*: the same deliberate judgment applied to code applies to how the work is explained, reviewed, and handed off. The ruler is **who reads it and what artifact it is**, not how much there is to say. Match the message to the reader and the artifact; say less, with more cohesion; expose the reasoning so it can be challenged.
+Communication is engineering *outward*: the same deliberate judgment applied to code applies to how the work is explained, reviewed, and handed off. What selects here is **who reads it and what artifact it is**, not how much there is to say; the plugin's ruler still sets the depth, through the weight of the subject the artifact carries. Match the message to the reader and the artifact; say less, with more cohesion; expose the reasoning so it can be challenged.
 
 ---
 
@@ -43,7 +43,7 @@ Communication is engineering *outward*: the same deliberate judgment applied to 
 - **How it works:** Reference only what the reader of *this artifact* can resolve unaided: a ticket they can open, or the thing itself described in a line. Internal planning IDs ("item 1.3", "REQ-7", "phase 2"), pointers to a spec or design doc they cannot open, and project-internal codenames or jargon all fail the test. Apply the test to the reader, not to the org chart: a teammate with identical access still cannot resolve a number that lives only in your spec.
 - **Objective:** The reader can follow every reference and every term without privileged access or a private glossary.
 - **When most valuable:** Any communication whose reader lacks your planning context, which includes most PRs, not only what crosses a team or org boundary.
-- **Tags:** Artifacts: any outward communication. Audiences: all. The ruler is resolvability by the reader, not their distance from the team. Kin: Rule 9 governs the same discipline inside shipped code artifacts (code comments, commit messages, PR descriptions); this lens is the broader case: any outward communication.
+- **Tags:** Artifacts: any outward communication. Audiences: all. What decides this lens is resolvability by the reader, not their distance from the team. Kin: Rule 9 governs the same discipline inside shipped code artifacts (code comments, commit messages, PR descriptions); this lens is the broader case: any outward communication.
 
 ### 6. Present alternatives with the reasoning exposed
 

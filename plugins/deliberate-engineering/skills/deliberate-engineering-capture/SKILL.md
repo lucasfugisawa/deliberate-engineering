@@ -1,6 +1,6 @@
 ---
 name: deliberate-engineering-capture
-description: "Use on demand to capture what you did this session into durable overrides. Observes the full session transcript on disk (operator-typed messages only, mined via subagent fan-out) for deviations (you corrected/skipped a catalog lens or rule), patterns (recurring practice the catalog lacks), and calibration adjustments (recurring ceremony heavier/lighter than the default for a class of work), discusses candidates, and on approval appends disable/modify/add entries to ~/.claude/deliberate-engineering/overrides.md. This is the adopter's write side: it grows YOUR personal override file. It is not the author contribution tools (contribute/promote), which propose lenses for the shared catalog. Stays silent unless invoked."
+description: "Use on demand to capture what you did this session into durable overrides. Observes the full session transcript on disk (operator-typed messages only, extracted to a temporary working directory that it does not delete, then mined via subagent fan-out) for deviations (you corrected/skipped a catalog lens or rule), patterns (recurring practice the catalog lacks), and calibration adjustments (recurring ceremony heavier/lighter than the default for a class of work), discusses candidates, and on approval appends disable/modify/add entries to ~/.claude/deliberate-engineering/overrides.md. This is the adopter's write side: it grows YOUR personal override file. It is not the author contribution tools (contribute/promote), which propose lenses for the shared catalog. Stays silent unless invoked."
 ---
 
 # Deliberate Engineering Capture
@@ -90,9 +90,9 @@ Collect every subagent's returned candidates and **deduplicate** overlapping sig
 
 For each observed signal, identify the addressable target and the operation:
 
-- **Targets** use the canonical form: `review #N`, `verify #N`, `planning #N`, `debug #N`, `Rule N` for specific lenses/rules; or `add: <catalog>` for operator-authored strategies where catalog is `review`, `planning`, `verify`, `debug`, or `rules`.
+- **Targets** use the canonical form: `review #N`, `verify #N`, `planning #N`, `debug #N`, `communication #N`, `Rule N` for specific lenses/rules; or `add: <catalog>` for operator-authored strategies where catalog is `review`, `planning`, `verify`, `debug`, `communication`, or `rules`.
 - **Operations** are `disable`, `modify`, or `add`.
-- **A calibration adjustment** maps to `planning #10: modify` (annotate the recurring ceremony adjustment for that class of work) or `add: rules`. It never targets the router's classification axes (clarity / risk / reversibility / reach): those are the plugin's architecture, not overridable content; the override rides on the *ceremony lens*, not the classifier.
+- **A calibration adjustment** maps to `planning #10: modify` (annotate the recurring ceremony adjustment for that class of work) or `add: rules`. It never targets the router's classification axes (clarity / risk / reversibility / reach) **or its genre to phase-sequence mapping**: both are the plugin's architecture, not overridable content, so an override may make a phase lighter but never removes one from the sequence. The override rides on the *ceremony lens*, not on the classifier and not on the sequence.
 - **A pattern that would generalize past you** (it holds beyond this employer, codebase, and stack, carries no private context, and has a lens's shape) is *also* a candidate for the shared catalog. Propose the `add` override as usual, and in the same breath say it looks contributable and that `/deliberate-engineering:contribute` is the path if the operator wants it shared. The two are not exclusive: the override is theirs today, the contribution is a separate, operator-approved act, and this skill never files one. Say nothing of the sort for a signal that is employer-specific or a personal preference: that is an override and only an override.
 
 If a signal has no clear target (ambiguous lens number, or a practice that does not fit any catalog), ask rather than force a wrong number, and ask with your own pick embedded (Rule 4): name the target you would use, or the `add` entry you would propose, and why, so the operator confirms a proposal instead of answering an open question. Drop candidates with no clear target or that are one-session noise: this skill does NOT propose an override of something seen once without a sign of recurring intent.
@@ -164,12 +164,39 @@ A calibration candidate is a `modify` on the ceremony lens (you want a class of 
 > ```markdown
 > ## planning #10: modify
 > 
-> **Add:** For analytics-only changes with no user-facing behavior or data-model impact, run one band lighter than the default: skip the plan phase and treat review as standard, not full.
+> **Add:** For analytics-only changes with no user-facing behavior or data-model impact, run one band lighter than the default: keep planning to a scope check with no written spec, and treat review as standard, not full.
 > ```
 > 
 > Approve this candidate, edit it, or reject it?
 
-**Recommend, never force.** The candidate is a proposal; the adopter decides. Present all candidates, let the adopter approve/edit/reject each. Do not append anything without approval.
+**Recommend, never force.** The candidate is a proposal; the adopter decides. Present all candidates, let the adopter approve/edit/reject each. Do not append anything without approval. One exception to the prompt, never to the stance: a candidate targeting the standing rules takes the heavier confirmation described in the next section. Still the adopter's call, asked more carefully.
+
+## A standing rule is not a preference: the elevated step
+
+A candidate targeting `Rule N` or `add: rules` is a change to the plugin's constitution, and it will be in force at the start of every future session, before any work is classified. Presenting it in the same words and the same shape as a formatting preference is what makes a safety rail easy to remove by accident. **Key this on content, not only on the header**, the same way the refusal below is keyed: an `add: <catalog>` lens whose body relaxes a gate is a constitutional change wearing a lens's address, and takes this step too. For those candidates, do three extra things before asking:
+
+1. **Name what it is.** Say plainly that this is a standing-rule change, not a lens preference, and that it applies from the start of every session until the operator removes it.
+2. **Say what it permits, in behavior.** Translate the entry into what the agent will now do without asking. "Once this is in, I will merge to shared branches in the staging pipeline without stopping for you" is the sentence that matters, not "Rule 1: modify".
+3. **Take a distinct confirmation.** Not the ordinary approve/edit/reject: ask for the change in the operator's own words ("tell me to write it and I will"). The read side then honors it every session with an acknowledgement rather than re-asking, which is exactly why the one confirmation here has to be real.
+
+The four worked candidates above all target catalog lenses, so they take the ordinary prompt. A standing-rule candidate looks like this instead:
+
+> **Candidate:** Rule 2: modify **(standing-rule change, not a lens preference)**
+>
+> **Signal:** You asked for this one directly: "make it permanent that you can write to the reporting replica without asking, it is a nightly-rebuilt mirror our team owns." I am not inferring it from the session; a safety rail is only ever loosened because you said so, and you did.
+>
+> **What this would change in my behavior:** from the start of every future session, on that replica I would run writes without stopping to ask you first. Everywhere else, Rule 2's read-only posture stays as it is.
+>
+> **Block to append:**
+> ```markdown
+> ## Rule 2: modify
+>
+> **Add:** On the nightly-rebuilt reporting replica, write queries do not need per-query approval; treat it as a system we own.
+> ```
+>
+> This is a standing rule, in force from the start of every session until you remove it. If you want it, tell me to write it.
+
+**The one thing this skill will not propose.** It never *initiates* a loosening of a safety rail from an observed deviation: Rule 1 (the human gate on irreversible and outward-facing actions) or Rule 2 (read-only on systems you do not own). **Judge this by content, not by the header.** An `add: rules` entry saying "in staging, ship without stopping", or an `add: review` lens whose body says "skip the gate here", is a Rule 1 loosening whatever it is addressed as, and the same restraint applies. The read side already judges these by content; the write side has to, or the rule is a formality with a rename around it. Seeing the gate skipped twice in a session is not evidence the operator wants it gone; it is just as likely evidence of a session where the operator was moving fast. If the operator asks for that override in words, write it, with the elevated step above. Otherwise, name the pattern out loud and stop there: "you triggered these yourself each time, so I am not proposing a gate change; say the word if you want one." A gate an agent can remove by inference is not a gate.
 
 ## The append-only write
 

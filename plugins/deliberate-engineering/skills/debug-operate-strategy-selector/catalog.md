@@ -1,6 +1,6 @@
 # Debug/Operate Strategy Catalog
 
-This catalog contains 17 strategies organized into five Parts plus composition patterns. Each strategy is a lens for the moment a *live system* behaves unexpectedly and you must diagnose under uncertainty and respond: deciding which evidence to trust, which failure-mode you're looking at, and how to act while the system is degraded. The selector skill references these by number to build a response tuned to the quality of the evidence and to how irreversible the consequence of being wrong is.
+This catalog contains 17 strategies organized into five Parts plus composition patterns. Most strategies here are lenses for the moment a *live system* behaves unexpectedly and you must diagnose under uncertainty and respond, and two Parts are not: Part D is peacetime signal hygiene and Part E is what you do after the fire is out. In the incident case: deciding which evidence to trust, which failure-mode you're looking at, and how to act while the system is degraded. The selector skill references these by number to build a response tuned to the quality of the evidence and to how irreversible the consequence of being wrong is.
 
 Strategy **numbers are stable identifiers, not reading order**: a strategy keeps its number for life, and a new one is appended with the next free number and *placed* under the Part it belongs to. So a Part may run out of numeric sequence (Part C ends with 17). This is deliberate: it keeps every published number citable (e.g. by an override) without renumbering.
 
@@ -12,7 +12,7 @@ It is also **distinct from verification.** Verification *confirms an expectation
 
 ## Master Principle
 
-**When a live system behaves unexpectedly, establish what is true before you act, and calibrate the response to the cost of staying wrong, not to the size of the symptom.** Evidence from a production system is partial and misleading by default (sampled, lossy, derived), so the quality of the evidence governs your confidence; and when the service is degraded, restoring the shared baseline outranks diagnosing the cause.
+**When a live system behaves unexpectedly, establish what is true before you act, and calibrate the response to the cost of staying wrong, not to the size of the symptom. In peacetime, keep the signals worth trusting so the next incident starts from evidence rather than from noise.** Evidence from a production system is partial and misleading by default (sampled, lossy, derived), so the quality of the evidence governs your confidence; and when the service is degraded, restoring the shared baseline outranks diagnosing the cause.
 
 ---
 

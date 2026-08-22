@@ -8,8 +8,10 @@ name: version-gate
 #   always carry the same version. Pure invariant, no false positives.
 # Check B (bump-on-content-change): if anything under the plugin source
 #   directory changed versus the base, the version must have changed too.
-#   Scoped to plugins/** so root-only edits (README, docs, this workflow)
-#   never demand a bump.
+#   Scoped to plugins/deliberate-engineering/, so root-only edits (README,
+#   docs, this workflow) never demand a bump. Note that the scope is that one
+#   directory and not plugins/** in general: a second plugin added here would
+#   not be gated until this path is widened.
 
 on:
   pull_request:

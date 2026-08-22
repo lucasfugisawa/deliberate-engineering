@@ -92,7 +92,7 @@ Tools change and profiles should not have to. More importantly, one tool carries
 
 ## A suggested starting set
 
-The pilot profile used nine archetypes. This is a starting point, not a required set:
+The first profile built with this method (the pilot, described in `bootstrap.md`) used nine archetypes. This is a starting point, not a required set:
 
 | Archetype | Covers |
 |---|---|

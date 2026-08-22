@@ -1,6 +1,6 @@
 ---
 name: debug-operate-strategy-selector
-description: "Use when a live system behaves unexpectedly and you must diagnose under uncertainty or respond to an incident: error rates climbing, a flow broken with no known cause, a page you have to act on, where you don't yet hold a reliable expectation and the system may be degraded. Also covers the two bands around the incident: in peacetime, the signal hygiene that incident response depends on (alerts that no longer earn a page, a noisy error stream, thresholds tied to nothing, unowned end-to-end flows); and after the fire is out, the blameless retrospective that turns a failure into tracked learning. Classifies the situation, then selects strategies from the catalog and dispatches superpowers for the debugging method. Distinct from verify: verify confirms an expectation you already hold; this is discovery under failure."
+description: "Use when a live system behaves unexpectedly and you must diagnose under uncertainty or respond to an incident: error rates climbing, a flow broken with no known cause, a page you have to act on, where you don't yet hold a reliable expectation and the system may be degraded. Also covers the two bands around the incident: in peacetime, the signal hygiene that incident response depends on (alerts that no longer earn a page, a noisy error stream, thresholds tied to nothing, unowned end-to-end flows); and after the fire is out, the blameless retrospective that turns a failure into tracked learning. Classifies the situation, then selects strategies from the catalog and dispatches superpowers for the debugging method. Distinct from verify: verify confirms an expectation you already hold; this is discovery under failure. On a multi-phase or multi-session work unit it writes a short live note through `deliberate-engineering-state`, which lands in the repository under `.deliberate/state/` (and may add that path to `.gitignore`) or under `~/.claude/` when it cannot."
 ---
 
 # Debug/Operate Strategy Selector
@@ -37,7 +37,7 @@ Incident-response posture has a cost, and it has a symmetric failure mode to ove
 
 **The entry gate** (a yes/no question, not a degree; it decides whether this skill owns the work at all):
 
-- **Is there a reliable expectation?** No → this catalog (discovery under failure). Yes (you're confirming "it should do X") → the `verification-strategy-selector`.
+- **Is there a reliable expectation?** No → this catalog (discovery under failure). Yes (you're confirming "it should do X") → the `verification-strategy-selector`. **Neither, because nothing is broken right now** (you are cleaning up alerts, tuning thresholds, assigning flow ownership, or running a retrospective) → this catalog too, at the peacetime band in Step 2: the gate is about which skill owns the work, and peacetime hygiene is this one's whether or not an incident is live.
 
 **The three axes** (*ordinal*, each runs low→high; together they set how deep to go once the gate sends you here):
 
@@ -47,13 +47,14 @@ Incident-response posture has a cost, and it has a symmetric failure mode to ove
 
 **The ruler is the cost of staying wrong, not the size of the symptom.** That ruler is what this selector shares with the rest of the plugin; the gate and axes above are its own, deliberately not the router's four routing axes, because this skill begins exactly where a stated expectation does not exist.
 
-## Step 2: Map to a depth band
+## Step 2: Map to a ceremony band
 
 The classifications are largely orthogonal: *evidence quality* (axis 1) sets how much Part A you do; *live degradation* (axis 2) sets whether Part C fires first.
 
 - **Low-stakes / no live degradation** → minimal: establish the fact from a trustworthy signal (Part A), state what's true, stop. Say you chose a light pass (see "When a quick read suffices").
-- **Active diagnosis, service stable** → Part A to calibrate which evidence you trust + Part B for the judgment on top of the method + **dispatch `superpowers:systematic-debugging`** for the hypothesis-elimination mechanics.
-- **Live degradation / irreversible response** → **restore first** (Part C: revert to known-good, don't wait for the author), *then* diagnose in peacetime (Part B + superpowers), *then* learn (Part E). Part D is the peacetime band that prevents the recurrence: schedule it, don't run it mid-fire.
+- **Active diagnosis, service stable** → standard: Part A to calibrate which evidence you trust + Part B for the judgment on top of the method + **dispatch `superpowers:systematic-debugging`** for the hypothesis-elimination mechanics.
+- **Peacetime, nothing degraded** → the peacetime band: open **Part D** for signal hygiene (alerts, error streams, thresholds, flow ownership) and **Part E** when you are learning from an incident that is already over. Part A applies only if you are weighing a number you do not trust; there is no fire to restore, so Part C does not fire.
+- **Live degradation / irreversible response** → full: **restore first** (Part C: revert to known-good, don't wait for the author), *then* diagnose in peacetime (Part B + superpowers), *then* learn (Part E). Part D is the peacetime band that prevents the recurrence: schedule it, don't run it mid-fire.
 
 ## Step 3: Select strategies from the catalog
 
@@ -67,7 +68,9 @@ Open only the Parts matching your classification:
 
 **Worked example (mainline/shared baseline broken, cause unknown, error counts climbing):** Degraded now + no reliable expectation (the entry gate sends it to this catalog; axis 2, live degradation, makes Part C fire first). Selected: **6** (revert to known-good immediately: don't wait for the original author; a broken baseline blocks everyone), then with the baseline restored, treat the evidence skeptically: **1** (the climbing count: is it from sampled traces? pull the unsampled aggregate before believing the magnitude), **2** (don't read the absence of an error log as "it didn't happen": the pipeline is lossiest exactly under this load), **4** (read the failure signature to point the hypothesis). **Dispatched `superpowers:systematic-debugging`** for the elimination method itself. After restoration, closed the loop with **14** (timeline while fresh) → **15** (blameless retro) → **16** (one owned, tracked action item). Skipped Part D: it's peacetime hygiene, not a mid-incident task; logged as not-now, to revisit when deriving the follow-up.
 
-**Operator overrides.** Before applying the selected lenses, consult `deliberate-engineering-overrides`: if any selected lens has an operator override (disable / modify / add), honor it and declare the deviation in the Output.
+**Entering here directly.** These lenses are the same whether you arrived through `/deliberate-engineering:start` or called this phase yourself, but four things the router would have carried do not come with a direct call, so carry them here. The nine standing rules in `deliberate-engineering-rules` hold regardless, including the human gate on anything irreversible or outward-facing. Write your place at each checkpoint through `deliberate-engineering-state` (Rule 6), so a compaction or a new session resumes from what happened rather than from recall. Re-classify out loud if the work turns out heavier or lighter than it looked, and say what moved. And when the next thing you produce is a communication rather than code, consult `communication-collaboration-selector` before writing it.
+
+**Operator overrides.** Before applying the selected lenses, consult `deliberate-engineering-overrides`: honor any override on a lens you selected (disable / modify), and ask it for any operator-authored `add:` entry for this catalog, which carries no shipped number and so is invisible to a lookup keyed on your selection. Declare every deviation in the Output.
 
 ## Step 4: Compose the response
 
@@ -89,4 +92,4 @@ When the **`verification-strategy-selector`** is co-active on the same task, the
 
 ## Output
 
-Report, briefly: the classification (reliable expectation? evidence quality, live degradation & reversibility, stake), the depth band, the strategies selected (by number) and why, anything deliberately skipped and why (e.g. Part D logged as not-now), and the diagnosis or response, with **the evidence quality named** for every signal you acted on (sampled / lossy / derived, and any fact you could not establish). If an incident occurred, close with the learn step: timeline (14), blameless analysis (15), and the owned, tracked action item (16).
+Report, briefly: the classification (reliable expectation? evidence quality, live degradation & reversibility, stake), the ceremony band, the strategies selected (by number) and why, anything deliberately skipped and why (e.g. Part D logged as not-now), and the diagnosis or response, with **the evidence quality named** for every signal you acted on (sampled / lossy / derived, and any fact you could not establish). If an incident occurred, close with the learn step: timeline (14), blameless analysis (15), and the owned, tracked action item (16).

@@ -1,6 +1,6 @@
 ---
 name: planning-strategy-selector
-description: "Use before building, when deciding what work to do and how to approach it: scoping a feature, shaping a spec or ticket, planning a migration or refactor, or choosing how much process a task calls for. Classifies the work by requirement clarity, risk, reversibility, and reach, then selects the right planning lenses: scope to the real requirement, ground the plan in the actual codebase, calibrate ceremony to risk, decompose and sequence safely, and capture the plan well. Judgment applied to planning, not a planning engine."
+description: "Use before building, when deciding what work to do and how to approach it: scoping a feature, shaping a spec or ticket, planning a migration or refactor, or choosing how much process a task calls for. Classifies the work by requirement clarity, risk, reversibility, and reach, then selects the right planning lenses: scope to the real requirement, ground the plan in the actual codebase, calibrate ceremony to risk, decompose and sequence safely, capture the plan well, and clear ambiguity before committing when the requirement itself is still foggy. Judgment applied to planning, not a planning engine. On a multi-phase or multi-session work unit it writes a short live note through `deliberate-engineering-state`, which lands in the repository under `.deliberate/state/` (and may add that path to `.gitignore`) or under `~/.claude/` when it cannot."
 ---
 
 # Planning Strategy Selector
@@ -35,7 +35,7 @@ These set how much of the catalog you apply, and in which direction.
 
 **These four set the depth here, not how big the change looks.** They are the same four the router routes on and the review selector classifies on, applied *before* code rather than after; verification and debug-operate classify on their own, because each starts from a different epistemic footing (see `deliberate-engineering-router`, Step 1). The ruler underneath all of them is the cost of being wrong, and that, not the axis names, is what every phase shares. Planning leads with **clarity** because resolving ambiguity is planning's first job.
 
-## Step 2: Map to a planning depth
+## Step 2: Map to a ceremony band
 
 - **Trivial-and-safe** → minimal: calibrate (10), confirm there's no hidden reach, do it, and state the light-ceremony decision. See "When NOT to over-plan."
 - **Standard** → scope to the real requirement (Part A), ground against the real codebase (5), and capture the plan with recommendations (14), a lightweight pass over the axes that scored non-trivial.
@@ -46,6 +46,7 @@ These set how much of the catalog you apply, and in which direction.
 Open only the parts matching your non-trivial axes:
 
 - **Always, standing** → 10 calibrate-ceremony-to-risk (it decides how much of the rest applies) and 14 recommend-don't-enumerate (every fork carries a pick); plus the Part A scope lenses: 1 simplest-mechanism, 2 strip-speculative, **3 the correctness counter-rule** (so trimming doesn't become under-scoping).
+- **The requirement itself is still foggy** → the disambiguation lenses: 17 clear-the-fog-with-evidence-before-asking and 18 decide-early-what-is-costly-to-reverse, closing with 19 the readiness-and-viability gate before you commit to building.
 - **Touches existing code / rests on assumptions** → 5 verify-repo-reality.
 - **Low clarity / unproven approach / feasibility unknown** → 8 spike-to-retire-the-riskiest-unknown.
 - **Unknown-size / migration / parity** → 6 front-loaded-inventory.
@@ -60,7 +61,9 @@ Open only the parts matching your non-trivial axes:
 
 **Worked example (plan a source-of-truth field migration):** Ambiguous-ish, high risk, hard to reverse, wide reach. Selected: **10** (full ceremony: it's risky and irreversible), **2 + 3** (strip anything speculative, but keep every step the migration needs to be correct), **7** (enumerate every downstream reader before calling it small), **6** (a classified inventory of all affected sites as the first deliverable), **9** (approve the approach before any code), **12** (sequence so no intermediate state is half-migrated and broken), **13** (expand→adopt→contract so the old code still reads and writes valid rows at every deploy step), **15** (a self-contained spec for the human and the executing agent), each fork carrying **14** a recommendation. Skipped frontend/altitude-heavy lenses, logged as not applicable.
 
-**Operator overrides.** Before applying the selected lenses, consult `deliberate-engineering-overrides`: if any selected lens has an operator override (disable / modify / add), honor it and declare the deviation in the Output.
+**Entering here directly.** These lenses are the same whether you arrived through `/deliberate-engineering:start` or called this phase yourself, but four things the router would have carried do not come with a direct call, so carry them here. The nine standing rules in `deliberate-engineering-rules` hold regardless, including the human gate on anything irreversible or outward-facing. Write your place at each checkpoint through `deliberate-engineering-state` (Rule 6), so a compaction or a new session resumes from what happened rather than from recall. Re-classify out loud if the work turns out heavier or lighter than it looked, and say what moved. And when the next thing you produce is a communication rather than code, consult `communication-collaboration-selector` before writing it.
+
+**Operator overrides.** Before applying the selected lenses, consult `deliberate-engineering-overrides`: honor any override on a lens you selected (disable / modify), and ask it for any operator-authored `add:` entry for this catalog, which carries no shipped number and so is invisible to a lookup keyed on your selection. Declare every deviation in the Output.
 
 ## Step 4: Compose the plan
 
@@ -78,4 +81,4 @@ When a planning or brainstorming engine is present (e.g. `superpowers`), **run i
 
 ## Output
 
-Report, briefly: the classification (4 axes), the planning depth, the lenses selected (by number) and why, what you scoped **out** and why (the most valuable part of a plan), anything deliberately skipped, and the plan itself: every decision point carrying a recommendation with its rationale. When a decision rests on a fact about the codebase, data, or feasibility, tie it to the evidence that established it in this pass (the `file:line` read, the spike run and its result) rather than to recalled belief: a plan built on an unverified premise is a hypothesis, not a plan.
+Report, briefly: the classification (4 axes), the ceremony band, the lenses selected (by number) and why, what you scoped **out** and why (the most valuable part of a plan), anything deliberately skipped, and the plan itself: every decision point carrying a recommendation with its rationale. When a decision rests on a fact about the codebase, data, or feasibility, tie it to the evidence that established it in this pass (the `file:line` read, the spike run and its result) rather than to recalled belief: a plan built on an unverified premise is a hypothesis, not a plan.

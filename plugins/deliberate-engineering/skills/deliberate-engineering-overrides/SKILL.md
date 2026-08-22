@@ -1,11 +1,11 @@
 ---
 name: deliberate-engineering-overrides
-description: "Use when applying any deliberate-engineering lens or standing rule. Reads ~/.claude/deliberate-engineering/overrides.md before applying catalog lenses or standing rules, honors disable/modify/add overrides, and declares each deviation. Stays silent when no override file exists or no override matches."
+description: "Use at the start of an engineering session to pick up the operator's standing-rule overrides, and again whenever any deliberate-engineering lens is about to be applied. Reads ~/.claude/deliberate-engineering/overrides.md, honors disable/modify/add overrides on lenses and standing rules, offers operator-authored lenses alongside the shipped ones, and declares each deviation. Stays silent when no override file exists or no override matches."
 ---
 
 # Deliberate Engineering Overrides
 
-The deliberate layer of *your practice takes precedence*. Where the four selectors and the rules skill ship judgment, this skill lets an operator's own practice override that shipped content. It reads and honors overrides from a personal file (disabling lenses, appending to them, or injecting operator-authored strategies) and declares the deviation out loud.
+The deliberate layer of *your practice takes precedence*. Where the shipped skills carry judgment, this skill lets an operator's own practice override that content, wherever it is applied. It reads and honors overrides from a personal file (disabling lenses, appending to them, or injecting operator-authored strategies) and declares the deviation out loud.
 
 ## vs the runtime precedence that already exists
 
@@ -15,18 +15,22 @@ The harness and the rules skill already establish a precedence order: explicit u
 
 This skill is the **read side** of the override layer. It consults the file, honors the overrides, and declares them. Growing the file from observed practice (noticing that an operator routinely overrides planning #12, offering to persist that preference, and writing the entry) is the **write side**, a separate capability owned by the `deliberate-engineering-capture` skill (invoked on demand via `/deliberate-engineering:capture`). The boundary holds regardless: *this* skill only reads and applies overrides; it never writes them. The capture skill writes only on demand, only with approval, and only by appending, never by editing what is already there.
 
-## The router is not a target
+## What is a target, and what is architecture
 
-The router is dispatch, not named content. It classifies work and invokes the selector that owns the method; it applies no lenses of its own. Overrides target **named catalog lenses** (review #35, planning #12) and **standing rules** (Rule 1, Rule 2), not the router. The router's classification axes (clarity, risk, reversibility, reach) and its genre → phase-sequence mapping are part of the plugin's judgment architecture and are not overridable by this mechanism.
+Overrides target **named catalog lenses** (review #35, planning #12) and **standing rules** (Rule 1, Rule 2). Two things are deliberately not targets: the router's four routing axes (clarity, risk, reversibility, reach) and its genre → phase-sequence mapping. Those are the classification the whole dispatch rests on, so they are architecture rather than content, and this mechanism does not reach them.
+
+The exemption is about *those two objects*, not about the router as a skill. The router does apply a named lens by citation: its ceremony-band step cites planning #10 for the method. Where it does, that lens's override applies exactly as it would inside the selector that owns the lens. An operator who has overridden planning #10 gets that override honored when the band is set, not only later when the planning selector runs.
 
 ## When to use
 
-Use this skill whenever a selector or the rules skill is about to apply content and an override file may be present. It is triggered two ways:
+Two kinds of content, reached two different ways, because they fail in opposite directions.
 
-1. **Primary trigger** (a one-line pointer in each selector and the rules skill): before applying selected lenses or rules, consult this skill.
-2. **By-description trigger**: when an override file is present and a request involves applying deliberate-engineering content.
+1. **Standing rules, once at session start.** `deliberate-engineering-rules` takes this file's standing-rule entries (`Rule N: <operation>` and `add: rules`) before any work is classified, and `deliberate-engineering-conduct` does the same as it authors a contract, since a conduction can be invoked without the rules skill having run. Reading the file shows you its catalog entries too: note them and leave them unapplied. An unread standing rule is an absent one, which is why this does not wait for a lens to be selected.
+2. **Catalog lenses, when they are applied.** Every skill that applies a numbered lens consults first: the five selectors, `conduct` at its contract fields, `orchestrate` at decomposition, the router at its ceremony band. An unread `disable` or `modify` leaves the stricter shipped text in force. An unread `add: <catalog>` entry does not: it is an operator-authored lens, and unread it is simply absent. It stays on demand anyway, since only the applier that opens that catalog can judge whether its `**When:**` fits, and the case that would actually hurt (an added lens whose body relaxes a gate) is caught by content in the declaration protocol below. The residual gap is real and bounded: an applier that skips its consult leaves an added lens unapplied and unmentioned.
 
-The selectors and the rules skill own the decision to invoke this skill; it does not decide for itself whether to run. When invoked, it reads the file if it exists, applies any relevant overrides, and reports them. When the file does not exist, this skill does nothing and says nothing. Override is opt-in.
+**The honest limit.** Both paths depend on a skill firing. For adopters running the README's always-on recipe, the rules read happens every engineering session; otherwise it rides description matching, and a session where the rules skill does not load is a session where standing-rule overrides go unread. This skill can also fire on its own description as a last backstop. The file cannot make a skill fire.
+
+When the file does not exist, this skill does nothing and says nothing. Override is opt-in.
 
 ## The override file
 
@@ -61,11 +65,12 @@ The override file lives at `~/.claude/deliberate-engineering/overrides.md`. Each
 ```
 
 **Reading contract:**
-- Headers are `## <target>: <operation>` where target is `review #N`, `planning #N`, `verification #N` or `verify #N`, `debug-operate #N` or `debug #N`, or `Rule N`, and operation is `disable`, `modify`, or `add`. A catalog may be cited by its catalog name or its command name (`verify` and `verification` mean the same catalog, as do `debug` and `debug-operate`), since this file is read by an agent, not a parser.
-- For `add` entries, the header is `## add: <catalog>` where catalog is `review`, `planning`, `verification` or `verify`, `debug-operate` or `debug`, or `rules`.
+- Headers are `## <target>: <operation>` where target is `review #N`, `planning #N`, `verification #N` or `verify #N`, `debug-operate #N` or `debug #N`, `communication #N`, or `Rule N`, and operation is `disable`, `modify`, or `add`. A catalog may be cited by its catalog name or its command name (`verify` and `verification` mean the same catalog, as do `debug` and `debug-operate`), since this file is read by an agent, not a parser.
+- For `add` entries, the header is `## add: <catalog>` where catalog is `review`, `planning`, `verification` or `verify`, `debug-operate` or `debug`, `communication`, or `rules`.
 - **disable** body: `**Why:**` (optional), the operator's note on why this lens is skipped.
 - **modify** body: `**Add:**` (required), the annotation to read alongside the shipped lens/rule text; the shipped text stays intact.
-- **add** body: `**Name:**` (required), the strategy's name for reference; `**When:**` (required), when to apply this operator-authored lens; `**Apply:**` (required), the lens content itself.
+- **add** body: `**Name:**` (required), the strategy's name for reference; `**When:**` (required for a catalog `add`), when to apply this operator-authored lens; `**Apply:**` (required), the lens content itself.
+- **`add: rules` is the exception on `**When:**`**, and deliberately so: a standing rule holds unconditionally, the way the shipped nine do, so it has no when-condition to state. `**Name:**` and `**Apply:**` are required; `**When:**` is optional, and where an operator writes one it is read as *scope* (the environment or class of work the rule covers), never as a gate that must be satisfied before the rule counts. A missing `**When:**` on an `add: rules` entry is correct, not malformed, and must never be treated as an ambiguity to stop and ask about: this is the entry most likely to carry a safety instruction, and turning it into a question at session start would defeat the read.
 
 If the file does not exist, this skill is silent and does nothing. Override is opt-in.
 
@@ -75,20 +80,30 @@ If the file does not exist, this skill is silent and does nothing. Override is o
 
 - **disable**: when a selected lens or rule is disabled, do not apply it. In the output, say it was skipped because the operator disabled it, quoting the operator's `**Why:**` if present. The lens is not evaluated; its text is not read. It is as if the selector never picked it.
 
-- **modify (append-only)**: the shipped lens or rule text stays intact; read the operator's `**Add:**` annotation alongside it and apply both. **modify never replaces the shipped text; it appends**, which is what keeps the override from rotting when the lens evolves in a future version of the plugin. Read the shipped text in full, then honor the `**Add:**` annotation alongside it: the shipped baseline plus the operator's refinement, never a replacement. The ability to cite stable identifiers like `review #35` or `Rule 1` depends on the plugin's append-only numbering policy: shipped content is never renumbered, only appended.
+  **What a disable removes is a method, never a required field.** Where a skill's own contract requires an artifact and cites a lens for *how* to produce it, disabling the lens removes the method, not the obligation: the conductor contract requires a verified recovery path whether or not verify #14 is disabled, and the field still has to be filled by some other means the operator names. Say so when this happens, rather than reporting the field as satisfied or quietly dropping it.
 
-- **add**: an operator-authored strategy or rule that maps to no shipped number. Treat it as one more available lens in the named catalog (or one more standing rule for `add: rules`). Read the `**When:**` text as human-readable guidance for when it applies, interpreted by you, not a formal condition to evaluate. The selector's classification and selection logic runs as normal, considering the `add` entries as part of the catalog. If an `add` entry's `**When:**` guidance fits the work, apply its `**Apply:**` content exactly as you would apply a shipped lens.
+- **modify (append-only)**: the shipped lens or rule text stays intact; read the operator's `**Add:**` annotation alongside it and apply both. **modify never rewrites the shipped text; it appends**, which is what keeps the override from rotting when the lens evolves in a future version of the plugin. That is a statement about the *file*, not about behavior: an annotation is free to narrow, widen, or redirect what the lens asks for, and the plugin's own example does exactly that (`planning #12: modify`, "verify the sequence only at the aggregate boundary, not at every internal step"). Read the shipped text in full, then honor the `**Add:**` annotation alongside it, and **where the two conflict, the annotation governs**: it is the operator's practice, which is the whole premise of this layer. One limit, judged by content and not by the header: an annotation reaches only the lens it is attached to. Where its body would instead change something this mechanism does not target (removing a phase from the router's sequence, redefining a routing axis), honor the rest of the annotation, decline that clause, and say which clause you declined and why. Addressing a lens does not extend an override's reach to the architecture behind it. Say what changed in the declaration, so a narrowing is visible rather than silently absorbed. What you must not do is quietly drop the annotation as "inert because the shipped text says otherwise", or report it as applied when it was not. The ability to cite stable identifiers like `review #35` or `Rule 1` depends on the plugin's append-only numbering policy: shipped content is never renumbered, only appended.
+
+- **add**: an operator-authored strategy or rule that maps to no shipped number. Treat it as one more available lens in the named catalog, or, for `add: rules`, as one more standing rule, held for the whole session exactly like a shipped rule once the session-start read has picked it up (see "When to use" for who does that read and what it depends on). Read the `**When:**` text as human-readable guidance for when it applies, interpreted by you, not a formal condition to evaluate. The selector's classification and selection logic runs as normal, considering the `add` entries as part of the catalog. If an `add` entry's `**When:**` guidance fits the work, apply its `**Apply:**` content exactly as you would apply a shipped lens.
 
 ## The awareness step
 
 The flow when this skill is invoked:
 
-1. The selector classifies the work and picks its lenses normally, using the shipped catalogs.
-2. The selector consults this skill. This skill reads `~/.claude/deliberate-engineering/overrides.md` if the file exists.
-3. For each selected lens with an override, this skill applies the operation instead of the shipped content. For `add` entries in the relevant catalog, this skill reads them as additional operator-authored lenses available in that catalog, applied when their `**When:**` guidance fits the work.
+**For standing rules, once per session:**
+
+1. The rules skill consults this skill at the start of an engineering session, before any work is classified. `deliberate-engineering-conduct` does the same as it authors a contract, since a conduction can be invoked without the rules skill having run and is where an unread loosening changes who pulls a trigger.
+2. This skill reads `~/.claude/deliberate-engineering/overrides.md` if it exists and returns the standing-rule entries: `Rule N` overrides and `add: rules` entries. Catalog-lens entries are left for their appliers.
+3. Those entries are held for the session alongside the shipped nine, and declared when they change behavior.
+
+**For catalog lenses, per applier:**
+
+1. The applier does its own work normally, using the shipped catalogs: a selector classifies and picks lenses, `conduct` authors its contract fields, `orchestrate` decomposes, the router sets the band. Not all of them are selectors, and not all of them "select": what they share is that they apply a numbered lens.
+2. The applier consults this skill. This skill reads the file if it exists.
+3. For each applied lens with an override, this skill applies the operation instead of the shipped content. Separately, and not conditioned on anything the applier selected, it offers every `add: <catalog>` entry for that catalog as an additional operator-authored lens, applied when its `**When:**` guidance fits the work. An `add` entry maps to no shipped number, so a consult that only looks up the selected lenses will never find one: look for them explicitly.
 4. This skill declares the deviation in the visible output: **always, never silent.** Every override that fires is reported.
 
-This skill does not re-run the selector's classification logic; it honors the selector's choices and applies the overrides to those choices. For `add` entries, the selector's existing classification (its own axes, whichever that selector uses, plus the picked lenses) informs whether the `add` entry's `**When:**` guidance fits; this skill does not second-guess that classification.
+This skill does not re-run the applier's own judgment; it honors what the applier chose and applies the overrides to those choices. For `add` entries, the applier's existing classification (its own axes, whichever it uses, plus the lenses it applied) informs whether the `add` entry's `**When:**` guidance fits; this skill does not second-guess that judgment.
 
 ## The declaration protocol
 
@@ -96,7 +111,7 @@ When an override fires, declare it in the visible output. The firmness of the de
 
 - **Common override** (disabling or modifying a catalog lens): a one-line factual note. Example: *"Override active: review #35 disabled (your note: team runs a separate simplification pass). Skipping."* State what was overridden, which operation was applied, and if `**Why:**` is present, quote it.
 
-- **Safety-loosening override (keyed to content, not the header string)**: an elevated-autonomy acknowledgement. This fires for *any* override whose content relaxes a safety rail, the human gate on an irreversible/outward action (Rule 1) or the read-only posture on a system you don't own (Rule 2), regardless of how it is addressed: a literal `Rule 1: modify`, an `add: rules` entry ("for staging, proceed without approval"), or even an `add: <catalog>` lens whose content says "skip the gate here." Do **not** classify a gate-loosening `add` entry as a common one-line note just because its header is not literally `Rule 1`/`Rule 2`. Judge the content. Example: *"Override active: you've loosened Rule 1 for deploys to staging. I'm proceeding without the human gate as you've instructed. This is elevated autonomy; speak up if this is unintended."* State the override, the implication (what behavior changes), and proceed: acknowledgement with an explicit invitation to interrupt, not a request for permission. Rule 1 and Rule 2 are the plugin's safety rails, and loosening them is the operator's right, but it must be explicit and acknowledged, never silent.
+- **Safety-loosening override (keyed to content, not the header string)**: an elevated-autonomy acknowledgement. This fires for *any* override whose content relaxes a safety rail, the human gate on an irreversible/outward action (Rule 1) or the read-only posture on a system you don't own (Rule 2), regardless of how it is addressed: a literal `Rule 1: modify`, an `add: rules` entry ("for staging, proceed without approval"), or even an `add: <catalog>` lens whose content says "skip the gate here." Do **not** classify a gate-loosening `add` entry as a common one-line note just because its header is not literally `Rule 1`/`Rule 2`. Judge the content. Example: *"Override active: you've loosened Rule 1 for deploys to staging. I'm proceeding without the human gate as you've instructed. This is elevated autonomy; speak up if this is unintended."* State the override, the implication (what behavior changes), and proceed: acknowledgement with an explicit invitation to interrupt, not a request for permission. Do not re-ask permission every session: the operator chose this once, and re-asking turns that into a recurring toll. Do not treat the acknowledgement as a formality either. `deliberate-engineering-capture` takes an explicit confirmation when it writes such an entry, but a hand-written file never had one, so this may be the first time the operator sees, in behavior terms, what they wrote. Rule 1 and Rule 2 are the plugin's safety rails, and loosening them is the operator's right, but it must be explicit and acknowledged, never silent.
 
 The no-silent stance mirrors the plugin's existing no-silent-truncation ethic: when the plugin's behavior deviates from the default, whether by compacting a context or by honoring an override, that deviation is declared, not hidden. Silence is not an option.
 
@@ -104,11 +119,11 @@ The no-silent stance mirrors the plugin's existing no-silent-truncation ethic: w
 
 Rule 1 (the human gate on irreversible and outward-facing actions) and Rule 2 (read-only posture on systems you do not own) can be overridden like any other content in the plugin. It is the operator's machine. Refusing to honor an override of Rule 1 or Rule 2 would be paternalistic and would contradict the plugin's premise: the machine is theirs, and the judgment layer is there to help, not to constrain. This skill does not refuse safety-rule overrides; it honors them and acknowledges the elevated autonomy per the declaration protocol above.
 
-The boundary: honoring an override is not the same as treating it as routine. A common override gets a factual note; a safety-rule override gets an explicit acknowledgement and a confirmation check. The operator has the final say, and the plugin makes that say legible.
+The boundary: honoring an override is not the same as treating it as routine. A common override gets a factual note; a safety-rule override gets an explicit acknowledgement and a standing invitation to interrupt. The operator has the final say, and the plugin makes that say legible, at the moment it is written and again every time it fires.
 
 ## Ambiguity and conflict
 
-If an override is ambiguous, malformed, or contradicts another override, do not guess. Name the conflict, describe why it is undecidable, and ask one question with an embedded recommendation, the Rule 4 posture. Never silently skip an override because it is unclear; that would be the same as ignoring it, which defeats the purpose of having a durable override file. Examples of conflict: two `modify` entries for the same lens with contradictory `**Add:**` annotations; an `add` entry with no `**When:**` or no `**Apply:**` field; a `disable` and a `modify` for the same target in the same file. Ask once, recommend a resolution, proceed when the operator clarifies.
+If an override is ambiguous, malformed, or contradicts another override, do not guess. Name the conflict, describe why it is undecidable, and ask one question with an embedded recommendation, the Rule 4 posture. Never silently skip an override because it is unclear; that would be the same as ignoring it, which defeats the purpose of having a durable override file. Examples of conflict: two `modify` entries for the same lens with contradictory `**Add:**` annotations; an `add: <catalog>` entry with no `**When:**` field, or any `add` entry with no `**Apply:**` field (a missing `**When:**` on `add: rules` is correct, not a conflict); a `disable` and a `modify` for the same target in the same file. Ask once, recommend a resolution, proceed when the operator clarifies.
 
 ## Coexistence and precedence
 
@@ -116,4 +131,4 @@ This skill turns the plugin's "coexistence with precedence" stance inward, appli
 
 ## Output
 
-When an override fired, report which target(s) were overridden, the operation applied, and, for a safety-rule override, the elevated-autonomy acknowledgement with confirmation check. When no override file exists or no override matched the selected lenses, report nothing. This skill is silent by default and speaks only when an override changes behavior.
+When an override fired, report which target(s) were overridden, the operation applied, what changed where a `modify` annotation conflicted with the shipped text, and, for a safety-rule override, the elevated-autonomy acknowledgement with its invitation to interrupt. A standing rule read at session start is reported when it changes behavior, not merely because it was read. When no override file exists or no override matched the selected lenses, report nothing. This skill is silent by default and speaks only when an override changes behavior.

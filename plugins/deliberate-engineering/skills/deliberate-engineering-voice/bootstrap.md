@@ -8,7 +8,7 @@ Set expectations before starting. This is a project, not an afternoon, and the c
 
 ## What this costs
 
-The pilot is one data point rather than a requirement, but its shape is the honest way to budget:
+Throughout this file, **the pilot** means the first profile built with this method, by its author, before any of it shipped. Its numbers are reported so you can budget against something real and see where the method strained; they are one data point rather than a requirement, and none of them is a target. Its shape is the honest way to budget:
 
 - **Roughly a thousand collected samples**, spanning many years of writing rather than a recent window.
 - **Six analyses run in parallel**, one per dimension, each producing its own findings.
