@@ -2,6 +2,8 @@
 
 This catalog contains 17 strategies organized into five Parts plus composition patterns. Each strategy is a lens for the moment a *live system* behaves unexpectedly and you must diagnose under uncertainty and respond: deciding which evidence to trust, which failure-mode you're looking at, and how to act while the system is degraded. The selector skill references these by number to build a response tuned to the quality of the evidence and to how irreversible the consequence of being wrong is.
 
+Strategy **numbers are stable identifiers, not reading order**: a strategy keeps its number for life, and a new one is appended with the next free number and *placed* under the Part it belongs to. So a Part may run out of numeric sequence (Part C ends with 17). This is deliberate: it keeps every published number citable (e.g. by an override) without renumbering.
+
 ## What this catalog is, and is not
 
 This catalog is the *judgment* layer for diagnose-and-respond-under-failure. It does **not** teach the *method* of debugging: hypothesis, bisection, isolation, elimination. That belongs to `superpowers:systematic-debugging`, which this catalog delegates to and cross-references. What it adds is judgment: which signals are trustworthy, which failure-mode signature you're reading, and how to calibrate a response when the system is degraded and the clock is running.

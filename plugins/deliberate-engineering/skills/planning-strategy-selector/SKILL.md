@@ -39,7 +39,7 @@ These set how much of the catalog you apply, and in which direction.
 
 - **Trivial-and-safe** → minimal: calibrate (10), confirm there's no hidden reach, do it, and state the light-ceremony decision. See "When NOT to over-plan."
 - **Standard** → scope to the real requirement (Part A), ground against the real codebase (5), and capture the plan with recommendations (14), a lightweight pass over the axes that scored non-trivial.
-- **Ambiguous / risky / irreversible / wide reach** → full depth: clear the fog and triage the open questions first (17, 18) and gate readiness before committing (19), resolve scope hard (Part A incl. the correctness counter-rule 3), spike any feasibility unknown (8), inventory and blast-radius the reach (6, 7), gate before code (9), decompose and sequence (11, 12), keep a multi-deploy schema/data change backward-compatible (13), capture a self-contained dual-audience artifact (15, 16), and record a decision costly to recover (20).
+- **Ambiguous / risky / irreversible / wide reach** → full depth: clear the fog and triage the open questions first (17, 18) and gate readiness before committing (19), resolve scope hard (Part A incl. lens 3, the correctness counter-rule), spike any feasibility unknown (8), inventory the reach (6) and, where the change alters the meaning of shared data, model its blast radius (7), gate before code (9), decompose and sequence (11, 12), keep a multi-deploy schema/data change backward-compatible (13), capture a self-contained dual-audience artifact (15, 16), and record a decision costly to recover (20).
 
 ## Step 3: Select lenses from the catalog
 

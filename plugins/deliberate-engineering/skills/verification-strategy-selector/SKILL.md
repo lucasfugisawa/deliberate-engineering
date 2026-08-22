@@ -76,7 +76,7 @@ Apply the catalog's Appendix patterns:
 - **Expectation-first**: every check carries its expected result *before* you observe the actual one. A check with no stated expectation can't fail loudly.
 - **Prove → re-prove**: reach a conclusion, then re-verify it independently (5) before acting. The second pass is where the rationalized error dies.
 - **Calibrate depth to irreversibility**: match the protocol to the cost of being wrong, not to the diff size.
-- **Capture, don't infer**: when the real payload/metric is obtainable, capture it (15); inference is a hypothesis, not verification.
+- **Capture, don't infer**: when the real payload/metric is obtainable, capture it (16); inference is a hypothesis, not verification.
 - **No silent skipping**: if a check couldn't be run faithfully (sandbox limit, no pre-prod), **say so and name the authority for it** (6). An unrun check must never read as a passed one.
 - **The evidence is yours; the trigger is not (Rule 1).** This selector owns the Part C promotion gates and the Part E mutation protocol, which sit directly in front of the plugin's hardest gate: verification prepares the evidence, states the go/no-go, and **stops** at the merge, the deploy, the promotion, or the destructive write for the human to trigger. Rule 2 holds alongside it: on a system you don't own, stay read-only unless the operator has said otherwise, which makes a dry-run (8) the default shape of a mutation check.
 

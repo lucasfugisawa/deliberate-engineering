@@ -46,7 +46,7 @@ Each bucket carries a **saturation floor**: a minimum below which a finding is n
 
 ## Phase 3: Analyze
 
-Run the analysis dimensions `bootstrap.md` names in its section 2 over the collected buckets, each producing findings with sample counts and ids attached. Six are **independent** and parallelize: lexicon, syntax and rhythm, structure, tone, pragmatics per speech act, and anti-patterns; run those concurrently via subagents or the Workflow engine when one is present, sequentially when it is not. Two are **cross-cutting derivations** that run *over* the others once those are in: cross-language (which findings hold in every language versus which are language-bound) and trajectory (how each dimension moved across the eras). That six-independent-plus-two-derived split is what `bootstrap.md`'s "six analyses in parallel" against its eight-dimension list actually means; the state machine tracks all eight and orders the two derivations after the six.
+Run the analysis dimensions `bootstrap.md` names in its section 2 over the collected buckets, each producing findings with sample counts and ids attached. That section also says which of them are **independent** and which are **cross-cutting derivations** that run *over* the others once those are in: run the independent ones concurrently via subagents or the Workflow engine when one is present, sequentially when it is not, and order the derivations after them. The state machine tracks every dimension in that list, not only the parallel ones.
 
 ## Phase 4: Verify the findings adversarially
 
@@ -62,9 +62,8 @@ Write `core.md`, `registers/<lang>.md`, and `archetypes/<type>.md` within the `c
 
 ## Phase 7: Calibrate with a blind A/B (human gate 2)
 
-Run the blind A/B the way `bootstrap.md` describes, with one correction that matters. The asymmetry between the two drafts is instruction-based, not enforced: a dispatched subagent keeps its file access, so "forbidden to read the profile" is compliance, not access control. Use the more robust form:
+Run the blind A/B the way `bootstrap.md`'s section 6 describes, including its "running this on yourself" construction, which is where the load-bearing guard lives: the blind draft is generated in a fresh session that is never told a profile exists, so the asymmetry is structural rather than instructed. Drive it as follows:
 
-- Generate the **blind draft in a fresh session given only the request**, with no mention that a profile exists, so there is nothing to disobey; generate the profile draft with the profile loaded. Same request, context, and length target. This no-context construction is itself the read-asymmetry check: the blind agent is never told a profile exists, so there is nothing for it to read. If you must instead use an in-session subagent, confirm from its tool-call log that it never read the profile directory, rather than assuming it.
 - Shuffle the pair and **withhold the labels** until the operator has committed to a pick and said what is wrong with the other draft. Committing before the reveal is what makes the result mean anything.
 - On a loss, fix the **profile**, not the draft (a loss is a missing rule, an overstated rule, or a ban that should not be there). Record wins, losses, and ties **per archetype**. Run rounds until it wins consistently across archetypes, and keep at least one round after the final edit. A persistent tie on an archetype means it carries nothing distinct: merge or drop it.
 

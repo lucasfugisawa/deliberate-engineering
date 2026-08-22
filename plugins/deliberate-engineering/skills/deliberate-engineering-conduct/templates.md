@@ -44,7 +44,7 @@ Checkbox state, not memory or a prose note: in the field, the one gate recorded 
 | <PR / batch / resource> | [ ] | [ ] | [ ] | [ ] |
 
 ## Before each irreversible step: dry-run and scope bound        (required; the form varies by cluster)
-- **Pre-write evidence**: run the step in no-op / dry-run / shadow mode first and record what it *would* touch, before pulling the trigger (verify #8: dry-run before executing; #23: differential, run old and new against the same input). For a git merge this is the diff and conflict check; for a data mutation, the `SELECT` the `UPDATE` will hit.
+- **Pre-write evidence**: run the step in no-op / dry-run / shadow mode first and record what it *would* touch, before pulling the trigger (verify #8: dry-run before executing; #23, only where the step must *preserve* behavior: differential, run old and new against the same input). For a git merge this is the diff and conflict check; for a data mutation, the `SELECT` the `UPDATE` will hit.
 - **Expected scope / blast-radius bound + abort threshold**: the pre-declared bound that is itself a stop-rule (planning #7: blast-radius modeling; verify #21: quantify real usage and cross-check truth before mutating). "~1,200 rows; halt if the dry-run shows > 2,000"; "these 3 services, no more".
 
 ## Between-step verification battery: after each step        (required)

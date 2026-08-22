@@ -2,6 +2,8 @@
 
 This catalog contains 24 verification strategies organized into five groups plus composition patterns. Each strategy is a way to establish that something is *actually* true: by confronting it with reality (a run, a query, the live system) rather than by reading the artifact and judging it plausible. The selector skill references these by number to build a verification plan tuned to what is being verified and how irreversible the consequence of being wrong is.
 
+Strategy **numbers are stable identifiers, not reading order**: a strategy keeps its number for life, and a new one is appended with the next free number and *placed* under the group it belongs to. So a group may run out of numeric sequence (Part D ends with 24). This is deliberate: it keeps every published number citable (e.g. by an override) without renumbering.
+
 ## What verification is, and how it differs from review
 
 **Review** examines a static artifact and asks *does this look correct?* (reading a diff, a spec, a design for logic errors and contradictions). **Verification** asks *is this correct in reality?*, and answers it with evidence from running the thing: an executed test, a query against real data, a production metric, a captured payload. Review reasons about the code; verification confronts the world.
@@ -166,7 +168,7 @@ The review catalog's Part B (empirical validation, real-data validation, source-
 
 - **How it works:** A green post-deploy check confirms the feature works: it does not confirm the change is *done*. A ship usually creates closeout obligations: a temporary flag to actually remove (not just mark), the code that flag now strands, docs the change invalidated, a delayed usage or support signal that only surfaces days later. Treat "done" as including these, and confirm each with the same evidence standard as the feature itself (the flag is gone from the running config, the stranded path is deleted, the docs match shipped reality) rather than trusting they'll be tidied "later."
 - **Objective:** Close the gap between "it works in production" and "it's actually finished," where the obligations a launch creates quietly harden into permanent debt because nothing verified they were discharged.
-- **When most valuable:** After shipping any flagged, staged, or temporary change; migrations with an old path to retire; anything whose rollout created cleanup that outlives the deploy. (The *doing* of the closeout lives at other moments: review #35 removes dead code, planning gates a flag's removal date; this verifies, post-launch, that those obligations were met. Kin to debug Part E #14–16, which learns from a *failure*; this closes out a *success*.)
+- **When most valuable:** After shipping any flagged, staged, or temporary change; migrations with an old path to retire; anything whose rollout created cleanup that outlives the deploy. (The *doing* of the closeout lives at other moments: review #35 removes dead code, for instance; this verifies, post-launch, that those obligations were met. Kin to debug Part E #14–16, which learns from a *failure*; this closes out a *success*.)
 
 ---
 

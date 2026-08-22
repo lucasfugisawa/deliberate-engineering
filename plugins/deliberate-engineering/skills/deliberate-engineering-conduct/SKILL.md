@@ -29,7 +29,7 @@ The conductor is the moment every standing rule fires at once, and it **cites** 
 
 Not every irreversible sequence needs its own doc. The rule is the baton-pass, discovered in the field, not designed:
 
-- A **small cascade** runs fine from a tracker's operator queue, or inline within a phase: two or three ordered steps with a check between do not earn a separate cockpit.
+- A **small cascade** runs fine inline within a phase, or from the operator queue of a program tracker where one is already carrying the work: two or three ordered steps with a check between do not earn a separate cockpit.
 - A **cluster earns its own conductor** only when the gate graph outgrows a tracker section: enough ordered steps, cross-step deploy gates, rollback caveats, and between-step checks that a queue can no longer hold them without losing a gate.
 - While a conductor is live it is the **single cockpit** for its cluster. One live cockpit at a time: if a program tracker (`orchestrate`) was carrying the work, it goes quiet and holds a pointer to the conductor in the same commit the conductor is born; at closure the conductor gets its frozen banner and the baton returns to the tracker. A retired cockpit gets a closure marker, never a stale header left to rot.
 
