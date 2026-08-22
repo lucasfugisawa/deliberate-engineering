@@ -10,7 +10,7 @@ The plugin is a thin layer of judgment over a workflow engine. The README's *Wha
 
 ### The front door and the constitution
 
-- **The rules are the constitution.** Nine standing postures held across every phase and never switched off during engineering work. They set *how you behave*; everything below sets *where you start and what you do*.
+- **The rules are the constitution.** Nine standing postures held across every phase of engineering work, and the defaults you do not switch off casually. You can override them deliberately: an operator override can loosen even a safety rule, which the plugin honors while announcing the raised autonomy. They set *how you behave*; everything below sets *where you start and what you do*.
 - **The router is the front door** (`/deliberate-engineering:start`). It classifies the work, names the phase sequence and the ceremony each phase earns, and routes (recommending, never forcing). The only hard stop is the Rule 1 human gate on an irreversible or outward-facing action.
 - **Orchestration is its across-session sibling** (`/deliberate-engineering:orchestrate`). When the work is a program too large for one session, it runs an orchestration session that decomposes the work into units, dispatches each to a fresh worker session (a background subagent only for a narrow, earned band), verifies each return against primary evidence in a separate context, dispositions it, and tracks the whole program behind an always-current recovery anchor that lets any fresh session resume the orchestrator. The router conducts phases *within* a session; this orchestrates units *across* sessions. It is deliberately thin: it cites the standing rules and reuses the selectors and the state working-note rather than restating them, and it stops at the same Rule 1 gate for every outward action a unit produces.
 - **Conduction is its sibling for irreversibility clusters** (`/deliberate-engineering:conduct`). When irreversibility concentrates into a cluster (a merge cascade, a deploy chain, a batch of production data mutations, a teardown), it runs the cluster from a CONDUCTOR contract: a fixed step order with a gate between each, world state re-derived before every gate, the gate state kept in a per-item station table rather than in memory, each irreversible step bounded by a dry-run and a blast-radius limit before it fires and verified after, and every irreversible trigger handed to the operator (Rule 1). The router conducts phases *within* a session, orchestrate units *across* sessions, and this conducts steps *across an irreversibility cluster*, usually in one. It cites the verification rollout and data-mutation lenses and the planning ordering lenses rather than restating them; a small cascade stays in a tracker queue, and a cluster earns its own cockpit only when the gate graph outgrows one.
@@ -20,11 +20,11 @@ The plugin is a thin layer of judgment over a workflow engine. The README's *Wha
 ```mermaid
 flowchart TD
     work["a unit of engineering work"]
-    axes["classify by risk, reversibility,<br/>requirement clarity, and reach"]
+    axes["the router classifies:<br/>genre, then clarity, risk,<br/>reversibility, reach"]
     plan["planning-strategy-selector<br/>:plan<br/>what's worth building, and how much process?"]
     review["review-strategy-selector<br/>:review<br/>which lenses does this change call for?"]
     verify["verification-strategy-selector<br/>:verify<br/>is it true against reality, and what's the evidence?"]
-    debug["debug-operate-strategy-selector<br/>:debug<br/>a live system misbehaves, no reliable expectation"]
+    debug["debug-operate-strategy-selector<br/>:debug<br/>a live system misbehaves, no reliable expectation;<br/>plus peacetime signal hygiene and post-incident learning"]
     catalog[("that phase's catalog<br/>read on demand: only the lenses that fit")]
     engine["the method engine<br/>(superpowers, Workflow, or built-in)"]
 
@@ -52,7 +52,8 @@ flowchart TD
     class engine engine
 ```
 
-- **The four phases share one pattern:** classify the work, then read only the lenses that fit from that phase's catalog (never the whole catalog at once). Planning decides what to build; review reasons about the artifact; verification confronts reality; debug/operate takes over when a live system misbehaves and no reliable expectation holds.
+- **The four phases share one pattern:** classify the work, then read only the lenses that fit from that phase's catalog (never the whole catalog at once). Planning decides what to build; review reasons about the artifact; verification confronts reality; debug/operate takes over when a live system misbehaves and no reliable expectation holds, and also owns the peacetime band that keeps those signals worth trusting and the retrospective that follows an incident.
+- **They share one ruler, not one set of axes.** Every phase measures depth by *the cost of being wrong, not the size of the change*, and that ruler is the single mental model. What each phase classifies *on* is its own and differs where the epistemic mode differs: plan and review use the router's four (clarity, risk, reversibility, reach); verification asks what kind of evidence the claim needs and how costly a false "it's fine" would be, since the expectation is already stated by the time it fires; debug/operate opens by asking whether a reliable expectation exists at all, because it starts where none does. Each selector states its own classification step, so a router classification never stands in for the phase's own.
 - **The method is delegated.** A workflow engine owns *how* the work is carried out: `superpowers` (TDD, systematic debugging, plan execution) is the one recommended and the Workflow tool handles orchestration, but the layer delegates to whatever engine is present, falling back to the agent's built-in abilities when none is. The plugin owns the judgment (which phase, which lenses, how much ceremony) and hands the mechanism to the engine.
 
 ### Communication and voice
@@ -85,7 +86,7 @@ flowchart TD
     class silent plain
 ```
 
-- **Communication is cross-cutting, not a phase.** When the artifact you're producing is a communication (a PR description, a review comment, a stakeholder message, a writeup of alternatives), the router routes it *by nature* to `communication-collaboration-selector`, which classifies by audience and artifact (its own axes, not the four phase axes) and applies its seven lenses. You consult it from inside whatever phase you're in; it never becomes a fifth phase and adds no fifth axis. Once the lenses have shaped the message, the selector consults `deliberate-engineering-voice`, an optional surface layer that applies your personal voice profile over the result (the lenses decide what the message must accomplish, the profile decides how it sounds) and names the files it loaded; with no profile directory it does nothing and says nothing.
+- **Communication is cross-cutting, not a phase.** When the artifact you're producing is a communication (a PR description, a review comment, a stakeholder message, a writeup of alternatives), the router routes it *by nature* to `communication-collaboration-selector`, which classifies by audience and artifact (its own axes, not the router's routing axes) and applies its seven lenses. You consult it from inside whatever phase you're in; it never becomes a fifth phase and adds no fifth axis. Once the lenses have shaped the message, the selector consults `deliberate-engineering-voice`, an optional surface layer that applies your personal voice profile over the result (the lenses decide what the message must accomplish, the profile decides how it sounds) and names the files it loaded; with no profile directory it does nothing and says nothing.
 
 ### The extensibility cycle
 
@@ -136,11 +137,11 @@ The step-by-step walkthroughs live in the **[guides](guides/README.md)**; start 
 - **Adapt**: [Capture](guides/capture.md) turns a session's corrections into your personal overrides; [Voice-build](guides/voice-build.md) builds your voice profile from your own writing. The formats they rely on are in the sections below.
 - **Contribute**: the author flow (a lens for everyone) lives in [CONTRIBUTING.md](../CONTRIBUTING.md).
 
-One mental model runs across all of them: risk, reversibility, requirement clarity, and reach decide the depth, not line count. The plugin recommends a depth and a set of lenses *with its reasoning*, and you stay in control. Nothing is forced except one thing: it stops at a human gate before any irreversible or outward-facing action (a merge, a deploy, a push, a posted message). The nine standing rules hold underneath every phase the whole time.
+One mental model runs across all of them, and it is the ruler rather than a shared set of axes: the cost of being wrong decides the depth, never line count (each phase classifies on its own axes, as above). The plugin recommends a depth and a set of lenses *with its reasoning*, and you stay in control. Nothing is forced except one thing: it stops at a human gate before any irreversible or outward-facing action (a merge, a deploy, a push, a posted message). The nine standing rules hold underneath every phase the whole time.
 
 ### Adapt: make it think like you
 
-The plugin is opinionated, and it's meant to become yours. A personal file at `~/.claude/deliberate-engineering/overrides.md` takes precedence over the shipped content, addressed by stable identifiers: `review #N`, `verify #N`, `planning #N`, `debug #N`, or `rule N`. Three operations: `disable` turns a lens or rule off; `modify` appends your annotation alongside the shipped text; `add` defines your own. The agent always declares when an override changed what it did (nothing happens silently), and you can even loosen a safety rule, which it honors while calling out the raised autonomy.
+The plugin is opinionated, and it's meant to become yours. A personal file at `~/.claude/deliberate-engineering/overrides.md` takes precedence over the shipped content, addressed by stable identifiers: `review #N`, `verify #N`, `planning #N`, `debug #N`, or `rule N`. Three operations: `disable` turns a lens or rule off; `modify` appends your annotation alongside the shipped text; `add` defines your own. The agent always declares when an override changed what it did (nothing happens silently), and you can even loosen a safety rule, which it honors while calling out the raised autonomy. The numbers are the headings in the catalogs themselves, which is where to look one up before writing an entry by hand: [review](../plugins/deliberate-engineering/skills/review-strategy-selector/catalog.md), [verification](../plugins/deliberate-engineering/skills/verification-strategy-selector/catalog.md), [planning](../plugins/deliberate-engineering/skills/planning-strategy-selector/catalog.md), [debug/operate](../plugins/deliberate-engineering/skills/debug-operate-strategy-selector/catalog.md), [communication](../plugins/deliberate-engineering/skills/communication-collaboration-selector/catalog.md).
 
 You can write that file by hand, or let the agent help: run `/deliberate-engineering:capture` (or just ask) and it distills the session you just had (the lenses you skipped or corrected, the practices the catalog lacks) into ready-to-paste blocks. On demand only, append-only, written only on your approval. This grows *your* file; it is the adopter's side, distinct from the author tools below. The walkthrough is the [capture guide](guides/capture.md).
 
@@ -149,7 +150,7 @@ You can write that file by hand, or let the agent help: run `/deliberate-enginee
 ```markdown
 ## review #35: disable
 
-**Why:** We run this lens manually in a separate security pass; not needed in the main review.
+**Why:** We run a separate simplification pass after the deliberate review; not needed in the main pass.
 
 ## add: review
 

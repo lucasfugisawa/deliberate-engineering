@@ -7,7 +7,7 @@ description: "Use when producing a communication around engineering work: a PR/M
 
 The deliberate layer of *how you communicate around the work*. Engineering is not only inward (code, systems, process) but also outward: the PR you open, the review comment you leave, the way you explain a decision to a stakeholder. This skill decides *which communication lenses THIS artifact and audience call for*, and applies them, so the message is tuned to its reader, not a generic dump.
 
-It is **cross-cutting, not a phase.** The four phase selectors (plan / review / verify / debug-operate) classify engineering work by the four canonical axes. Communication does not classify by those axes: what selects a lens here is **which artifact + which audience.** So this selector has its own two-axis classification, and you consult it from *within* any phase the moment the next thing you produce is a communication.
+It is **cross-cutting, not a phase.** Each phase selector (plan / review / verify / debug-operate) classifies engineering work on the axes proper to its own phase. This one classifies on a different pair entirely: what selects a lens here is **which artifact + which audience.** The ruler the whole plugin shares still reaches this work, through the weight of the subject the artifact carries (Step 1, axis 2), but the axis names are this selector's own. Consult it from *within* any phase the moment the next thing you produce is a communication.
 
 The reference for every lens cited below is `catalog.md` in this directory (a handful of lenses + a composition note). Read **only** the sections you select: progressive disclosure, not the whole file.
 
@@ -21,9 +21,13 @@ The reference for every lens cited below is `catalog.md` in this directory (a ha
 
 This is calibration, not always-more. A one-line note whose every reference the reader can already resolve needs no ceremony. When you deliberately keep it light, **say so**: a stated light-touch decision is calibration; silence is not.
 
+## Scope and re-derivation
+
+Resolve the artifact and its reader from the **world**, never from conversation memory. What a PR description says the change does comes from the diff, the branch, or the ticket, not from what the session remembers doing; the reader comes from the review thread, the assignee, or the channel, not from a guess about who cares. On re-invocation, re-derive those facts from the same sources rather than relaying the earlier draft (Rule 3): a recalled "here is what this change does" is a memory artifact, and this artifact is outward-facing, so the error ships.
+
 ## Step 1: Classify on two axes: audience and artifact
 
-1. **Audience**: who reads this? **code-agent** (another agent or tool consuming structured instruction), **engineering** (a technical peer, including the operator), **product**, or **business**. If the reader fits none of these cleanly, **ask the operator** which register fits rather than guessing (naming the edge of what you know beats fabricating it).
+1. **Audience**: who reads this? **code-agent** (another agent or tool consuming structured instruction), **engineering** (a technical peer, including the operator), **product**, or **business**. If the reader fits none of these cleanly, **ask the operator** which register fits rather than guessing, with your pick embedded in the question (Rule 4), e.g. "I'd write this for an engineering reader. Confirm?" (naming the edge of what you know beats fabricating it).
 2. **Artifact**: what communication are you producing? A PR/MR description, a review comment, a design doc, an RFC, a stakeholder message, a handoff. The artifact carries the **weight of the underlying subject**: communicating an irreversible, high-risk deploy plan is a heavier artifact than a typo note, and deserves more depth.
 
 Audience sets the *register and vocabulary*; artifact sets *which lenses and how much weight*.
@@ -44,6 +48,12 @@ Open the catalog and pick the lenses whose **Tags** (artifacts + audiences) matc
 
 **Operator voice.** After applying the selected lenses, when the artifact is going to a reader other than the operator, consult `deliberate-engineering-voice` **by invoking the skill, not by reading the profile directly**: its loading contract, its fallback states and its declaration protocol live in the skill, and reaching past it to the files applies the profile without the rules that govern it. Then: if a voice profile is present, apply it as the surface layer (core + register + archetype), and name the files loaded in the Output. A reply to the operator is outside that scope, including when the reply presents options (lens 6); how the agent talks to the operator follows the rules skill's authoring convention, not the operator's profile.
 
-## Step 3: Apply and output
+## Step 3: Coexistence and precedence
+
+When other engines are present (a PR-description generator, commit-message tooling, a feature-development flow's PR step), **THIS skill decides what the artifact and its reader need** and may invoke them as *tactics*. It orchestrates; it never requires removing or disabling any of them. Where a present tool already owns the ground for a selected lens, delegate to it and note the delegation rather than duplicating the pass.
+
+Precedence inside this skill runs in one order: the lenses set what the message must accomplish, an operator override adjusts a selected lens where one applies, and the voice profile shapes the surface last. A profile never licenses dropping a lens or breaking a standing rule.
+
+## Step 4: Apply and output
 
 Apply the selected lenses to the communication, then report, briefly: the classification (audience + artifact), the lenses selected and why, anything deliberately skipped and why, and, when you presented alternatives, the rationale exposed for critique (lens 6).

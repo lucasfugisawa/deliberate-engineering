@@ -23,7 +23,7 @@ This skill is consulted, not invoked directly. It is read at two lifecycle momen
 
 The working-note lives in a project-local directory that is ensured-ignored by the VCS, with a fallback to a global directory when no project-local home is available. The resolution order:
 
-1. **Project-local preferred**: `.deliberate/state/` in the repository root. Before writing here, ensure the `.deliberate/` directory is ignored by the VCS in use. The concretely-implemented case is git: run `git check-ignore .deliberate/probe` to confirm it is ignored (probe a child path, not `.deliberate` itself: `git check-ignore` on a not-yet-created directory exits 1 even when `.deliberate/` is ignored, so probing the bare directory would make the first write of a work unit wrongly fall back to global). Exit code 0 means the path IS ignored and safe to write; exit code 1 means it is NOT ignored: add `.deliberate/` to `.gitignore` first and declare the addition in the visible output. The generic principle is "ignored by the VCS in use": git is the implemented case; other VCSes would follow the same principle but are not concretely implemented in this skill. If the working directory is not under version control, skip to the fallback.
+1. **Project-local preferred**: `.deliberate/state/` in the repository root. Before writing here, ensure the `.deliberate/` directory is ignored by the VCS in use. The concretely-implemented case is git: run `git check-ignore .deliberate/probe` to confirm it is ignored (probe a child path, not `.deliberate` itself: `git check-ignore` on a not-yet-created directory exits 1 even when `.deliberate/` is ignored, so probing the bare directory would make the first write of a work unit wrongly fall back to global). Exit code 0 means the path IS ignored and safe to write; exit code 1 means it is NOT ignored: add `.deliberate/` to `.gitignore` first and declare the addition in the visible output. That addition is a tracked-file change unrelated to the work, so keep it out of whatever you hand over: stage narrowly, per Rule 1, rather than letting it ride along into the prepared change. The generic principle is "ignored by the VCS in use": git is the implemented case; other VCSes would follow the same principle but are not concretely implemented in this skill. If the working directory is not under version control, skip to the fallback.
 
 2. **Fallback when project-local is unavailable**: `~/.claude/deliberate-engineering/state/`. Use this when there is no repository root or the project-local ignore setup failed.
 
@@ -59,17 +59,17 @@ Example:
 
 - **Phase**: verification
 - **Sequence**: planning → review → verification
-- **Ceremony band**: medium
-- **Rituals**: planning #8, #12, #19; review #25, #35; verification #3, #16
+- **Ceremony band**: standard
+- **Rituals**: planning #8, #12, #19; review #25, #35; verification #1, #3
 - **Pendings**:
   - ✗ PR description needs ticket link
   - ✗ DB migration test pending prod schema fetch
 
 ## Decision log
 
-- 2026-06-28 14:32: Skipped verify #14 (kill-switch verification). Why: The export is gated by an existing flag; no new switch to verify.
+- 2026-06-28 14:32: Skipped verify #14 (kill-switch verification). Why: The export is read-only, so there is no behavior to switch off and no way back to verify.
 - 2026-06-28 16:45: Chose verify #4 (validate against the real schema) over a broad load pass. Why: The endpoint is low-traffic; schema-change risk outweighs volume risk.
-- 2026-06-29 09:15: Added verify #16 (direct runtime evidence: a read-only prod query). Why: The prod DB schema differs from staging (a legacy column is still present); a read-only query confirms compatibility.
+- 2026-06-29 09:15: Added verify #1 (query the live canonical source: a read-only prod query). Why: The prod DB schema differs from staging (a legacy column is still present); a read-only query confirms compatibility before the change lands.
 ```
 
 ## Rehydrate (the read operation)

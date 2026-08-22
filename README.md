@@ -8,16 +8,16 @@ Coding agents are good at *acting*. `deliberate-engineering` makes them good at 
 
 Left to its defaults, an agent gives a one-line change to a money calculation the same effort as a typo fix, and can report "done" before anything met reality, not from carelessness, but because nothing told it this change was different. This layer is what tells it: it classifies the work first, then decides *how much* ceremony the change has earned, *which* lenses it actually calls for, and *whether* the result is really true. And it stops at a human gate for anything irreversible or outward-facing.
 
-One mental model runs across the whole lifecycle. **Risk, reversibility, requirement clarity, and reach decide the depth, not line count:**
+One mental model runs across the whole lifecycle, and it is a **ruler**: depth is set by the cost of being wrong, never by line count. Each phase classifies on its own axes (planning and review on risk, reversibility, requirement clarity, and reach):
 
 | Phase | Selector | The question it answers |
 |---|---|---|
 | **Plan** | `planning-strategy-selector` | What's worth building, and how much process does it deserve? |
 | **Review** | `review-strategy-selector` | Which lenses does *this* change actually call for? |
 | **Verify** | `verification-strategy-selector` | Is it true against reality, and what's my evidence? |
-| **Debug/Operate** | `debug-operate-strategy-selector` | A live system is misbehaving and I have no reliable expectation. Now what? |
+| **Debug/Operate** | `debug-operate-strategy-selector` | A live system is misbehaving and I have no reliable expectation. Now what? And in peacetime: are these alerts still worth a page? |
 
-Planning decides what to build; review reasons about the artifact; verification confronts reality; and debug/operate takes over when a live system misbehaves and no reliable expectation holds. Two siblings handle scale beyond a single pass, `:orchestrate` across many sessions and `:conduct` across a cluster of irreversible steps, and a cross-cutting communication layer tunes what you write for its reader (see [What's inside](#whats-inside)).
+Planning decides what to build; review reasons about the artifact; verification confronts reality; and debug/operate takes over when a live system misbehaves and no reliable expectation holds, and owns the peacetime signal hygiene and the post-incident learning around it. Two siblings handle scale beyond a single pass, `:orchestrate` across many sessions and `:conduct` across a cluster of irreversible steps, and a cross-cutting communication layer tunes what you write for its reader (see [What's inside](#whats-inside)).
 
 ## See it in action
 
@@ -169,7 +169,7 @@ flowchart TD
 <details>
 <summary><strong>The four phase catalogs in detail</strong> (116 strategies total; the cross-cutting communication catalog adds seven lenses)</summary>
 
-- **Review: 55 strategies** in five groups: process / meta-review (14), verification & evidence (7), failure & contradiction reasoning (6), engineering-quality lenses (13), and reviews beyond back-end (15). Classifies your change by risk, reversibility, requirement clarity, and size, then selects the lenses that fit.
+- **Review: 55 strategies** in five groups: process / meta-review (14), verification & evidence (7), failure & contradiction reasoning (6), engineering-quality lenses (13), and reviews beyond back-end (15). Classifies your change by risk, reversibility, requirement clarity, and reach, then selects the lenses that fit.
 - **Verification: 24 strategies** in five groups: evidence & ground truth (6), local & pre-merge (6), staged promotion & rollout (5), post-deploy production verification (5), and operational data-mutation verification (2). For establishing something is *actually* true, with evidence from running systems, not just plausible on paper. Review asks "does this look correct?"; verification asks "is it correct, and what's my evidence?"
 - **Planning: 20 strategies** in six groups: scope / anti-over-engineering (4), ground the plan in reality (4), calibrate ceremony to risk (2), slice & sequence (3), capture the plan (4), and disambiguation / readiness (3). For *before* code exists: deciding what work is worth doing and how much process it calls for. It delegates the *how-to-plan* discipline to your workflow engine.
 - **Debug/Operate: 17 strategies** in five groups: trust the evidence (3), diagnose under uncertainty (2), respond under pressure (4), keep the signal healthy (5), and learn from the failure (3). For when a *live system* misbehaves and you must diagnose under uncertainty and respond. Verification confirms an expectation you already hold; this is discovery under failure, and it delegates the debugging *method* to your workflow engine.
@@ -202,9 +202,13 @@ So it does not carry domain-specific knowledge: API design, data modeling, perfo
 
 The same honesty applies to its platform reach: it ships as a Claude Code plugin, and that is the honest scope today. It doesn't claim to run on other agents or IDEs, and it removes nothing, coexisting with whatever review and workflow tooling you already run.
 
+### What the plugin writes
+
+Nothing in your source, and two things worth knowing about. To keep its place across context boundaries on multi-phase or multi-session work, it writes a working-note: `.deliberate/state/` in the repository root when it can confirm that path is ignored by your VCS, and `~/.claude/deliberate-engineering/state/` otherwise. **Confirming that can mean adding a `.deliberate/` line to your `.gitignore`**, which is a tracked file, so that is the one edit it makes outside its own directories; it stages narrowly and tells you. It also says which location it chose every time it reads or writes a note. Your personal overrides and voice profile live under `~/.claude/deliberate-engineering/` and never enter a repository.
+
 ## Uninstall
 
-Both steps are independent, and undoing this never touches your code or your repos:
+Both steps are independent, and neither touches your source:
 
 1. **Disable or remove the plugin** via `/plugin`: that's the whole product.
 2. **If** you added the optional always-on block to your personal `~/.claude/CLAUDE.md`, delete it: everything from `<!-- deliberate-engineering:begin -->` through `<!-- deliberate-engineering:end -->`, inclusive. Removing it is unrelated to disabling the plugin; the router and rules then load only on description match, like any normal skill.

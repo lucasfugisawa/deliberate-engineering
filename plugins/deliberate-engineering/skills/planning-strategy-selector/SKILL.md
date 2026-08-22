@@ -33,13 +33,13 @@ These set how much of the catalog you apply, and in which direction.
 3. **Reversibility**: How hard is it to undo the *direction* once committed: a chosen abstraction, a data-model decision, a migration?
 4. **Reach**: How many call sites, services, consumers, or teams does the work touch? (Not the diff size, the blast radius of the decision.)
 
-**The ruler is clarity, risk, reversibility, and reach, not how big the change looks.** These are deliberately the *same* risk / reversibility / clarity / reach axes the review and verification selectors use, applied here *before* code rather than after: one mental model, three lenses across the lifecycle. Planning leads with **clarity** because resolving ambiguity is planning's first job.
+**These four set the depth here, not how big the change looks.** They are the same four the router routes on and the review selector classifies on, applied *before* code rather than after; verification and debug-operate classify on their own, because each starts from a different epistemic footing (see `deliberate-engineering-router`, Step 1). The ruler underneath all of them is the cost of being wrong, and that, not the axis names, is what every phase shares. Planning leads with **clarity** because resolving ambiguity is planning's first job.
 
 ## Step 2: Map to a planning depth
 
 - **Trivial-and-safe** → minimal: calibrate (10), confirm there's no hidden reach, do it, and state the light-ceremony decision. See "When NOT to over-plan."
 - **Standard** → scope to the real requirement (Part A), ground against the real codebase (5), and capture the plan with recommendations (14), a lightweight pass over the axes that scored non-trivial.
-- **Ambiguous / risky / irreversible / wide reach** → full depth: clear the fog and triage the open questions first (17, 18) and gate readiness before committing (19), resolve scope hard (Part A incl. the correctness counter-rule 3), spike any feasibility unknown (8), inventory and blast-radius the reach (6, 7), gate before code (9), decompose and sequence (11, 12), keep a multi-deploy schema/data change backward-compatible (13), capture a self-contained dual-audience artifact (15, 16), and record a decision costly to recover (20).
+- **Ambiguous / risky / irreversible / wide reach** → full depth: clear the fog and triage the open questions first (17, 18) and gate readiness before committing (19), resolve scope hard (Part A incl. lens 3, the correctness counter-rule), spike any feasibility unknown (8), front-load a classified inventory when the true size is unknown (6) and, where the change alters the meaning of shared data, model its blast radius (7), gate before code (9), decompose and sequence (11, 12), keep a multi-deploy schema/data change backward-compatible (13), capture a self-contained dual-audience artifact (15, 16), and record a decision costly to recover (20).
 
 ## Step 3: Select lenses from the catalog
 

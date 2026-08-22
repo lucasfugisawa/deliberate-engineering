@@ -2,6 +2,8 @@
 
 This catalog contains 20 planning strategies organized into six groups plus composition patterns. Each strategy is a lens of *judgment applied to planning*: deciding what to build, how much process the work calls for, how to slice and sequence it, and how to capture it. The selector skill references these by number to build a planning approach tuned to the work's clarity, risk, and reach.
 
+Strategy **numbers are stable identifiers, not reading order**: a strategy keeps its number for life, and a new one is appended with the next free number and *placed* under the group it belongs to. So a group may run out of numeric sequence (Part E ends with 20). This is deliberate: it keeps every published number citable (e.g. by an override) without renumbering.
+
 ## What this catalog is, and is not
 
 This is **not** a planning *engine*. It does not teach how to brainstorm, how to write a plan document, or how to author acceptance criteria. A workflow engine such as `superpowers` owns that discipline, and this layer delegates to it. This catalog is the **deliberate judgment** exercised *while* planning: the decisions about scope, ceremony, decomposition, sequencing, and artifact shape that separate a plan that builds the right thing from a plan that builds everything plausible.
@@ -112,7 +114,7 @@ It sits *before* code exists. Where review judges an artifact and verification c
 
 - **How it works:** The judgment is choosing the right multi-step shape so a schema or data change never outruns the code deployed beside it: **expand → adopt → contract** for a non-additive change (a rename, a drop of something still referenced, a `NOT NULL` without default, a type change), or **dual-write + backfill** for a large *online* data move, keeping a proven fallback and advancing one *deployed* phase at a time. The rule that makes each phase safe: backward-compatibility is judged against the *currently-running* old code, which in a non-atomic deploy keeps serving while the change rolls out, so at every step the old code must still both *read* what it expects **and** *write* semantically valid rows (passing only one is not safe). When a change can't be made compatible in a single deploy, don't ship it as one step; do only the safe step now, never trading safety for fewer PRs. When in doubt, add a deploy boundary rather than remove one.
 - **Objective:** Keep every step of a multi-deploy schema or data change compatible with the code running beside it, so a migration never becomes an outage even when the new code is correct.
-- **When most valuable:** Any schema change to a live system; renames, drops, constraint/type tightening; large online data migrations; anywhere schema and code deploy separately. (Sequencing analog: lens 12, *avoid hidden intermediate states*: that keeps each step internally safe; this keeps each step compatible with the *old code still running*. Evidence analogs in verification: strategy 13 *deploy ordering*, 14 *kill-switch/fallback*, 21 *reconcile before cutover*.)
+- **When most valuable:** Any schema change to a live system; renames, drops, constraint/type tightening; large online data migrations; anywhere schema and code deploy separately. (Sequencing analog: lens 12, *avoid hidden intermediate states*: that keeps each step internally safe; this keeps each step compatible with the *old code still running*. Evidence analogs in verification: strategy 13 *deploy ordering*, 14 *kill-switch/fallback*, 21 *quantify usage and cross-check against the system of record before mutating*.)
 
 ---
 
@@ -154,7 +156,7 @@ It sits *before* code exists. Where review judges an artifact and verification c
 
 - **How it works:** Faced with a vague, broad, or ill-defined problem, first exhaust what is already knowable: the code, the docs, the product docs, the discussion threads, the email trail (delegate the search to an agent where it scales), not only to find the answer outright but to reach whoever *can* answer with grounded, context-loaded questions. Never arrive with a raw question you could have answered or sharpened yourself; help the people who help you by carrying the context to them.
 - **Objective:** Convert ambiguity into precise, directed questions, minimizing round-trips and the burden you place on others.
-- **When most valuable:** Any ill-defined problem before planning begins; any question you are about to address to a busy human. (Evidence analog: review-catalog lens 14 and verification-catalog strategy 1 gather facts from the canonical source; this lens uses that gathering to *disambiguate the requirement* before a plan exists, distinct from lens 5, which plans against the code once the requirement is clear.)
+- **When most valuable:** Any ill-defined problem before planning begins; any question you are about to address to a busy human. (Evidence analog: review-catalog lens 14 confirms you are looking at the canonical artifact and verification-catalog strategy 1 gathers the facts from it; this lens uses that gathering to *disambiguate the requirement* before a plan exists, distinct from lens 5, which plans against the code once the requirement is clear.)
 
 ### 18. Decide early what's costly to reverse, late what's cheap to adjust
 

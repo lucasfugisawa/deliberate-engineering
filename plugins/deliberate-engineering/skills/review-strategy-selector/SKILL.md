@@ -1,6 +1,6 @@
 ---
 name: review-strategy-selector
-description: "Use after any baseline code review, or when reviewing a change, to deliberately select the right review lenses for THIS change instead of running a generic pass. Classifies by risk, reversibility, requirement clarity, and size, then applies matching strategies from the catalog. Less vibe coding, more deliberate craft."
+description: "Use after any baseline code review, or when reviewing a change, to deliberately select the right review lenses for THIS change instead of running a generic pass. Classifies by risk, reversibility, requirement clarity, and reach, then applies matching strategies from the catalog. Less vibe coding, more deliberate craft."
 ---
 
 # Review Strategy Selector
@@ -8,6 +8,14 @@ description: "Use after any baseline code review, or when reviewing a change, to
 The deliberate layer of review. A baseline pass (catalog strategy 1) finds the obvious. This skill decides *which additional lenses THIS change actually calls for*, and applies them, so review is tuned to the change, not a generic checklist run on autopilot.
 
 The reference for every strategy cited below is `catalog.md` in this directory (five groups of strategies + composition patterns). Read **only** the sections you select: progressive disclosure, not the whole file.
+
+## Review vs. verification vs. debug/operate: stay on the right side of the line
+
+- **Review** (this skill): reasons about a static artifact (a diff, a spec, a design) and judges whether it *looks* correct.
+- **Verification** (`verification-strategy-selector`): establishes whether it *is* correct, with evidence from the running world. The moment a finding turns on a fact about reality (a number, an actual production behavior, the real schema), it stops being reviewable: hand it there instead of settling it by reading.
+- **Debug/operate** (`debug-operate-strategy-selector`): owns a live system misbehaving with no reliable expectation yet. If a review turns into chasing a live break, you have left this skill.
+
+They compose in that order: review finds candidates, verification confirms the ones that need reality. Reviewing is not verifying, and a lens that concludes "this reads correctly" has not established that it *is* correct.
 
 ## When to use
 
@@ -30,9 +38,9 @@ Assess each axis. These, not line count, set the depth.
 1. **Risk**: Does it touch money, customer/PII data, security/auth, or production behavior? Could a defect cause loss, leak, or outage?
 2. **Reversibility**: Migrations, backfills, destructive or in-place writes, schema changes? Is there a bounded path back to the prior state?
 3. **Requirement clarity**: Is the intent unambiguous, or are you inferring what "correct" means? Ambiguity is itself a risk.
-4. **Size / scope**. Blast radius: how many call sites, services, or consumers does it reach? (Not the diff size, the reach.)
+4. **Reach**. Blast radius: how many call sites, services, or consumers does the change touch? (Not the diff size, the reach.)
 
-**The ruler is RISK AND UNCERTAINTY, not line count.** A one-line change to a fee calculation or a `DELETE` predicate is high-depth; a 600-line addition of an isolated, well-tested helper is not.
+**The ruler is RISK AND UNCERTAINTY, not line count.** A one-line change to a fee calculation or a `DELETE` predicate is high-depth; a 600-line addition of an isolated, well-tested helper is not. This is the plugin's one shared ruler stated in review's terms: depth follows the cost of being wrong, never the size of the change.
 
 ## Step 2: Map to a depth band
 
@@ -50,11 +58,11 @@ Open the catalog **groups** matching your non-trivial axes and pick lenses. Read
 - **Migrations / backfills / destructive (Reversibility)** → 23 concurrency, 24 reversibility/rollback, 28 data integrity, 31 operability/rollout, 16 coverage analysis.
 - **Ambiguous intent (Requirement clarity)** → 15 assumption/invariant audit, 32 cross-document consistency, 13 validation against real data, 50 spec self-review.
 - **Implementation reviewed against a spec/intent** → 52 spec-conformance audit (alignment-not-correctness, drift taxonomy, discovery-only), with 25.
-- **Wide blast radius (Size/scope)** → 55 blast-radius/change-impact (map every caller/consumer the change reaches), 29 contract/API, 32 cross-service consistency, 18 test-quality.
+- **Wide blast radius (Reach)** → 55 blast-radius/change-impact (map every caller/consumer the change reaches), 29 contract/API, 32 cross-service consistency, 18 test-quality.
 - **External-dependency / error paths** → 21 silent-failure hunting, 22 error-handling adequacy.
 - **Frontend / mobile / infra / data / experiments** → the matching Part-D / Part-E group; open only the relevant subsection.
 
-**Worked example (change writes production data via a backfill):** Non-trivial on Risk + Reversibility + Size. Selected lenses: **25** (functional correctness: does it backfill what the requirement meant?), **23** (concurrency: backfill contends with live writes), **24** (reversibility: is there a bounded way back?), **28** (data integrity: invariants/transactions hold?), **2** (adversarial: try to break it), closed with **3** (fresh eyes). Skipped frontend/i18n groups, logged as not applicable.
+**Worked example (change writes production data via a backfill):** Non-trivial on Risk + Reversibility + Reach. Selected lenses: **25** (functional correctness: does it backfill what the requirement meant?), **23** (concurrency: backfill contends with live writes), **24** (reversibility: is there a bounded way back?), **28** (data integrity: invariants/transactions hold?), **2** (adversarial: try to break it), closed with **3** (fresh eyes). Skipped frontend/i18n groups, logged as not applicable.
 
 **Operator overrides.** Before applying the selected lenses, consult `deliberate-engineering-overrides`: if any selected lens has an operator override (disable / modify / add), honor it and declare the deviation in the Output.
 
@@ -72,7 +80,7 @@ This is what makes a recalled review visibly incomplete: reused conclusions carr
 Apply the composition patterns from the catalog's Appendix:
 
 - **Rotate the lens each pass**: one strategy per pass, never the same angle twice.
-- **Find → verify**: find candidates broadly, then verify each adversarially (9 majority-refute) before acting on it. For unknown-size audits, loop until dry (6).
+- **Find → verify**: find candidates broadly, then verify each adversarially (9 majority-refute) before acting on it. For unknown-size audits, loop until dry (6). ("Verify" here is lens 9's refutation vote *inside* review; confirming a candidate against reality is the `verification-strategy-selector`'s job, not this pattern's.)
 - **Self-review your own fixes** (4): after editing, review what the fix may have broken.
 - **CLOSE with a fresh-eyes pass (3) in a separate context**: the final pass must be independent of the edit history AND of the prior conclusions. In-context re-reading inherits what you already concluded, so it confirms rather than re-sees; dispatch it as a fresh-context agent (or defer to a new session). Always.
 - **Never silently truncate**: if you limited coverage (sampled, capped, skipped a group), **log what you deliberately skipped and why.** Truncating silently reads as "covered everything," which is a lie of omission.

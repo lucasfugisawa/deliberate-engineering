@@ -73,7 +73,7 @@ One receipt per loaded set is enough. It is worth giving on the first draft of a
 - Normal: *"Voice profile applied: core + registers/en + archetypes/code-review."*
 - No archetype match: *"Voice profile applied: core + registers/en. No archetype matched a calendar invite, so surface is core plus register only."*
 - No register match: *"Voice profile applied: core + archetypes/email. No register for this language; core only on language-bound habits."*
-- Lens conflict resolved: add one clause. *"...lens 7 kept its handoff structure over the profile's no-headings preference."*
+- Lens conflict resolved: add one clause. *"...lens 7's handoff skeleton kept, rendered without headings per the profile."*
 
 When the profile did not fire because the directory is absent, say nothing at all.
 

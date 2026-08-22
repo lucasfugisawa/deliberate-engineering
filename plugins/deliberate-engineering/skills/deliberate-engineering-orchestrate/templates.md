@@ -8,7 +8,7 @@ Two of these are per-dispatch (handoff, work report); the tracker is per-program
 
 ## 1. Handoff (outbound contract)
 
-The orchestration session writes this; a fresh session executes from it holding nothing else. It must be resolvable on its own (Rule 9), and its binding premise must be frozen against a live-state read taken **at dispatch time**, not from the orchestration session's last-known snapshot (Rule 3, premise-freshness).
+The orchestration session writes this; a fresh session executes from it holding nothing else. It must be resolvable on its own (the bar Rule 9 sets for shipped artifacts, reused here), and its binding premise must be frozen against a live-state read taken **at dispatch time**, not from the orchestration session's last-known snapshot (Rule 3, premise-freshness).
 
 ```markdown
 # Handoff: <one-line unit title>

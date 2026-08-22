@@ -105,7 +105,7 @@ The promote skill degrades gracefully and reports failures explicitly. It never 
 
 **Malformed candidate (missing frontmatter, invalid `target`, unparseable):** report the malformation, do NOT guess, do NOT edit. A valid `target` is one of `review`, `verify`, `planning`, or `debug`; anything else is malformed. Ask the author to fix the candidate file and re-invoke promotion.
 
-**Modify-nonexistent (`operation: modify` with `modifies: N` but `### N.` does not exist in the catalog):** stop, report the missing lens number, do NOT edit. The candidate likely cites the wrong number. Ask the author to correct the `modifies` field or change the operation to `add`.
+**Modify-nonexistent (`operation: modify` with `modifies: N` but `### N.` does not exist in the catalog):** stop, report the missing lens number, do NOT edit. The candidate likely cites the wrong number. Ask the author to correct the `modifies` field or change the operation to `add`, with your pick embedded (Rule 4): search the catalog for a lens already covering that ground, then recommend `modify` against the number you found, or `add` when nothing covers it.
 
 **Add-duplicate (a lens with the same title or nearly identical principle already exists):** flag the duplication, suggest either converting the candidate to a `modify` operation (if the intent is to amend the existing lens) or dropping the candidate (if it is redundant). Do NOT silently add a duplicate lens.
 

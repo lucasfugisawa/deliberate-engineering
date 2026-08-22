@@ -268,7 +268,7 @@ Strategies **compose**. The strongest pattern is to *rotate the lens each pass* 
 
 - **How it works:** Before judging the change in isolation, map what else it reaches: every caller of a changed signature, every consumer of a changed data shape or event, the feature flags and config it interacts with, and the shared state it reads or writes. Trace outward from the diff (including into repos and services not in front of you) and ask what breaks, loudly or silently, if this behaves a little differently than before.
 - **Objective:** Surface the true reach of a change so it isn't reviewed as a local edit when its effects are global: the defect that ships because the reviewer only read the lines that changed.
-- **When most valuable:** Changes to shared functions, contracts, schemas, events, or config consumed elsewhere; anything whose callers or consumers span modules, services, or teams. (Planning analog: planning-catalog lens 7, *blast-radius modeling*, sizes the reach while planning; this judges it on the finished change. Reversibility is #24; this is reach, not undo.)
+- **When most valuable:** Changes to shared functions, contracts, schemas, events, or config consumed elsewhere; anything whose callers or consumers span modules, services, or teams. (Planning analog: planning-catalog lens 7, *blast-radius modeling*, sizes the reach while planning, though it is scoped to data-semantic changes; this judges it on the finished change, at any scope. Reversibility is #24; this is reach, not undo.)
 
 ---
 
