@@ -1,6 +1,6 @@
 ---
 name: debug-operate-strategy-selector
-description: "Use when a live system behaves unexpectedly and you must diagnose under uncertainty or respond to an incident: error rates climbing, a flow broken with no known cause, a page you have to act on. You don't yet hold a reliable expectation; you're discovering what's true while the system may be degraded. Classifies the evidence quality and how irreversible being wrong is, then selects strategies from the catalog and dispatches superpowers for the debugging method. Distinct from verify: verify confirms an expectation you already hold; this is discovery under failure."
+description: "Use when a live system behaves unexpectedly and you must diagnose under uncertainty or respond to an incident: error rates climbing, a flow broken with no known cause, a page you have to act on, where you don't yet hold a reliable expectation and the system may be degraded. Also covers the two bands around the incident: in peacetime, the signal hygiene response depends on (alerts that no longer earn a page, a noisy error stream, thresholds tied to nothing, unowned end-to-end flows); and after the fire is out, the blameless retrospective that turns a failure into tracked learning. Classifies the situation, then selects strategies from the catalog and dispatches superpowers for the debugging method. Distinct from verify: verify confirms an expectation you already hold; this is discovery under failure."
 ---
 
 # Debug/Operate Strategy Selector
@@ -32,18 +32,23 @@ Incident-response posture has a cost, and it has a symmetric failure mode to ove
 - After the fire is out, to convert the incident into durable learning.
 - In peacetime, to keep the signals that incident response depends on healthy.
 
-## Step 1: Classify the situation (four axes)
+## Step 1: Classify the situation: one entry gate, then three axes
 
-1. **Is there a reliable expectation?** No → this catalog (discovery under failure). Yes (you're confirming "it should do X") → the `verification-strategy-selector`. **This is the entry gate.**
-2. **Evidence quality**: is the signal you'd act on sampled, lossy, derived, or second-hand? A trace-derived count is an extrapolation, not a measurement; a missing log line is "no evidence either way," not proof of absence. **This sets how much Part A trust-work you need before you believe a number.**
-3. **Live degradation & response reversibility**: is the service degraded *now*, and how reversible is the response (a revert to known-good vs. a fresh forward fix made under stress)? **This sets Part C depth. The ruler is the cost of staying wrong, not the size of the symptom.**
-4. **Stake / severity**. Elevated stakes shift the escalation threshold *toward* action: when the cost of a missed-real incident dwarfs the cost of a false alarm, bias toward escalating and restoring early.
+**The entry gate** (a yes/no question, not a degree; it decides whether this skill owns the work at all):
 
-**The ruler is the cost of staying wrong, not the size of the symptom.**
+- **Is there a reliable expectation?** No → this catalog (discovery under failure). Yes (you're confirming "it should do X") → the `verification-strategy-selector`.
+
+**The three axes** (*ordinal*, each runs low→high; together they set how deep to go once the gate sends you here):
+
+1. **Evidence quality**: is the signal you'd act on sampled, lossy, derived, or second-hand? A trace-derived count is an extrapolation, not a measurement; a missing log line is "no evidence either way," not proof of absence. **This sets how much Part A trust-work you need before you believe a number.**
+2. **Live degradation & response reversibility**: is the service degraded *now*, and how reversible is the response (a revert to known-good vs. a fresh forward fix made under stress)? **This sets Part C depth.**
+3. **Stake / severity**. Elevated stakes shift the escalation threshold *toward* action: when the cost of a missed-real incident dwarfs the cost of a false alarm, bias toward escalating and restoring early.
+
+**The ruler is the cost of staying wrong, not the size of the symptom.** That ruler is what this selector shares with the rest of the plugin; the gate and axes above are its own, deliberately not the router's four routing axes, because this skill begins exactly where a stated expectation does not exist.
 
 ## Step 2: Map to a depth band
 
-The classifications are largely orthogonal: *evidence quality* (axis 2) sets how much Part A you do; *live degradation* (axis 3) sets whether Part C fires first.
+The classifications are largely orthogonal: *evidence quality* (axis 1) sets how much Part A you do; *live degradation* (axis 2) sets whether Part C fires first.
 
 - **Low-stakes / no live degradation** → minimal: establish the fact from a trustworthy signal (Part A), state what's true, stop. Say you chose a light pass (see "When a quick read suffices").
 - **Active diagnosis, service stable** → Part A to calibrate which evidence you trust + Part B for the judgment on top of the method + **dispatch `superpowers:systematic-debugging`** for the hypothesis-elimination mechanics.
@@ -70,6 +75,7 @@ Apply the catalog's Appendix patterns:
 - **Re-execute on re-invocation (Rule 3)**: resolve scope from a world-derived target, and recompute in fresh context rather than relaying a prior in-session conclusion.
 - **Evidence before action, except under degradation.** Establish what's true (Part A) before responding, but hold this in tension with restoration: when the service is degraded, you do *not* wait for perfect evidence. The Master Principle's second clause wins and you restore the baseline first. Name which way the tension resolves: degraded → restore; not degraded → keep gathering.
 - **Restore, then diagnose.** Under a live break, Part C precedes Part B. Get the baseline back to known-good, *then* hunt the cause in peacetime: diagnosing a live outage while it burns trades the whole team's time for your curiosity.
+- **You prepare the restore; the human fires it (Rule 1).** Part C's moves are outward and irreversible: a revert pushed to a shared baseline, a failover, shed or rate-limited load, a path disabled in production. "Don't wait for the author" (6) means don't block on the *original* author; it never means an agent pushes to a shared baseline on its own. Prepare the exact revert or containment step with its expected effect and blast radius, and hand it to the on-call responder to execute immediately. Under pressure the speed comes from having it ready, not from skipping the gate.
 - **Delegate the method, own the judgment.** Dispatch `superpowers:systematic-debugging` for the mechanics; this skill decides which evidence to trust and how to respond. Different jobs: don't reinvent the method.
 - **Peacetime feeds wartime.** Part D's hygiene is what makes Part A's evidence trustworthy in the *next* incident. Every shortcut taken in peacetime is a blind spot inherited mid-incident.
 - **No silent skipping.** If you couldn't establish a fact (lossy logs, sampled data, no access), **say so and name the limit**. An unestablished fact is a known unknown, never a quiet "fine"; never let an absence read as confirmation.

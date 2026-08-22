@@ -33,7 +33,7 @@ These set how much of the catalog you apply, and in which direction.
 3. **Reversibility**: How hard is it to undo the *direction* once committed: a chosen abstraction, a data-model decision, a migration?
 4. **Reach**: How many call sites, services, consumers, or teams does the work touch? (Not the diff size, the blast radius of the decision.)
 
-**The ruler is clarity, risk, reversibility, and reach, not how big the change looks.** These are deliberately the *same* risk / reversibility / clarity / reach axes the review and verification selectors use, applied here *before* code rather than after: one mental model, three lenses across the lifecycle. Planning leads with **clarity** because resolving ambiguity is planning's first job.
+**The ruler is clarity, risk, reversibility, and reach, not how big the change looks.** These are the same four axes the router routes on and the review selector classifies on, applied here *before* code rather than after; verification and debug-operate classify on their own axes, because each starts from a different epistemic footing (see `deliberate-engineering-router`, Step 1, for the split). What every phase shares is the ruler, the cost of being wrong rather than the size of the change, not the names of the axes. Planning leads with **clarity** because resolving ambiguity is planning's first job.
 
 ## Step 2: Map to a planning depth
 

@@ -20,7 +20,7 @@ The plugin is a thin layer of judgment over a workflow engine. The README's *Wha
 ```mermaid
 flowchart TD
     work["a unit of engineering work"]
-    axes["classify by risk, reversibility,<br/>requirement clarity, and reach"]
+    axes["the router classifies:<br/>genre, then clarity, risk,<br/>reversibility, reach"]
     plan["planning-strategy-selector<br/>:plan<br/>what's worth building, and how much process?"]
     review["review-strategy-selector<br/>:review<br/>which lenses does this change call for?"]
     verify["verification-strategy-selector<br/>:verify<br/>is it true against reality, and what's the evidence?"]
@@ -53,6 +53,7 @@ flowchart TD
 ```
 
 - **The four phases share one pattern:** classify the work, then read only the lenses that fit from that phase's catalog (never the whole catalog at once). Planning decides what to build; review reasons about the artifact; verification confronts reality; debug/operate takes over when a live system misbehaves and no reliable expectation holds.
+- **They share one ruler, not one set of axes.** Every phase measures depth by *the cost of being wrong, not the size of the change*, and that ruler is the single mental model. What each phase classifies *on* is its own and differs where the epistemic mode differs: plan and review use the router's four (clarity, risk, reversibility, reach); verification asks what kind of evidence the claim needs and how costly a false "it's fine" would be, since the expectation is already stated by the time it fires; debug/operate opens by asking whether a reliable expectation exists at all, because it starts where none does. Each selector states its own classification step, so a router classification never stands in for the phase's own.
 - **The method is delegated.** A workflow engine owns *how* the work is carried out: `superpowers` (TDD, systematic debugging, plan execution) is the one recommended and the Workflow tool handles orchestration, but the layer delegates to whatever engine is present, falling back to the agent's built-in abilities when none is. The plugin owns the judgment (which phase, which lenses, how much ceremony) and hands the mechanism to the engine.
 
 ### Communication and voice
@@ -85,7 +86,7 @@ flowchart TD
     class silent plain
 ```
 
-- **Communication is cross-cutting, not a phase.** When the artifact you're producing is a communication (a PR description, a review comment, a stakeholder message, a writeup of alternatives), the router routes it *by nature* to `communication-collaboration-selector`, which classifies by audience and artifact (its own axes, not the four phase axes) and applies its seven lenses. You consult it from inside whatever phase you're in; it never becomes a fifth phase and adds no fifth axis. Once the lenses have shaped the message, the selector consults `deliberate-engineering-voice`, an optional surface layer that applies your personal voice profile over the result (the lenses decide what the message must accomplish, the profile decides how it sounds) and names the files it loaded; with no profile directory it does nothing and says nothing.
+- **Communication is cross-cutting, not a phase.** When the artifact you're producing is a communication (a PR description, a review comment, a stakeholder message, a writeup of alternatives), the router routes it *by nature* to `communication-collaboration-selector`, which classifies by audience and artifact (its own axes, not the router's routing axes) and applies its seven lenses. You consult it from inside whatever phase you're in; it never becomes a fifth phase and adds no fifth axis. Once the lenses have shaped the message, the selector consults `deliberate-engineering-voice`, an optional surface layer that applies your personal voice profile over the result (the lenses decide what the message must accomplish, the profile decides how it sounds) and names the files it loaded; with no profile directory it does nothing and says nothing.
 
 ### The extensibility cycle
 

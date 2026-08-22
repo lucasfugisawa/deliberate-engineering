@@ -7,7 +7,7 @@ description: "Use when producing a communication around engineering work: a PR/M
 
 The deliberate layer of *how you communicate around the work*. Engineering is not only inward (code, systems, process) but also outward: the PR you open, the review comment you leave, the way you explain a decision to a stakeholder. This skill decides *which communication lenses THIS artifact and audience call for*, and applies them, so the message is tuned to its reader, not a generic dump.
 
-It is **cross-cutting, not a phase.** The four phase selectors (plan / review / verify / debug-operate) classify engineering work by the four canonical axes. Communication does not classify by those axes: what selects a lens here is **which artifact + which audience.** So this selector has its own two-axis classification, and you consult it from *within* any phase the moment the next thing you produce is a communication.
+It is **cross-cutting, not a phase.** Each phase selector (plan / review / verify / debug-operate) classifies engineering work on the axes proper to its own phase. This one classifies on a different pair entirely: what selects a lens here is **which artifact + which audience.** The ruler the whole plugin shares still reaches this work, through the weight of the subject the artifact carries (Step 1, axis 2), but the axis names are this selector's own. Consult it from *within* any phase the moment the next thing you produce is a communication.
 
 The reference for every lens cited below is `catalog.md` in this directory (a handful of lenses + a composition note). Read **only** the sections you select: progressive disclosure, not the whole file.
 
