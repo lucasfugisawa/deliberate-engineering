@@ -30,14 +30,14 @@ When you already know where you are, skip the front door:
 | `/deliberate-engineering:plan` | Before code exists | What is worth building, and how much process? |
 | `/deliberate-engineering:review` | A change, diff, or PR in hand | Which lenses does *this* change call for? |
 | `/deliberate-engineering:verify` | A claim that must be established as fact | Is it true against reality, and what is the evidence? |
-| `/deliberate-engineering:debug` | A live system misbehaving, no reliable expectation | What is actually going on, and how do I respond? |
+| `/deliberate-engineering:debug` | A live system misbehaving with no reliable expectation; also peacetime signal hygiene (alerts, error streams, thresholds, flow ownership) and the post-incident retrospective | What is actually going on, how do I respond, and how do I keep the signals worth trusting? |
 | `/deliberate-engineering:communicate` | The next artifact is a communication | How should this read for its audience? |
 
 Two rules of thumb the plugin holds throughout: **risk and uncertainty set the depth, not line count** (a one-line change to a fee calculation is high-depth; a 600-line isolated helper is not), and **review asks "does this look correct?" while verify asks "is it correct, and what is my evidence?"**.
 
 ## What runs underneath
 
-The nine standing rules hold under every phase (the human gate, verify-before-endorse, recommend-with-rationale, checkpoint durable state, and the rest); your [overrides](capture.md) take precedence over any shipped lens or rule; and `deliberate-engineering-state` keeps a working-note so the phase sequence and pendings survive across sessions: all consulted automatically, none of them yours to drive.
+The nine standing rules hold under every phase (the human gate, verify-before-endorse, recommend-with-rationale, checkpoint durable state, and the rest); your [overrides](capture.md) take precedence over any shipped lens or rule; and `deliberate-engineering-state` keeps a working-note so the phase sequence and pendings survive across sessions, written to `.deliberate/state/` in the repository root when it can confirm that directory is ignored by your VCS and to `~/.claude/deliberate-engineering/state/` otherwise, saying which it used each time: all consulted automatically, none of them yours to drive.
 
 ## Where to go next
 

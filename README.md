@@ -204,9 +204,11 @@ The same honesty applies to its platform reach: it ships as a Claude Code plugin
 
 ## Uninstall
 
-Both steps are independent, and undoing this never touches your code or your repos:
+Both steps are independent, and neither edits your code:
 
 1. **Disable or remove the plugin** via `/plugin`: that's the whole product.
+
+If you ran multi-phase or multi-session work, the plugin will have written a working-note to keep its place across context boundaries: `.deliberate/state/` in the repository root when it can confirm that directory is ignored by your VCS, and `~/.claude/deliberate-engineering/state/` otherwise. It says which location it used every time it reads or writes one. Removing the plugin leaves those notes where they are; delete the directory if you want them gone.
 2. **If** you added the optional always-on block to your personal `~/.claude/CLAUDE.md`, delete it: everything from `<!-- deliberate-engineering:begin -->` through `<!-- deliberate-engineering:end -->`, inclusive. Removing it is unrelated to disabling the plugin; the router and rules then load only on description match, like any normal skill.
 
 ## License
