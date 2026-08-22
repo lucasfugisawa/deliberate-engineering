@@ -8,7 +8,7 @@ Coding agents are good at *acting*. `deliberate-engineering` makes them good at 
 
 Left to its defaults, an agent gives a one-line change to a money calculation the same effort as a typo fix, and can report "done" before anything met reality, not from carelessness, but because nothing told it this change was different. This layer is what tells it: it classifies the work first, then decides *how much* ceremony the change has earned, *which* lenses it actually calls for, and *whether* the result is really true. And it stops at a human gate for anything irreversible or outward-facing.
 
-One mental model runs across the whole lifecycle, and it is a **ruler**: depth is set by the cost of being wrong, never by line count. Each phase then classifies on the axes proper to it (planning and review on risk, reversibility, requirement clarity, and reach; verification and debug/operate on their own, because they start from a different footing):
+One mental model runs across the whole lifecycle, and it is a **ruler**: depth is set by the cost of being wrong, never by line count. Each phase classifies on its own axes (planning and review on risk, reversibility, requirement clarity, and reach):
 
 | Phase | Selector | The question it answers |
 |---|---|---|
