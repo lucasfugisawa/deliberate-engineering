@@ -59,7 +59,7 @@ Example:
 
 - **Phase**: verification
 - **Sequence**: planning → review → verification
-- **Ceremony band**: medium
+- **Ceremony band**: standard
 - **Rituals**: planning #8, #12, #19; review #25, #35; verification #1, #3
 - **Pendings**:
   - ✗ PR description needs ticket link

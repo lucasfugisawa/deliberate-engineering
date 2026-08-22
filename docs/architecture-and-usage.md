@@ -150,7 +150,7 @@ You can write that file by hand, or let the agent help: run `/deliberate-enginee
 ```markdown
 ## review #35: disable
 
-**Why:** We run this lens manually in a separate security pass; not needed in the main review.
+**Why:** We run a separate simplification pass after the deliberate review; not needed in the main pass.
 
 ## add: review
 

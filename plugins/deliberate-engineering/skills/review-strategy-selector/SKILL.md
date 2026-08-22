@@ -40,7 +40,7 @@ Assess each axis. These, not line count, set the depth.
 3. **Requirement clarity**: Is the intent unambiguous, or are you inferring what "correct" means? Ambiguity is itself a risk.
 4. **Reach**. Blast radius: how many call sites, services, or consumers does the change touch? (Not the diff size, the reach.)
 
-**The ruler is RISK AND UNCERTAINTY, not line count.** A one-line change to a fee calculation or a `DELETE` predicate is high-depth; a 600-line addition of an isolated, well-tested helper is not.
+**The ruler is RISK AND UNCERTAINTY, not line count.** A one-line change to a fee calculation or a `DELETE` predicate is high-depth; a 600-line addition of an isolated, well-tested helper is not. This is the plugin's one shared ruler stated in review's terms: depth follows the cost of being wrong, never the size of the change.
 
 ## Step 2: Map to a depth band
 

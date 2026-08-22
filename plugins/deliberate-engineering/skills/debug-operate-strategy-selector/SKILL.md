@@ -9,8 +9,9 @@ The deliberate layer of diagnose-and-respond-under-failure. Where verify confron
 
 The reference for every strategy cited below is `catalog.md` in this directory (five Parts of strategies + composition patterns). Read **only** the Parts you select: progressive disclosure, not the whole file.
 
-## Verify vs. debug/operate: stay on the right side of the line
+## Review vs. verify vs. debug/operate: stay on the right side of the line
 
+- **Review** (the `review-strategy-selector` skill): reasons about a static artifact (a diff, a spec, a design) and judges whether it *looks* correct. If what you actually need is a judgment about text rather than about a running system, you are in the wrong skill.
 - **Verify** (the `verification-strategy-selector` skill): you hold an expectation tied to a known change and gather evidence to *confirm* it. ("I shipped X; did it do X? Did my backfill set the rows I intended?") Confirmation.
 - **Debug/operate** (this skill): you have no trustworthy expectation. You're hunting a cause in a live system, or deciding how to respond while it's degraded. ("Why are error rates climbing? Do I revert or roll forward?") Discovery under failure.
 
