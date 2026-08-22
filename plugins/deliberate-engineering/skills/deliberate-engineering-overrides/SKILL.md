@@ -88,7 +88,7 @@ The flow when this skill is invoked:
 3. For each selected lens with an override, this skill applies the operation instead of the shipped content. For `add` entries in the relevant catalog, this skill reads them as additional operator-authored lenses available in that catalog, applied when their `**When:**` guidance fits the work.
 4. This skill declares the deviation in the visible output: **always, never silent.** Every override that fires is reported.
 
-This skill does not re-run the selector's classification logic; it honors the selector's choices and applies the overrides to those choices. For `add` entries, the selector's existing classification (the four axes, the picked lenses) informs whether the `add` entry's `**When:**` guidance fits; this skill does not second-guess that classification.
+This skill does not re-run the selector's classification logic; it honors the selector's choices and applies the overrides to those choices. For `add` entries, the selector's existing classification (its own axes, whichever that selector uses, plus the picked lenses) informs whether the `add` entry's `**When:**` guidance fits; this skill does not second-guess that classification.
 
 ## The declaration protocol
 

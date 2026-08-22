@@ -8,7 +8,7 @@ Coding agents are good at *acting*. `deliberate-engineering` makes them good at 
 
 Left to its defaults, an agent gives a one-line change to a money calculation the same effort as a typo fix, and can report "done" before anything met reality, not from carelessness, but because nothing told it this change was different. This layer is what tells it: it classifies the work first, then decides *how much* ceremony the change has earned, *which* lenses it actually calls for, and *whether* the result is really true. And it stops at a human gate for anything irreversible or outward-facing.
 
-One mental model runs across the whole lifecycle. **Risk, reversibility, requirement clarity, and reach decide the depth, not line count:**
+One mental model runs across the whole lifecycle, and it is a **ruler**: depth is set by the cost of being wrong, never by line count. Each phase then classifies on the axes proper to it (planning and review on risk, reversibility, requirement clarity, and reach; verification and debug/operate on their own, because they start from a different footing):
 
 | Phase | Selector | The question it answers |
 |---|---|---|
@@ -169,7 +169,7 @@ flowchart TD
 <details>
 <summary><strong>The four phase catalogs in detail</strong> (116 strategies total; the cross-cutting communication catalog adds seven lenses)</summary>
 
-- **Review: 55 strategies** in five groups: process / meta-review (14), verification & evidence (7), failure & contradiction reasoning (6), engineering-quality lenses (13), and reviews beyond back-end (15). Classifies your change by risk, reversibility, requirement clarity, and size, then selects the lenses that fit.
+- **Review: 55 strategies** in five groups: process / meta-review (14), verification & evidence (7), failure & contradiction reasoning (6), engineering-quality lenses (13), and reviews beyond back-end (15). Classifies your change by risk, reversibility, requirement clarity, and reach, then selects the lenses that fit.
 - **Verification: 24 strategies** in five groups: evidence & ground truth (6), local & pre-merge (6), staged promotion & rollout (5), post-deploy production verification (5), and operational data-mutation verification (2). For establishing something is *actually* true, with evidence from running systems, not just plausible on paper. Review asks "does this look correct?"; verification asks "is it correct, and what's my evidence?"
 - **Planning: 20 strategies** in six groups: scope / anti-over-engineering (4), ground the plan in reality (4), calibrate ceremony to risk (2), slice & sequence (3), capture the plan (4), and disambiguation / readiness (3). For *before* code exists: deciding what work is worth doing and how much process it calls for. It delegates the *how-to-plan* discipline to your workflow engine.
 - **Debug/Operate: 17 strategies** in five groups: trust the evidence (3), diagnose under uncertainty (2), respond under pressure (4), keep the signal healthy (5), and learn from the failure (3). For when a *live system* misbehaves and you must diagnose under uncertainty and respond. Verification confirms an expectation you already hold; this is discovery under failure, and it delegates the debugging *method* to your workflow engine.

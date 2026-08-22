@@ -20,7 +20,7 @@ Each lens in a catalog follows a consistent three-part structure:
 2. **Objective**: the engineering goal this lens achieves.
 3. **When most valuable**: the contexts where this lens provides the most signal.
 
-This structure makes lenses composable and context-aware: a selector reasons about which lenses a specific change calls for by matching the change's characteristics to each lens's *when most valuable* clause. A lens should teach a deliberate practice, not provide a static checklist: composable (rotate the lens each pass; find → verify; close with fresh eyes), context-aware (selected by risk, reversibility, requirement clarity, and reach), and empirically grounded (validate claims rather than assume them).
+This structure makes lenses composable and context-aware: a selector reasons about which lenses a specific change calls for by matching the change's characteristics to each lens's *when most valuable* clause. A lens should teach a deliberate practice, not provide a static checklist: composable (rotate the lens each pass; find → verify; close with fresh eyes), context-aware (selected by the classification its own selector runs: risk, reversibility, requirement clarity, and reach for planning and review; evidence type and irreversibility for verification; the expectation gate for debug), and empirically grounded (validate claims rather than assume them).
 
 ## How to contribute a lens
 
