@@ -15,9 +15,9 @@ One mental model runs across the whole lifecycle, and it is a **ruler**: depth i
 | **Plan** | `planning-strategy-selector` | What's worth building, and how much process does it deserve? |
 | **Review** | `review-strategy-selector` | Which lenses does *this* change actually call for? |
 | **Verify** | `verification-strategy-selector` | Is it true against reality, and what's my evidence? |
-| **Debug/Operate** | `debug-operate-strategy-selector` | A live system is misbehaving and I have no reliable expectation. Now what? |
+| **Debug/Operate** | `debug-operate-strategy-selector` | A live system is misbehaving and I have no reliable expectation. Now what? And in peacetime: are these alerts still worth a page? |
 
-Planning decides what to build; review reasons about the artifact; verification confronts reality; and debug/operate takes over when a live system misbehaves and no reliable expectation holds. Two siblings handle scale beyond a single pass, `:orchestrate` across many sessions and `:conduct` across a cluster of irreversible steps, and a cross-cutting communication layer tunes what you write for its reader (see [What's inside](#whats-inside)).
+Planning decides what to build; review reasons about the artifact; verification confronts reality; and debug/operate takes over when a live system misbehaves and no reliable expectation holds, and owns the peacetime signal hygiene and the post-incident learning around it. Two siblings handle scale beyond a single pass, `:orchestrate` across many sessions and `:conduct` across a cluster of irreversible steps, and a cross-cutting communication layer tunes what you write for its reader (see [What's inside](#whats-inside)).
 
 ## See it in action
 
@@ -202,13 +202,15 @@ So it does not carry domain-specific knowledge: API design, data modeling, perfo
 
 The same honesty applies to its platform reach: it ships as a Claude Code plugin, and that is the honest scope today. It doesn't claim to run on other agents or IDEs, and it removes nothing, coexisting with whatever review and workflow tooling you already run.
 
+### What the plugin writes
+
+Nothing in your source, and two things worth knowing about. To keep its place across context boundaries on multi-phase or multi-session work, it writes a working-note: `.deliberate/state/` in the repository root when it can confirm that path is ignored by your VCS, and `~/.claude/deliberate-engineering/state/` otherwise. **Confirming that can mean adding a `.deliberate/` line to your `.gitignore`**, which is a tracked file, so that is the one edit it makes outside its own directories; it stages narrowly and tells you. It also says which location it chose every time it reads or writes a note. Your personal overrides and voice profile live under `~/.claude/deliberate-engineering/` and never enter a repository.
+
 ## Uninstall
 
-Both steps are independent, and neither edits your code:
+Both steps are independent, and neither touches your source:
 
 1. **Disable or remove the plugin** via `/plugin`: that's the whole product.
-
-If you ran multi-phase or multi-session work, the plugin will have written a working-note to keep its place across context boundaries: `.deliberate/state/` in the repository root when it can confirm that directory is ignored by your VCS, and `~/.claude/deliberate-engineering/state/` otherwise. It says which location it used every time it reads or writes one. Removing the plugin leaves those notes where they are; delete the directory if you want them gone.
 2. **If** you added the optional always-on block to your personal `~/.claude/CLAUDE.md`, delete it: everything from `<!-- deliberate-engineering:begin -->` through `<!-- deliberate-engineering:end -->`, inclusive. Removing it is unrelated to disabling the plugin; the router and rules then load only on description match, like any normal skill.
 
 ## License
