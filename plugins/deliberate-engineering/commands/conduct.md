@@ -1,5 +1,5 @@
 ---
-description: "Conduct an irreversibility cluster (a merge cascade, a deploy chain, a batch of production data mutations, a teardown): a gated, re-derived runbook where the agent conducts and you pull every irreversible trigger"
+description: "Conduct an irreversibility cluster (a merge cascade, a deploy chain, a batch of production data mutations, a teardown): a gated, re-derived runbook where the agent conducts and you pull the irreversible triggers, unless you have deliberately loosened Rule 1 yourself"
 argument-hint: Optional cluster description (e.g., "the 4-repo deploy chain", "the user-table backfill")
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: review-strategy-selector
-description: "Use after any baseline code review, or when reviewing a change, to deliberately select the right review lenses for THIS change instead of running a generic pass. Classifies by risk, reversibility, requirement clarity, and reach, then applies matching strategies from the catalog. Less vibe coding, more deliberate craft."
+description: "Use after any baseline review, or when reviewing a change, to deliberately select the right review lenses for THIS change instead of running a generic pass. The artifact need not be code: it also reviews a spec, a design or an architecture, and the catalog reaches past back-end code into accessibility, infrastructure, CI/CD, privacy and data protection, cost, disaster recovery, internationalization and experiments. Classifies by risk, reversibility, requirement clarity, and reach, then applies matching strategies from the catalog. Less vibe coding, more deliberate craft. On a multi-phase or multi-session work unit it writes a short live note through `deliberate-engineering-state`, which lands in the repository under `.deliberate/state/` (and may add that path to `.gitignore`) or under `~/.claude/` when it cannot."
 ---
 
 # Review Strategy Selector
@@ -42,7 +42,7 @@ Assess each axis. These, not line count, set the depth.
 
 **The ruler is RISK AND UNCERTAINTY, not line count.** A one-line change to a fee calculation or a `DELETE` predicate is high-depth; a 600-line addition of an isolated, well-tested helper is not. This is the plugin's one shared ruler stated in review's terms: depth follows the cost of being wrong, never the size of the change.
 
-## Step 2: Map to a depth band
+## Step 2: Map to a ceremony band
 
 - **Trivial-and-safe** → minimal: baseline (1) plus a 34 *scan* (did this diff introduce a comment that shouldn't exist, or a reference the reader can't resolve?) and a stated rationale for stopping (see "When NOT to pile on"). A solo in-context pass is fine here, **but the reuse-vs-recompute declaration (Rule 3) is mandatory**: if this re-runs an earlier pass, say whether you recomputed or reused, and why.
 - **Standard** → a small set of targeted lenses (typically 2–4) for the non-trivial axes; **dispatch each substantive lens to a fresh-context subagent** as the default unit of work so the lens recomputes rather than recalls, and each returns its evidence artifact (Task: see "Compose the passes"). Close with fresh eyes (3).
@@ -64,7 +64,9 @@ Open the catalog **groups** matching your non-trivial axes and pick lenses. Read
 
 **Worked example (change writes production data via a backfill):** Non-trivial on Risk + Reversibility + Reach. Selected lenses: **25** (functional correctness: does it backfill what the requirement meant?), **23** (concurrency: backfill contends with live writes), **24** (reversibility: is there a bounded way back?), **28** (data integrity: invariants/transactions hold?), **2** (adversarial: try to break it), closed with **3** (fresh eyes). Skipped frontend/i18n groups, logged as not applicable.
 
-**Operator overrides.** Before applying the selected lenses, consult `deliberate-engineering-overrides`: if any selected lens has an operator override (disable / modify / add), honor it and declare the deviation in the Output.
+**Entering here directly.** These lenses are the same whether you arrived through `/deliberate-engineering:start` or called this phase yourself, but four things the router would have carried do not come with a direct call, so carry them here. The nine standing rules in `deliberate-engineering-rules` hold regardless, including the human gate on anything irreversible or outward-facing. Write your place at each checkpoint through `deliberate-engineering-state` (Rule 6), so a compaction or a new session resumes from what happened rather than from recall. Re-classify out loud if the work turns out heavier or lighter than it looked, and say what moved. And when the next thing you produce is a communication rather than code, consult `communication-collaboration-selector` before writing it.
+
+**Operator overrides.** Before applying the selected lenses, consult `deliberate-engineering-overrides`: honor any override on a lens you selected (disable / modify), and ask it for any operator-authored `add:` entry for this catalog, which carries no shipped number and so is invisible to a lookup keyed on your selection. Declare every deviation in the Output.
 
 **Each substantive lens emits an evidence artifact, and the artifact IS its completion criterion.** A lens has not run until it has produced, from THIS pass, the concrete trace of what it examined:
 
@@ -93,4 +95,4 @@ This skill **never requires removing or disabling** any other reviewer. It orche
 
 ## Output
 
-Report, briefly: the classification (4 axes), the depth band, the lenses selected (by number) and why, anything deliberately skipped and why, and the findings: each tagged blocking vs. optional (53), and each tied to the concrete evidence produced in this pass (the `file:line` actually opened, the command run and its output, the requirement clause quoted from source). A finding with no fresh-pass evidence is incomplete, not done: recompute it, don't relay it. End with the fresh-eyes close.
+Report, briefly: the classification (4 axes), the ceremony band, the lenses selected (by number) and why, anything deliberately skipped and why, and the findings: each tagged blocking vs. optional (53), and each tied to the concrete evidence produced in this pass (the `file:line` actually opened, the command run and its output, the requirement clause quoted from source). A finding with no fresh-pass evidence is incomplete, not done: recompute it, don't relay it. End with the fresh-eyes close.

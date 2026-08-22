@@ -11,15 +11,19 @@ The plugin is a thin layer of judgment over a workflow engine. The README's *Wha
 ### The front door and the constitution
 
 - **The rules are the constitution.** Nine standing postures held across every phase of engineering work, and the defaults you do not switch off casually. You can override them deliberately: an operator override can loosen even a safety rule, which the plugin honors while announcing the raised autonomy. They set *how you behave*; everything below sets *where you start and what you do*.
-- **The router is the front door** (`/deliberate-engineering:start`). It classifies the work, names the phase sequence and the ceremony each phase earns, and routes (recommending, never forcing). The only hard stop is the Rule 1 human gate on an irreversible or outward-facing action.
-- **Orchestration is its across-session sibling** (`/deliberate-engineering:orchestrate`). When the work is a program too large for one session, it runs an orchestration session that decomposes the work into units, dispatches each to a fresh worker session (a background subagent only for a narrow, earned band), verifies each return against primary evidence in a separate context, dispositions it, and tracks the whole program behind an always-current recovery anchor that lets any fresh session resume the orchestrator. The router conducts phases *within* a session; this orchestrates units *across* sessions. It is deliberately thin: it cites the standing rules and reuses the selectors and the state working-note rather than restating them, and it stops at the same Rule 1 gate for every outward action a unit produces.
-- **Conduction is its sibling for irreversibility clusters** (`/deliberate-engineering:conduct`). When irreversibility concentrates into a cluster (a merge cascade, a deploy chain, a batch of production data mutations, a teardown), it runs the cluster from a CONDUCTOR contract: a fixed step order with a gate between each, world state re-derived before every gate, the gate state kept in a per-item station table rather than in memory, each irreversible step bounded by a dry-run and a blast-radius limit before it fires and verified after, and every irreversible trigger handed to the operator (Rule 1). The router conducts phases *within* a session, orchestrate units *across* sessions, and this conducts steps *across an irreversibility cluster*, usually in one. It cites the verification rollout and data-mutation lenses and the planning ordering lenses rather than restating them; a small cascade stays in a tracker queue, and a cluster earns its own cockpit only when the gate graph outgrows one.
+- **The router is the front door** (`/deliberate-engineering:start`). Before classifying anything it checks the altitude: a program too large for one session goes to orchestration, a concentrated cluster of irreversible steps goes to conduction, and only work that fits one session stays here. Then it classifies, names the phase sequence and the ceremony each phase earns, and routes (recommending, never forcing). The only hard stop is the Rule 1 human gate on an irreversible or outward-facing action. At each phase transition it writes a short live note through the state skill below.
+- **Four skills have no command, and are consulted rather than driven.** `deliberate-engineering-rules` is the constitution above, always in play and never invoked. `deliberate-engineering-voice` is the surface layer the communication selector reaches after the lenses have decided substance, and is described under *Communication and voice* below. `deliberate-engineering-overrides` reads your personal override file and applies it wherever a lens or standing rule is about to be used, declaring every deviation; what it cannot reach is the router's classification axes and its genre-to-phase map, which are architecture rather than content. `deliberate-engineering-state` owns the working-note that carries phase, sequence, ceremony band, chosen lenses and pendings across sessions; it writes that note to `.deliberate/state/` inside the repository once it confirms the path is VCS-ignored, which can mean adding that line to your `.gitignore`, and to `~/.claude/deliberate-engineering/state/` when it cannot. They are named here because a map that only listed the commands would leave them invisible, and one of them writes to your repository.
+- **Orchestration is its across-session sibling** (`/deliberate-engineering:orchestrate`). When the work is a program too large for one session, it runs an orchestration session that decomposes the work into units, dispatches each to a fresh worker session (a background subagent only for a narrow, earned band), verifies each return against primary evidence in a separate context, dispositions it, and tracks the whole program behind an always-current recovery anchor that lets any fresh session resume the orchestrator, committing that tracker to its own repository as each disposition lands. The router conducts phases *within* a session; this orchestrates units *across* sessions. It is deliberately thin: it cites the standing rules and reuses the selectors and the state working-note rather than restating them, and it stops at the same Rule 1 gate for every outward action a unit produces.
+- **Conduction is its sibling for irreversibility clusters** (`/deliberate-engineering:conduct`). When irreversibility concentrates into a cluster (a merge cascade, a deploy chain, a batch of production data mutations, a teardown), it runs the cluster from a CONDUCTOR contract: a fixed step order with a gate between each, world state re-derived before every gate, the gate state kept in a per-item station table rather than in memory, each irreversible step bounded by a dry-run and a blast-radius limit before it fires and verified after, and every irreversible trigger handed to the operator (Rule 1). It writes a conductor doc for the cluster, committed to the tracker's repository when one is in play. The router conducts phases *within* a session, orchestrate units *across* sessions, and this conducts steps *across an irreversibility cluster*, usually in one. It cites the verification rollout and data-mutation lenses and the planning ordering lenses rather than restating them; a small cascade stays in a tracker queue, and a cluster earns its own cockpit only when the gate graph outgrows one.
 
 ### The four phases
 
 ```mermaid
 flowchart TD
     work["a unit of engineering work"]
+    altitude{"does it fit one session?"}
+    orch["deliberate-engineering-orchestrate<br/>:orchestrate<br/>a program, dispatched across sessions"]
+    cond["deliberate-engineering-conduct<br/>:conduct<br/>a cluster of irreversible steps, gated"]
     axes["the router classifies:<br/>genre, then clarity, risk,<br/>reversibility, reach"]
     plan["planning-strategy-selector<br/>:plan<br/>what's worth building, and how much process?"]
     review["review-strategy-selector<br/>:review<br/>which lenses does this change call for?"]
@@ -28,7 +32,11 @@ flowchart TD
     catalog[("that phase's catalog<br/>read on demand: only the lenses that fit")]
     engine["the method engine<br/>(superpowers, Workflow, or built-in)"]
 
-    work --> axes
+    work --> altitude
+    altitude -->|"no: a program"| orch
+    altitude -->|"no: irreversibility concentrates"| cond
+    altitude -->|yes| axes
+    orch -.->|each unit is a session's work| work
     axes --> plan
     axes --> review
     axes --> verify
@@ -46,8 +54,8 @@ flowchart TD
     classDef phase fill:#e0f0ff,stroke:#3b82c4,stroke-width:1px;
     classDef store fill:#e6f5e6,stroke:#4a9d4a,stroke-width:1px;
     classDef engine fill:#e6f5e6,stroke:#4a9d4a,stroke-width:2px;
-    class work,axes entry
-    class plan,review,verify,debug phase
+    class work,altitude,axes entry
+    class plan,review,verify,debug,orch,cond phase
     class catalog store
     class engine engine
 ```
@@ -68,8 +76,11 @@ flowchart TD
     silent["ship as-is; the layer stays silent"]
     profile["deliberate-engineering-voice<br/>surface layer: loads only what the draft needs<br/>(core, register, archetype); names the files it loaded"]
 
+    oneoff(["a one-off draft, no phase behind it"])
+
     phase --> artifact
     artifact -->|no| phase
+    oneoff --> voice
     artifact -->|yes, by nature| comms
     comms --> substance
     substance --> voice
@@ -80,7 +91,7 @@ flowchart TD
     classDef comms fill:#fff0d9,stroke:#e0962e,stroke-width:1px,stroke-dasharray:4 2;
     classDef voice fill:#f5eaf5,stroke:#9c5c9c,stroke-width:1px,stroke-dasharray:4 2;
     classDef plain fill:#eef2f7,stroke:#7c8aa0,stroke-width:1px;
-    class phase entry
+    class phase,oneoff entry
     class comms,substance comms
     class voice,profile voice
     class silent plain
@@ -106,9 +117,10 @@ flowchart LR
         contribute["/deliberate-engineering:contribute"]
         queue["the candidates queue"]
         promote["/deliberate-engineering:promote"]
-        catalog["the shared catalogs"]
+        catalog["the shared catalogs<br/>plus the counts, manifests<br/>and changelog the edit forces"]
         gate["human gate<br/>commit / PR / push"]
         contribute --> queue --> promote --> catalog --> gate
+        promote -.->|removes the promoted candidate| queue
     end
 
     session --> capture
@@ -125,8 +137,8 @@ flowchart LR
     class gate gate
 ```
 
-- **Your overrides file is the personal layer.** Read at runtime, it takes precedence over any shipped lens or rule; when it changes what the agent does, the agent says so. `/deliberate-engineering:capture` grows that file for you, distilling a session into ready-to-paste blocks.
-- **The author tools grow the shared catalogs.** `/deliberate-engineering:contribute` generalizes a session's judgment into a candidate (dropping anything that can't be said without the specifics) and `/deliberate-engineering:promote` runs a blocking leak-audit and edits the catalog append-only. Both stop at the human gate: they edit only the working tree and never commit, open a PR, or push. That last step is always yours (Rule 1).
+- **Your overrides file is the personal layer.** Read at runtime, it takes precedence over any shipped lens or rule; when it changes what the agent does, the agent says so. `/deliberate-engineering:capture` grows that file for you, reading the full session transcript from disk (your typed messages, extracted to a temporary directory it does not delete) and distilling it into ready-to-paste blocks.
+- **The author tools grow the shared catalogs.** `/deliberate-engineering:contribute` generalizes a session's judgment into a candidate (dropping anything that can't be said without the specifics) and `/deliberate-engineering:promote` runs a blocking leak-audit, edits the catalog append-only, and follows that edit through everything it forces: the counts stated in the README and in this document, both version manifests, the CHANGELOG, and the deletion of the promoted candidate from the queue. Both stop at the human gate: they edit only the working tree and never commit, open a PR, or push. That last step is always yours (Rule 1).
 
 ## How to use it
 
@@ -137,11 +149,11 @@ The step-by-step walkthroughs live in the **[guides](guides/README.md)**; start 
 - **Adapt**: [Capture](guides/capture.md) turns a session's corrections into your personal overrides; [Voice-build](guides/voice-build.md) builds your voice profile from your own writing. The formats they rely on are in the sections below.
 - **Contribute**: the author flow (a lens for everyone) lives in [CONTRIBUTING.md](../CONTRIBUTING.md).
 
-One mental model runs across all of them, and it is the ruler rather than a shared set of axes: the cost of being wrong decides the depth, never line count (each phase classifies on its own axes, as above). The plugin recommends a depth and a set of lenses *with its reasoning*, and you stay in control. Nothing is forced except one thing: it stops at a human gate before any irreversible or outward-facing action (a merge, a deploy, a push, a posted message). The nine standing rules hold underneath every phase the whole time.
+One mental model runs across all of them, and it is the ruler rather than a shared set of axes: the cost of being wrong decides the depth, never line count (each phase classifies on its own axes, as above). The plugin recommends a depth and a set of lenses *with its reasoning*, and you stay in control. Two things are not left to that discretion: it stops at a human gate before any irreversible or outward-facing action (a merge, a deploy, a push, a posted message), and it writes its place to the live note at each checkpoint rather than trusting recall. Everything else is recommended and yours to overrule. The nine standing rules hold underneath every phase the whole time.
 
 ### Adapt: make it think like you
 
-The plugin is opinionated, and it's meant to become yours. A personal file at `~/.claude/deliberate-engineering/overrides.md` takes precedence over the shipped content, addressed by stable identifiers: `review #N`, `verify #N`, `planning #N`, `debug #N`, or `rule N`. Three operations: `disable` turns a lens or rule off; `modify` appends your annotation alongside the shipped text; `add` defines your own. The agent always declares when an override changed what it did (nothing happens silently), and you can even loosen a safety rule, which it honors while calling out the raised autonomy. The numbers are the headings in the catalogs themselves, which is where to look one up before writing an entry by hand: [review](../plugins/deliberate-engineering/skills/review-strategy-selector/catalog.md), [verification](../plugins/deliberate-engineering/skills/verification-strategy-selector/catalog.md), [planning](../plugins/deliberate-engineering/skills/planning-strategy-selector/catalog.md), [debug/operate](../plugins/deliberate-engineering/skills/debug-operate-strategy-selector/catalog.md), [communication](../plugins/deliberate-engineering/skills/communication-collaboration-selector/catalog.md).
+The plugin is opinionated, and it's meant to become yours. A personal file at `~/.claude/deliberate-engineering/overrides.md` takes precedence over the shipped content it can address, which is the named lenses and the standing rules; the router's four routing axes and its genre to phase-sequence map are architecture and stay out of reach. Entries are addressed by stable identifiers: `review #N`, `verify #N`, `planning #N`, `debug #N`, `communication #N`, or `Rule N`. Three operations: `disable` turns a lens or rule off; `modify` appends your annotation alongside the shipped text; `add` defines your own. The agent always declares when an override changed what it did (nothing happens silently), and you can even loosen a safety rule, which it honors while calling out the raised autonomy. The numbers are the headings in the catalogs themselves, which is where to look one up before writing an entry by hand: [review](../plugins/deliberate-engineering/skills/review-strategy-selector/catalog.md), [verification](../plugins/deliberate-engineering/skills/verification-strategy-selector/catalog.md), [planning](../plugins/deliberate-engineering/skills/planning-strategy-selector/catalog.md), [debug/operate](../plugins/deliberate-engineering/skills/debug-operate-strategy-selector/catalog.md), [communication](../plugins/deliberate-engineering/skills/communication-collaboration-selector/catalog.md).
 
 You can write that file by hand, or let the agent help: run `/deliberate-engineering:capture` (or just ask) and it distills the session you just had (the lenses you skipped or corrected, the practices the catalog lacks) into ready-to-paste blocks. On demand only, append-only, written only on your approval. This grows *your* file; it is the adopter's side, distinct from the author tools below. The walkthrough is the [capture guide](guides/capture.md).
 
@@ -161,14 +173,14 @@ You can write that file by hand, or let the agent help: run `/deliberate-enginee
 **Apply:** Review the diff for any breaking changes (removed endpoints, changed request/response shapes, deleted fields). If a breaking change is present and the version is not a major bump, flag it. Non-breaking additions (new optional fields, new endpoints) are fine.
 ```
 
-Overrides are one of two personal layers under `~/.claude/deliberate-engineering/`, both opt-in, both absent by default. The override file changes *what the agent does*; the voice profile changes *how what it writes sounds*. The profile is a directory at `~/.claude/deliberate-engineering/voice/`: `core.md` for what's true of your writing everywhere, `registers/<lang>.md` for what changes with the language, `archetypes/<type>.md` for what changes with the kind of communication (a DM is not a design doc). `deliberate-engineering-voice` reads it after the communication lenses have shaped the message and applies it as the surface layer, loading at most three files per draft (the core, the matching register, the matching archetype) and falling back to two, declared, when one has no match. Precedence runs explicit instruction > voice profile > default style; where a lens and the profile genuinely conflict, the lens wins on substance and the profile wins on surface. It names the files it loaded when it fires, it never licenses breaking a standing rule (the Rule 1 gate and the Rule 9 resolvability bar hold regardless of how you write), and it does nothing and says nothing when the directory is absent. The plugin ships the mechanism, the contract, a template, a bootstrap method, and a guided build path (`deliberate-engineering-voice-build`, the `/deliberate-engineering:voice-build` command, which runs that method from collection to a finished profile and keeps the interview and the blind A/B human); no profile content ships, and the directory stays out of every repository. The README's *Sound like yourself* section is the overview; `contract.md` next to the skill is the full layout; the walkthrough is the [voice-build guide](guides/voice-build.md).
+Overrides are one of four things the plugin keeps under `~/.claude/deliberate-engineering/`, all opt-in and all absent by default: the override file, the voice profile, the state notes it falls back to when a repository cannot host them, and the working directory a voice build uses. The override file changes *what the agent does*; the voice profile changes *how what it writes sounds*. The profile is a directory at `~/.claude/deliberate-engineering/voice/`: `core.md` for what's true of your writing everywhere, `registers/<lang>.md` for what changes with the language, `archetypes/<type>.md` for what changes with the kind of communication (a DM is not a design doc). `deliberate-engineering-voice` normally reads it after the communication lenses have shaped the message, and applies it as the surface layer; it is also reachable directly for a one-off draft with no phase behind it, loading at most three files per draft (the core, the matching register, the matching archetype) and falling back to two, declared, when one has no match. Precedence runs explicit instruction > voice profile > default style; where a lens and the profile genuinely conflict, the lens wins on substance and the profile wins on surface. It names the files it loaded when it fires, it never licenses breaking a standing rule (the Rule 1 gate and the Rule 9 resolvability bar hold regardless of how you write), and it does nothing and says nothing when the directory is absent. The plugin ships the mechanism, the contract, a template, a bootstrap method, and a guided build path (`deliberate-engineering-voice-build`, the `/deliberate-engineering:voice-build` command, which runs that method from collection to a finished profile and keeps the interview and the blind A/B human); no profile content ships, and the corpus and the profile are kept out of every repository by a best-effort check the build runs, which warns and cannot enforce: it lowers the risk of a leak rather than removing it. The README's *Sound like yourself* section is the overview; `contract.md` next to the skill is the full layout; the walkthrough is the [voice-build guide](guides/voice-build.md).
 
 ### Contribute: ship judgment to everyone
 
 When a session surfaces judgment that generalizes beyond you, it can become a catalog lens for everyone. Two steps, with a hard wall between them and the public:
 
-- `/deliberate-engineering:contribute` turns that judgment into a candidate. Its central act is *generalize at capture*: it extracts the employer-neutral principle and discards the specifics (services, incidents, names) before anything is written. Anything that can't survive that, it drops rather than half-cleans. Approved candidates land as `pending` files in the `candidates/` queue.
-- `/deliberate-engineering:promote` drives a candidate into the catalog: a blocking leak-audit first (any surviving specific stops it), then an append-only edit (a new lens gets the next free number and existing lenses are never renumbered, so the override identifiers you cite stay stable) plus a skill-reviewer pass. A structural change (a new catalog, a reorganization, a rule change) is not auto-applied; promote recommends the full design cycle instead.
+- `/deliberate-engineering:contribute` turns that judgment into a candidate. Its central act is *generalize at capture*: it extracts the employer-neutral principle and discards the specifics (services, incidents, names) before anything is written. Anything that can't survive that, it drops rather than half-cleans. Approved candidates land as `pending` files in the `candidates/` queue, created on first use inside the plugin's own clone rather than in the project you are working on.
+- `/deliberate-engineering:promote` drives a candidate into the catalog: a blocking leak-audit first (any surviving specific stops it), then an append-only edit (a new lens gets the next free number and existing lenses are never renumbered, so the override identifiers you cite stay stable), a skill-reviewer pass, the count and manifest updates that edit forces, and the removal of the candidate it promoted. A structural change (a new catalog, a reorganization, a rule change) is not auto-applied; promote recommends the full design cycle instead.
 
 Both tools edit only the working tree and always stop before commit, PR, or push: publication is your decision (Rule 1). For the contributor workflow end to end, see [`CONTRIBUTING.md`](../CONTRIBUTING.md).
 

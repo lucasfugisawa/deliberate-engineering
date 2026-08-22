@@ -7,4 +7,4 @@ argument-hint: Optional artifact or audience (e.g., "PR description", "review co
 
 Invoke the `communication-collaboration-selector` skill against $ARGUMENTS.
 
-Classify the communication by audience (code-agent / engineering / product / business) and artifact, then select and apply the matching lenses from the catalog so the message is tuned to its reader and artifact. This is cross-cutting: consult it from within any phase the moment the next thing you produce is a communication; it is not a phase of its own. If the communication is a one-line note to a same-context peer, say so and keep it light.
+Classify the communication by audience (code-agent / engineering / product / business) and artifact, then select and apply the matching lenses from the catalog so the message is tuned to its reader and artifact. This is cross-cutting: consult it from within any phase the moment the next thing you produce is a communication; it is not a phase of its own. Draft it fully, name the exact target, and stop: posting, sending and commenting are yours to trigger (Rule 1). If the communication is a one-line note to a same-context peer, say so and keep it light.

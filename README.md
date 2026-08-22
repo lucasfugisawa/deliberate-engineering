@@ -69,8 +69,10 @@ migrating, shipping, or operating code with real consumers, risk, or
 irreversibility), begin by invoking `/deliberate-engineering:start` (the
 `deliberate-engineering-router`) to classify the work and route to the right
 phase, not just on description match. The `deliberate-engineering-rules` skill
-is the always-on constitution underneath: it holds on every engineering task
-regardless of phase, and the router cites it rather than replacing it. When
+is the always-on constitution underneath: consult it at the start of the
+session, including its standing-rule overrides if you keep an override file,
+and hold it on every engineering task regardless of phase; the router cites it
+rather than replacing it. When
 the next thing you produce is an engineering communication (a PR
 description, a review comment, a work item, a message, an email), consult
 `communication-collaboration-selector` and, with it,
@@ -86,7 +88,7 @@ EOF
 
 This is your machine's choice, never a requirement of the plugin: it only changes *when* the router and rules fire on your machine. To undo it, see [Uninstall](#uninstall).
 
-The nine rules are the small always-on core; everything else, the lenses and catalogs, loads just-in-time when the work calls for it, never as a wall of text in your context.
+The nine rules are the small always-on core, joined by your own standing rules if you keep an override file; everything else, the lenses and catalogs, loads just-in-time when the work calls for it, never as a wall of text in your context.
 
 ## Getting started
 
@@ -163,7 +165,7 @@ flowchart TD
 - **`communication-collaboration-selector`** (`:communicate`): cross-cutting, not a phase: when the artifact is a *communication* (a PR description, a review comment, a stakeholder message, a writeup of alternatives), it classifies by audience and artifact and applies the matching lenses. Consult it from inside any phase.
 - **`deliberate-engineering-voice`**: the read side of an optional personal voice profile. It applies as the surface layer over whatever the communication selector decided (the lenses decide what the message must accomplish, the profile decides how it sounds), loads only what the draft needs, names the files it loaded, and does nothing when the profile directory is absent. Build a profile with the guided **`:voice-build`** flow. See [Sound like yourself](#sound-like-yourself).
 - **Make it yours**: a personal override layer lets your own practice take precedence over any shipped lens or rule; `/deliberate-engineering:capture` distills a session into ready-to-paste override blocks. See [Make it yours](#make-it-yours).
-- **`deliberate-engineering-state`**: a consulted-only skill that owns a per-work-unit working-note, so process state (phase sequence, current phase, chosen rituals, open pendings, and the decisions and why) survives across sessions. The router and Rule 6 delegate to it to rehydrate on resume and checkpoint as work proceeds.
+- **`deliberate-engineering-state`**: a consulted-only skill that owns a per-work-unit working-note, so process state (phase sequence, current phase, chosen lenses, open pendings, and the decisions and why) survives across sessions. The router and Rule 6 delegate to it to rehydrate on resume and checkpoint as work proceeds.
 - **For contributors**: `/deliberate-engineering:contribute` and `:promote` grow the *shared* catalog from a local clone of this repo (generalize-at-capture, a blocking leak-audit, append-only numbering, and a stop before publish). This is the author side, distinct from your personal overrides; see [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 <details>
@@ -178,7 +180,7 @@ flowchart TD
 
 ## Make it yours
 
-The plugin is opinionated, and it's meant to become yours. A personal override file takes precedence over any shipped lens or rule, addressed by stable id (`review #35`, `verify #14`, `rule 2`): disable one you don't want, annotate one with a note of your own, or add your own strategy or rule. The agent always declares when an override changed what it did, and you can even loosen a safety rule, which it honors while calling out the raised autonomy. It's opt-in: no file, no change.
+The plugin is opinionated, and it's meant to become yours. A personal override file takes precedence over any shipped lens or rule it can address, which is every catalog lens and every standing rule, but not the router's own classification axes or its genre-to-phase map, which stay architecture. Entries are addressed by stable id (`review #35`, `verify #14`, `Rule 2`): disable one you don't want, annotate one with a note of your own, or add your own strategy or rule. The agent always declares when an override changed what it did, and you can even loosen a safety rule, which it honors while calling out the raised autonomy. It's opt-in: no file, no change.
 
 You don't have to write it by hand: `/deliberate-engineering:capture` (or just ask) distills the session you just had into ready-to-paste blocks, appended only on your approval.
 
@@ -204,7 +206,16 @@ The same honesty applies to its platform reach: it ships as a Claude Code plugin
 
 ### What the plugin writes
 
-Nothing in your source, and two things worth knowing about. To keep its place across context boundaries on multi-phase or multi-session work, it writes a working-note: `.deliberate/state/` in the repository root when it can confirm that path is ignored by your VCS, and `~/.claude/deliberate-engineering/state/` otherwise. **Confirming that can mean adding a `.deliberate/` line to your `.gitignore`**, which is a tracked file, so that is the one edit it makes outside its own directories; it stages narrowly and tells you. It also says which location it chose every time it reads or writes a note. Your personal overrides and voice profile live under `~/.claude/deliberate-engineering/` and never enter a repository.
+Nothing in your source. Everything else it writes, in full:
+
+- **A working-note**, to keep its place across context boundaries on multi-phase or multi-session work: `.deliberate/state/` in the repository root when it can confirm that path is ignored by your VCS, and `~/.claude/deliberate-engineering/state/` otherwise. **Confirming that can mean adding a `.deliberate/` line to your `.gitignore`**, which is a tracked file, so that is the only pre-existing tracked file it ever edits in your project; everything below is a file it creates. It says which location it chose every time it reads or writes a note.
+- **A conductor doc**, only when you run `/deliberate-engineering:conduct`: the cockpit for that cluster of irreversible steps, written beside the work it conducts and committed with the tracker when one is in play.
+- **A program tracker**, only when you run `/deliberate-engineering:orchestrate`: it commits an update as each unit is dispositioned, so a fresh session can resume.
+- **Handoff and report files**, only when you run `/deliberate-engineering:orchestrate`: one handoff per unit dispatched and one report per unit returned, written beside the tracker so the program has an audit trail rather than a chat log.
+- **A temporary copy of your typed messages**, only when you run `/deliberate-engineering:capture`: it extracts them from the session transcript into a temp directory to mine them, and does not delete it afterwards.
+- **Your own files under `~/.claude/deliberate-engineering/`**: the override file, the voice profile, and, while you run `/deliberate-engineering:voice-build`, a working directory holding the writing samples you supplied. That corpus is the most sensitive thing the plugin ever touches, and the check that keeps it out of a repository is best-effort: it warns, it cannot enforce.
+
+The author tools (`/deliberate-engineering:contribute` and `/deliberate-engineering:promote`) write only inside a clone of this plugin, never in your project.
 
 ## Uninstall
 

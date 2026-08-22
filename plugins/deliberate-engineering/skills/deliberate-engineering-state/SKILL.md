@@ -1,11 +1,11 @@
 ---
 name: deliberate-engineering-state
-description: "Use when work spans phases or sessions and process state must survive: the current phase and phase sequence, the chosen ceremony band and rituals, open pendings, and the decisions made and why. Reads and rehydrates a per-work-unit working-note at the start of a session or phase, and rewrites it at Rule 6 checkpoints with a changed-since-read safety check. Delegates to a tracker or superpowers when one is present; falls back to its own note otherwise. Consulted by the router and Rule 6, not invoked directly; stays silent when there is no state to record."
+description: "Use when work spans phases or sessions and process state must survive: the current phase and phase sequence, the chosen ceremony band and lenses, open pendings, and the decisions made and why. Reads and rehydrates a per-work-unit working-note at the start of a session or phase, and rewrites it at Rule 6 checkpoints with a changed-since-read safety check. Writes that note into the repository at .deliberate/state/ once it confirms the path is VCS-ignored, which can mean adding a line to the project's .gitignore, and falls back to ~/.claude/deliberate-engineering/state/ otherwise. Delegates to a tracker or superpowers when one is present; falls back to its own note otherwise. Consulted by the router and Rule 6, not invoked directly; stays silent when there is no state to record."
 ---
 
 # Deliberate Engineering State
 
-The deliberate layer of *not losing your place*. Where the selectors and the rules skill own the method (the selected phase sequence, the ceremony band, the rituals to apply), this skill owns the working-note that carries that state across sessions and phases. It mirrors how `deliberate-engineering-overrides` owns the override file: one skill encapsulates location, naming, schema, and concurrency for the note, so the router and Rule 6 can bind the write to their checkpoint events without inventing a file format inline. The note is agent-driven: it reads like a shared whiteboard, not a machine-parseable artifact, and it is read and rewritten by the agent at the router's start and Rule 6's checkpoints.
+The deliberate layer of *not losing your place*. Where the selectors and the rules skill own the method (the selected phase sequence, the ceremony band, the lenses to apply), this skill owns the working-note that carries that state across sessions and phases. It mirrors how `deliberate-engineering-overrides` owns the override file: one skill encapsulates location, naming, schema, and concurrency for the note, so the router and Rule 6 can bind the write to their checkpoint events without inventing a file format inline. The note is agent-driven: it reads like a shared whiteboard, not a machine-parseable artifact, and it is read and rewritten by the agent at the router's start and Rule 6's checkpoints.
 
 ## vs Rule 6 and the router live-note
 
@@ -13,11 +13,11 @@ Rule 6 sets the checkpoint posture: compact judiciously, and checkpoint before y
 
 ## vs the tracker / superpowers (hybrid with fallback)
 
-When a tracker or a `superpowers` plan is present, delegate to it and record state there: the tracker or superpowers task already owns the work-unit's durable home, so use it. Fall back to the owned working-note only when there is no durable tracker home. Always declare which path was taken in the visible output: if state was delegated to a tracker, say so; if the fallback note was used, say so. The hybrid-with-fallback stance mirrors the override layer's awareness protocol: the deviation from the default is never silent.
+During a conduction, `deliberate-engineering-conduct`'s conductor doc is the live cockpit for the cluster: the station table, the current gate and the conduction's own pendings live there, and you do not open a second note beside it for them. The work unit's phase state (current phase, phase sequence, ceremony band, chosen lenses) is not dissolved by a baton: it stays wherever it already lived, this note or the tracker, and is rehydrated from there when the baton returns. When a tracker or a `superpowers` plan is present, delegate to it and record state there: the tracker or superpowers task already owns the work-unit's durable home, so use it. Fall back to the owned working-note only when there is no durable tracker home. Always declare which path was taken in the visible output: if state was delegated to a tracker, say so; if the fallback note was used, say so. The hybrid-with-fallback stance mirrors the override layer's awareness protocol: the deviation from the default is never silent.
 
 ## When to use
 
-This skill is consulted, not invoked directly. It is read at two lifecycle moments: (a) at session or phase start, to rehydrate the work-unit's current state (the current phase, the phase sequence, the chosen ceremony band and rituals, and open pendings), and (b) at Rule 6 checkpoints, to rewrite the live state and append new decisions. When work is a single-shot task with no multi-phase or multi-session state (a one-commit trivial fix), this skill stays silent; there is nothing to record. It is consulted at definite checkpoint events, not when the model happens to recall it: a phase transition, a dispatch or a disposition, a pre-compaction checkpoint, and session end each carry a state write (to this note, or to the tracker it delegates to) as a step of that event (Rule 6 and the router bind the write to those events). This skill still does not decide for itself whether to run; the change is that the events that consult it are named and definite, not an optional nicety.
+This skill is consulted, not invoked directly. It is read at two lifecycle moments: (a) at session or phase start, to rehydrate the work-unit's current state (the current phase, the phase sequence, the chosen ceremony band and lenses, and open pendings), and (b) at Rule 6 checkpoints, to rewrite the live state and append new decisions. When work is a single-shot task with no multi-phase or multi-session state (a one-commit trivial fix), this skill stays silent; there is nothing to record. It is consulted at definite checkpoint events, not when the model happens to recall it: a phase transition, a dispatch or a disposition, a pre-compaction checkpoint, and session end each carry a state write (to this note, or to the tracker it delegates to) as a step of that event (Rule 6 and the router bind the write to those events). This skill still does not decide for itself whether to run; the change is that the events that consult it are named and definite, not an optional nicety.
 
 ## The working-note: location
 
@@ -31,9 +31,11 @@ Always declare which location was chosen in the visible output when a note is re
 
 ## The working-note: naming and granularity
 
-One note per work-unit, named by a world-derived identifier in preference order: the current branch name, the PR number, or the ticket key. The filename is `<identifier>.md`, where path-unsafe characters in the identifier (e.g., `/` in a branch name like `feat/user-export`) are sanitized (e.g., to `-`) to produce a valid filename like `feat-user-export.md`. Other examples: `pr-1234.md`, `PROJ-42.md`. By construction, parallel sessions working on different work-units never collide: each has its own note. The rare collision case is two sessions working on the same work-unit simultaneously; the write gate (below) handles that with best-effort detect-and-reconcile.
+One note per work-unit, named by a world-derived identifier in preference order: the current branch name, the PR number, or the ticket key, falling back to an assigned name when the work-unit has none of the three (below). The filename is `<identifier>.md`, where path-unsafe characters in the identifier (e.g., `/` in a branch name like `feat/user-export`) are sanitized (e.g., to `-`) to produce a valid filename like `feat-user-export.md`. Other examples: `pr-1234.md`, `PROJ-42.md`. By construction, parallel sessions working on different work-units never collide: each has its own note. The rare collision case is two sessions working on the same work-unit simultaneously; the write gate (below) handles that with best-effort detect-and-reconcile.
 
 The naming preference order reflects the durability of the identifier: a branch name is stable across the work-unit's life and is local, so it is preferred. A PR number is stable once the PR is created. A ticket key is stable when the ticket exists but may predate the local branch. Choose the first available identifier in that order.
+
+When the work-unit has none of the three (work that happens outside any repository, such as a voice-profile build), fall back to an **assigned name**: a short stable slug for the work itself, normally the name of the skill or command driving it (`voice-build.md`), sanitized the same way. Fix it at the first write, reuse it verbatim in later sessions, and declare it in the visible output, since an assigned name is the only handle a later session has for finding the note. It is the weakest identifier of the four because nothing in the world enforces it: two different work-units must never be given the same name.
 
 ## The schema: two blocks
 
@@ -42,8 +44,8 @@ The working-note has two blocks: **Live state** (rewritten on each checkpoint) a
 **Live state** (rewritten):
 - Current phase (e.g., "verification")
 - Phase sequence (e.g., "planning → contribution → verification")
-- Ceremony band (e.g., "medium")
-- Chosen rituals (e.g., "planning #8, #12, #19; verification #3, #7")
+- Ceremony band (e.g., "standard")
+- Chosen lenses (e.g., "planning #8, #12, #19; verification #3, #7")
 - Open pendings (e.g., "✗ PR description needs ticket link; ✗ DB migration test pending prod schema")
 
 **Decision log** (append-only):
@@ -60,7 +62,7 @@ Example:
 - **Phase**: verification
 - **Sequence**: planning → review → verification
 - **Ceremony band**: standard
-- **Rituals**: planning #8, #12, #19; review #25, #35; verification #1, #3
+- **Chosen lenses**: planning #8, #12, #19; review #25, #35; verification #1, #3
 - **Pendings**:
   - ✗ PR description needs ticket link
   - ✗ DB migration test pending prod schema fetch
@@ -74,7 +76,7 @@ Example:
 
 ## Rehydrate (the read operation)
 
-At session or phase start, read the work-unit's note (or the delegated tracker task). Return the current phase, the phase sequence, the ceremony band, the chosen rituals, and the open pendings. If no note exists for this work-unit at the resolved location, check for orphaned notes before starting fresh: (a) if the work-unit identifier changed (e.g., branch renamed, or work moved from ticket-named to branch-named), look for a note under a prior or alternate identifier (other names in the branch→PR→ticket set) and adopt it if found; (b) if the resolved location is project-local (.deliberate/state/) but has no note, check the fallback location (~/.claude/deliberate-engineering/state/) for a note written by an earlier session before a repository was initialized, and adopt it if found. If no note exists after checking alternates and fallback, return nothing: the work is starting from scratch. When resuming work, re-read the note before reasoning about what to do next, rather than guessing from memory or prior context. The rehydrated state is the source of truth for where the work stands.
+At session or phase start, read the work-unit's note (or the delegated tracker task). Return the current phase, the phase sequence, the ceremony band, the chosen lenses, and the open pendings. If no note exists for this work-unit at the resolved location, check for orphaned notes before starting fresh: (a) if the work-unit identifier changed (e.g., branch renamed, or work moved from ticket-named to branch-named), look for a note under a prior or alternate identifier (other names in the branch, PR, ticket, or assigned-name set) and adopt it if found; (b) if the resolved location is project-local (.deliberate/state/) but has no note, check the fallback location (~/.claude/deliberate-engineering/state/) for a note written by an earlier session before a repository was initialized, and adopt it if found. If no note exists after checking alternates and fallback, return nothing: the work is starting from scratch. When resuming work, re-read the note before reasoning about what to do next, rather than guessing from memory or prior context. The rehydrated state is the source of truth for where the work stands.
 
 ## Checkpoint (the write operation)
 
@@ -88,4 +90,4 @@ Always declare in the visible output when behavior deviated from the default: (a
 
 ## Output
 
-On **rehydrate**, report the recovered state: the current phase, the phase sequence, the ceremony band, the chosen rituals, and the open pendings. If no note existed, say so: "no prior state found; starting fresh." On **checkpoint**, report what was written (the updated live state fields) and what was appended (the new decision-log entries), and declare any deviation (fallback location used, delegated to tracker, collision reconciled). When there is no multi-phase or multi-session state to record (a single-shot task), stay silent. This skill speaks only when there is state to persist or recover.
+On **rehydrate**, report the recovered state: the current phase, the phase sequence, the ceremony band, the chosen lenses, and the open pendings. If no note existed, say so: "no prior state found; starting fresh." On **checkpoint**, report what was written (the updated live state fields) and what was appended (the new decision-log entries), and declare any deviation (fallback location used, delegated to tracker, collision reconciled). When there is no multi-phase or multi-session state to record (a single-shot task), stay silent. This skill speaks only when there is state to persist or recover.
