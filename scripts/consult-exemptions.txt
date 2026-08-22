@@ -1,0 +1,12 @@
+# Skills that cite a numbered catalog lens but do not consult the override layer,
+# with the reason each is exempt. An exemption is a stated decision: a skill that
+# belongs here for a bad reason is a finding, and one that is missing entirely is
+# a defect the check will catch.
+#
+# Format: <skill-directory>: <reason>
+
+deliberate-engineering-promote: it edits catalogs rather than applying lenses; the numbers it cites are example addresses (review #35) and target fields in candidate files, not lenses being selected for a piece of work.
+
+deliberate-engineering-state: it records which lenses a selector already chose, in the working-note schema and its worked example; it applies none, so there is nothing for an override to change here. Established at source during the 0.12.0 review.
+
+deliberate-engineering-capture: it writes override entries and cites lens numbers as the targets they address (review #35: disable); the read side applying those overrides is the override skill itself, and a consult here would be the write side reading its own output.

@@ -7,8 +7,16 @@ name: consistency
 # a claim drifts from the source of truth: the class of defect where a lens
 # was added append-only but a routing table or a doc count went stale.
 #
+# Alongside it, check-invariants.py guards the structural invariants that are
+# not counts: a lens number is a permanent address, every citation resolves,
+# every lens-applying skill consults the override layer, no catalog or command
+# is invisible, named-section references resolve, and passages claimed identical
+# are identical. Its own negative controls run here too, because a check nobody
+# has watched fail is not a check.
+#
 # No judgment, no version decision: pure invariants (Rule 1 stays the
-# maintainer's). Runnable locally: ./scripts/check-consistency.sh
+# maintainer's). Runnable locally: ./scripts/check-consistency.sh and
+# python3 scripts/check-invariants.py
 
 on:
   pull_request:
@@ -20,5 +28,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Run the consistency harness
         run: ./scripts/check-consistency.sh
+      - name: Run the invariant guards
+        run: |
+          base="${{ github.event.pull_request.base.sha }}"
+          if [ -z "$base" ]; then base="${{ github.event.before }}"; fi
+          python3 scripts/check-invariants.py ${base:+--base "$base"}
+      - name: Prove the guards still catch what they claim
+        run: python3 scripts/test-check-invariants.py
