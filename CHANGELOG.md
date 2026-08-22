@@ -2,6 +2,16 @@
 
 All notable changes to the `deliberate-engineering` plugin are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/), and the project aims at [Semantic Versioning](https://semver.org/) (pre-1.0: minor covers features and breaking changes, patch covers fixes).
 
+## Unreleased
+
+### Tooling
+- **The structural invariants are guarded mechanically, not only stated.** A reviewer proved by mutation that the existing harness was blind to everything that is not a count: renumbering an entire catalog passed green, deleting the override consult from all five selectors passed, a sixth catalog was invisible because the catalog list was a hardcoded array, and a thirteenth command passed while the README said twelve. `scripts/check-invariants.py` now guards seven invariants: a lens number is a permanent address and may never disappear between the base revision and HEAD; every `<catalog> #N` and `Rule N` citation resolves to a real heading (214 of them today); every skill that applies a numbered lens consults the override layer; no catalog is invisible to the count harness and no command invokes a skill that does not exist; every named-section reference resolves; passages the text claims are identical are identical; and no doubled word or conflict marker ships.
+- **Every guard has a negative control, and they run in CI.** `scripts/test-check-invariants.py` copies the repository, breaks one invariant at a time, and asserts the right check fails, because a check nobody has watched fail is not a check. Twelve mutations, each caught by its own check. Two of them found blind spots in the guards themselves while they were being written: the consult check was satisfied by the two strings appearing anywhere in a file rather than by an actual consult, and it never examined the five selectors at all, because a selector cites its own lenses as bare numbers rather than as `review #25`.
+- **Exemptions are stated, not silent.** Three skills cite lens numbers without applying them (`promote` edits catalogs, `state` records what a selector already chose, `capture` writes override entries that address them). Each is listed in `scripts/consult-exemptions.txt` with its reason, and the guard fails on an exemption with no reason or for a skill that does not exist.
+- **The version gate covers `plugins/` rather than one plugin directory**, so a second plugin is gated from the day it lands instead of shipping silently exempt.
+
+**What this does not do:** make coherence self-enforcing. It stops the mechanical invariants from regressing. The semantic ones (a description that hides a write, a gloss that misreads its lens, a claim untrue of a sibling) remain the work of review, and the record of this release says that work wants fresh context and more than one angle.
+
 ## [0.12.0] - 2026-08-22
 
 The override-reach release: the second half of the architectural review's findings, where the override layer promised more reach than its plumbing had. Five verified majors shared one root, and they are fixed together because they are one system.
