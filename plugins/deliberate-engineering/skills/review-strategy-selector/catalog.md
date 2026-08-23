@@ -6,6 +6,8 @@ Strategy **numbers are stable identifiers, not reading order**: a lens keeps its
 
 ## Master Principle
 
+**Depth follows risk and uncertainty, not line count**: a one-line change to a fee calculation earns more than a six-hundred-line isolated helper. That is the plugin's one ruler, stated here in review's terms, and it decides how much of what follows applies.
+
 Strategies **compose**. The strongest pattern is to *rotate the lens each pass* (a new strategy per review), validate empirically where possible, and **close with a fresh-eyes pass that has no history of the edits** to break accumulated bias. This applies equally to documentation, design, and code.
 
 ---
