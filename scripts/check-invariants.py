@@ -87,7 +87,7 @@ def markdown_files():
             for f in files:
                 if f.endswith(".md"):
                     out.append(os.path.join(dirpath, f))
-    for extra in ("README.md", "CONTRIBUTING.md"):
+    for extra in ("README.md", "CONTRIBUTING.md", "CHANGELOG.md"):
         p = os.path.join(ROOT, extra)
         if os.path.isfile(p):
             out.append(p)
@@ -391,6 +391,58 @@ def check_text_artifacts():
         ok("artifacts: no doubled words, no conflict markers")
 
 
+def slug(heading):
+    """GitHub's anchor slug: lowercase, punctuation dropped, spaces to hyphens."""
+    h = re.sub(r"`|\*|_", "", heading).strip().lower()
+    h = re.sub(r"[^a-z0-9 \-]", "", h)
+    return re.sub(r"\s+", "-", h)
+
+
+LINK_RE = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
+
+
+def check_links():
+    """Every relative link resolves, and every anchor matches a real heading.
+
+    This is Rule 9 ("ship nothing the reader can't resolve") turned on the
+    plugin itself: a link that 404s or an anchor that lands nowhere is exactly
+    the pointer the rule forbids.
+    """
+    anchors = {}
+    for path in markdown_files():
+        anchors[os.path.abspath(path)] = set(
+            slug(h) for h in re.findall(r"^#{1,6} (.+)$", read(path), re.M)
+        )
+    checked = 0
+    bad = 0
+    for path in markdown_files():
+        base = os.path.dirname(os.path.abspath(path))
+        for i, line in enumerate(read(path).splitlines(), 1):
+            for m in LINK_RE.finditer(line):
+                target = m.group(1).strip()
+                if target.startswith(("http://", "https://", "mailto:")):
+                    continue
+                checked += 1
+                filepart, _, anchor = target.partition("#")
+                if filepart:
+                    dest = os.path.normpath(os.path.join(base, filepart))
+                    if not os.path.exists(dest):
+                        fail("links", f"{rel(path)}:{i} links to {filepart}, which does not exist")
+                        bad += 1
+                        continue
+                else:
+                    dest = os.path.abspath(path)
+                if anchor:
+                    known = anchors.get(os.path.abspath(dest))
+                    if known is None:
+                        continue  # a non-markdown target carries no headings to check
+                    if anchor.lower() not in known:
+                        fail("links", f"{rel(path)}:{i} links to #{anchor}, which matches no heading in {os.path.basename(dest)}")
+                        bad += 1
+    if not bad:
+        ok(f"links: {checked} relative link(s) and anchor(s), all resolve")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--base", default=os.environ.get("INVARIANTS_BASE", ""),
@@ -411,13 +463,15 @@ def main():
     check_identical_blocks()
     print("== Invariant 7: no doubled words or conflict markers ==")
     check_text_artifacts()
+    print("== Invariant 8: every relative link and anchor resolves ==")
+    check_links()
     print()
     for n in notes:
         print(f"  note: {n}")
     if failures:
         print(f"\nInvariant check FAILED: {len(failures)} problem(s).")
         return 1
-    print("\nInvariant check OK: all seven invariants hold.")
+    print("\nInvariant check OK: all eight invariants hold.")
     return 0
 
 

@@ -39,7 +39,9 @@ def edit(tree, relpath, old, new, count=1):
 def fresh_tree(stack):
     tree = tempfile.mkdtemp(prefix="invariant-nc-")
     stack.append(tree)
-    for item in ("plugins", "scripts", "docs", "README.md", "CONTRIBUTING.md"):
+    # The scratch tree must be a faithful copy: a file the guard reads but the
+    # copy omits produces a failure that belongs to the harness, not to the code.
+    for item in ("plugins", "scripts", "docs", "README.md", "CONTRIBUTING.md", "CHANGELOG.md"):
         src = os.path.join(ROOT, item)
         dst = os.path.join(tree, item)
         if os.path.isdir(src):
@@ -110,6 +112,12 @@ case("diverging a passage claimed identical", "identical",
      lambda t: edit(t, f"{SK}/planning-strategy-selector/SKILL.md",
                     "**Operator overrides.** Before applying the selected lenses",
                     "**Operator overrides.** Before applying the picked lenses"))
+
+case("a link to a file that does not exist", "links",
+     lambda t: edit(t, "README.md", "](docs/guides/README.md)", "](docs/guides/READMEE.md)"))
+
+case("an anchor that matches no heading", "links",
+     lambda t: edit(t, "README.md", "](#whats-inside)", "](#whats-inside-nowhere)"))
 
 case("a doubled word", "artifacts",
      lambda t: edit(t, "README.md", "One mental model runs", "One mental mental model runs"))

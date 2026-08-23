@@ -15,6 +15,12 @@
 
 set -euo pipefail
 
+if [ "${BASH_VERSINFO[0]}" -lt 4 ]; then
+  echo "This harness needs bash 4 or newer (found $BASH_VERSION)." >&2
+  echo "macOS ships 3.2 as /bin/bash; run it with a newer bash, e.g. /opt/homebrew/bin/bash scripts/check-consistency.sh" >&2
+  exit 2
+fi
+
 # Resolve repo root from this script's location, so it runs from anywhere.
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SKILLS="$ROOT/plugins/deliberate-engineering/skills"
