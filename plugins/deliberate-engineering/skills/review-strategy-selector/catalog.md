@@ -30,8 +30,8 @@ Strategies **compose**. The strongest pattern is to *rotate the lens each pass* 
 
 ### 3. Independent fresh-eyes pass
 
-- **How it works:** A review deliberately *without* the history of prior edits, so as not to inherit rationalizations already made (e.g. dispatch a reviewer with no context of who edited).
-- **Objective:** Break the "each pass finds less because it is already convinced" loop; see what the author can no longer see.
+- **How it works:** A review deliberately *without* the history of prior edits, so as not to inherit rationalizations already made (e.g. dispatch a reviewer with no context of who edited). Give it two jobs, not one: find what the earlier passes missed, and say what it would defend the artifact against if someone flagged it as a defect. A reviewer only asked to find things finds things. Ask for the defence list without showing it the earlier findings, which pattern 7 forbids anyway, and compare the two yourself.
+- **Objective:** Break the "each pass finds less because it is already convinced" loop, and give yourself something to hold the earlier findings against.
 - **When most valuable:** After several of your own passes; before a merge; whenever you are both author and reviewer.
 
 ### 4. Self-review of what your own fixes introduced
@@ -372,12 +372,13 @@ Strategies **compose**. The strongest pattern is to *rotate the lens each pass* 
 
 ## Appendix: Composition Patterns
 
-*How to chain strategies together. This appendix contains 7 composition patterns. Each pattern carries a permanent number, cited as `review pattern #N` the way a lens is cited as `review #N`, so an operator override can address one. Numbers are append-only here for the same reason they are for lenses: an address that moves is not an address.*
+*How to chain strategies together. This appendix contains 8 composition patterns. Each pattern carries a permanent number, cited as `review pattern #N` the way a lens is cited as `review #N`, so an operator override can address one. Numbers are append-only here for the same reason they are for lenses: an address that moves is not an address.*
 
 - **1. Lens rotation:** A different strategy per pass; do not repeat the same angle.
 - **2. Find → verify pipeline:** Find candidates broadly, then verify each adversarially (voting/refutation) before acting.
 - **3. Barrier when you need the whole:** Only synchronize between phases when the next phase needs *all* findings together (e.g. global dedup before expensive verification).
 - **4. Scale to the ask:** "Find bugs" → few finders, simple vote. "Exhaustive audit" → large finder pool + 3–5 adversarial votes + synthesis.
-- **5. Discovery before remediation:** Keep a review pass read-only: report what you find and stop, rather than fixing as you go. Findings stay trustworthy and complete when the audit doesn't mutate the artifact mid-pass; remediation is a separate, later step.
+- **5. Discovery before remediation:** Keep a review pass read-only: report what you find and stop, rather than fixing as you go. Read-only is about the artifact under review, not a ban on running anything: lens 12 already executes in a disposable environment, which is also what keeps it inside this pattern, since running code in place leaves build artifacts behind and those are a change too. Findings stay trustworthy and complete when the audit doesn't mutate the artifact mid-pass; remediation is a separate, later step.
 - **6. No silent truncation:** If the review limited coverage (top-N, sampling, no retry), **log what you deliberately skipped and why**: truncating silently reads as "covered everything," which is a lie of omission.
 - **7. Close with fresh eyes:** The last pass should be independent of the edit history.
+- **8. Do not hand a dispatched agent your hypothesis:** When you dispatch a lens, describe what to examine, never what you expect to be wrong. A prompt that says "find where this truncates" spends the pass on your guess and biases what you do with what comes back. A capable agent may refuse it, and in the run that produced this pattern three of them did, but refusal is not something to design around: the brief is where contamination enters a design built on dispatching lenses, and it enters before any independence can act on it. Say what to look at, what evidence would settle it, and that finding nothing is a result.
