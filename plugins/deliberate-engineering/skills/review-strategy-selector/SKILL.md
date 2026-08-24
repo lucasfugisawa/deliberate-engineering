@@ -83,7 +83,8 @@ Apply the composition patterns from the catalog's Appendix:
 
 - **Rotate the lens each pass**: one strategy per pass, never the same angle twice.
 - **Find → verify**: find candidates broadly, then verify each adversarially (9 majority-refute) before acting on it. For unknown-size audits, loop until dry (6). ("Verify" here is lens 9's refutation vote *inside* review; confirming a candidate against reality is the `verification-strategy-selector`'s job, not this pattern's.)
-- **Self-review your own fixes** (4): after editing, review what the fix may have broken.
+- **Self-review your own fixes** (4): after editing, review what the fix may have broken, and first whether the fix reproduces the defect class it was fixing.
+- **Check coverage, then decide when to stop (10, 54)**: before the closing pass, run the completeness critic (10: what is missing, a modality not exercised, a claim not verified, a source not read?) and send what it finds into another round; then apply the stopping criterion (54: which classes of defect went unexamined, and is that judgment stated rather than reached by fatigue?), which earns its full weight on an exhaustive audit or a high-stakes change.
 - **CLOSE with a fresh-eyes pass (3) in a separate context**: the final pass must be independent of the edit history AND of the prior conclusions. In-context re-reading inherits what you already concluded, so it confirms rather than re-sees; dispatch it as a fresh-context agent (or defer to a new session). Always.
 - **Never silently truncate**: if you limited coverage (sampled, capped, skipped a group), **log what you deliberately skipped and why.** Truncating silently reads as "covered everything," which is a lie of omission.
 

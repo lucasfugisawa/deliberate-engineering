@@ -2,6 +2,16 @@
 
 All notable changes to the `deliberate-engineering` plugin are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/), and the project aims at [Semantic Versioning](https://semver.org/) (pre-1.0: minor covers features and breaking changes, patch covers fixes).
 
+## [0.12.2] - 2026-08-23
+
+One lens amendment, contributed through the plugin's own `contribute` and `promote` flow run against itself, plus routing for two Part A lenses that no selector step reached.
+
+### Changed
+- **Review 4 now points inward first, and its title says so.** It was titled "Self-review of regressions introduced by your own fixes", and its method sent the reviewer outward, to what else the fix might have broken. The likelier defect is inward and same-class: a repair is written inside the frame that admitted the original defect, on the same subject matter and usually minutes later, so the branch added to handle an error has its own unhandled path and the sentence replacing a misleading one misleads in a new way. A same-class recurrence is a new defect in new text rather than a regression, which is why the title moved with the method. The lens keeps its number and its place.
+
+### Fixed
+- **Two of the six unrouted Part A lenses now route.** Lens 10 (completeness critic) and lens 54 (stopping criterion) were reachable only by reading the catalog straight through: no step of `review-strategy-selector` selected either one, and under progressive disclosure, where an agent reads only the sections a step names, that means never read. This is the defect class v0.4.0 fixed in the communication catalog and v0.4.1 fixed in four more lenses. Step 4 now routes both. **Deliberately not in this change:** lenses 5, 7, 8 and 11 carry the same defect and stay unrouted, lens 11 (change-size / reviewability, whose own scope is "any PR/CL") most visibly. Each wants a home chosen for it rather than a sweep appended to a patch, and two of six should not read as all of them.
+
 ## [0.12.1] - 2026-08-22
 
 A cold measurement of the shipped 0.12.0 scored all three clauses of the architectural review's objective as met, and located eleven stale sentences anyway. This is those eleven, plus the guard that would have caught the sharpest of them.

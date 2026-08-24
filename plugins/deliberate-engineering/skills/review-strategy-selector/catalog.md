@@ -34,11 +34,11 @@ Strategies **compose**. The strongest pattern is to *rotate the lens each pass* 
 - **Objective:** Break the "each pass finds less because it is already convinced" loop; see what the author can no longer see.
 - **When most valuable:** After several of your own passes; before a merge; whenever you are both author and reviewer.
 
-### 4. Self-review of regressions introduced by your own fixes
+### 4. Self-review of what your own fixes introduced
 
-- **How it works:** After applying fixes, review specifically **what those fixes might have broken**.
-- **Objective:** Prevent the repair of one defect from planting another.
-- **When most valuable:** Always, after a round of non-trivial edits.
+- **How it works:** After applying fixes, review what those fixes might have broken, and **first** whether the fix reproduces the very defect class it was repairing. The repair is written inside the frame that admitted the original defect, on the same subject matter and usually minutes later: the branch added to handle an error has its own unhandled path, the lock that closes a race opens a different ordering, the sentence replacing a misleading one misleads in a new way. Re-apply the lens that produced the finding to the text of the fix.
+- **Objective:** Prevent the repair of one defect from planting another, most often another of the same kind.
+- **When most valuable:** Always, after a round of non-trivial edits. (Re-applying one angle here is not a break with lens rotation: the target is the fix's new text, which has not been through that angle yet.)
 
 ### 54. Stopping criterion: have we exhausted the lenses?
 
