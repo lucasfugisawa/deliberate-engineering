@@ -37,7 +37,7 @@ Two rules of thumb the plugin holds throughout: **risk and uncertainty set the d
 
 ## What runs underneath
 
-The nine standing rules hold under every phase (the human gate, verify-before-endorse, recommend-with-rationale, checkpoint durable state, and the rest); your [overrides](capture.md) take precedence over any shipped lens or rule; and `deliberate-engineering-state` keeps a working-note so the phase sequence and pendings survive across sessions, written to `.deliberate/state/` in the repository root when it can confirm that directory is ignored by your VCS and to `~/.claude/deliberate-engineering/state/` otherwise, saying which it used each time: all consulted automatically, none of them yours to drive.
+The nine standing rules hold under every phase (the human gate, verify-before-endorse, recommend-with-rationale, checkpoint durable state, and the rest); your [overrides](capture.md) take precedence over any shipped lens, composition pattern or rule; and `deliberate-engineering-state` keeps a working-note so the phase sequence and pendings survive across sessions, written to `.deliberate/state/` in the repository root when it can confirm that directory is ignored by your VCS and to `~/.claude/deliberate-engineering/state/` otherwise, saying which it used each time: all consulted automatically, none of them yours to drive.
 
 ## Where to go next
 

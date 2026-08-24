@@ -330,6 +330,14 @@ def check_section_refs():
 
 IDENTICAL_BLOCKS = [
     (
+        "Operator overrides on patterns consult",
+        "**Operator overrides on patterns.** Before composing",
+        [
+            "planning-strategy-selector", "review-strategy-selector",
+            "verification-strategy-selector", "debug-operate-strategy-selector",
+        ],
+    ),
+    (
         "Operator overrides consult",
         "**Operator overrides.** Before applying the selected lenses",
         [
@@ -456,7 +464,7 @@ def title_words(title):
     return {w for w in re.findall(r"[a-z]{4,}", title.lower()) if w not in TITLE_STOPWORDS}
 
 
-def routing_prose(sel_text):
+def routing_prose(sel_text, strip_patterns=True):
     """The selector text a routing citation could live in.
 
     Frontmatter is metadata, a heading routes nothing, and a code span, a URL, a
@@ -473,7 +481,13 @@ def routing_prose(sel_text):
     sel_text = re.sub(r"^---\n.*?\n---\n", "", sel_text, flags=re.S)
     sel_text = re.sub(r"`[^`\n]*`", " ", sel_text)
     sel_text = re.sub(r"https?://\S+", " ", sel_text)
-    sel_text = re.sub(r"(?i)\b(?:step|rule|axis|part)[ \t]+\d+", " ", sel_text)
+    # "pattern 6" is a composition pattern, a separate numbering from the lenses; without this
+    # strip a pattern citation can be read as a lens citation and route a lens nobody routed
+    # substitute a digit rather than a space: the window in routed_lenses cuts at the next
+    # digit, so blanking one widens it, and a sentence declining a lens started routing it
+    sel_text = re.sub(r"(?i)\b(?:step|rule|axis|part)[ \t]+\d+", " 0 ", sel_text)
+    if strip_patterns:
+        sel_text = re.sub(r"(?i)(?<!-)\bpattern[ \t]+\d+", " 0 ", sel_text)
     sel_text = re.sub(
         r"(?i)\b(?:review|verification|verify|planning|debug-operate|debug|communication)[ \t]+#\d+",
         " ", sel_text)
@@ -640,6 +654,115 @@ def check_lens_reachability():
            f"{n_ex} stated exemption(s)")
 
 
+def check_pattern_reachability():
+    """Every composition pattern is cited by its selector's compose step.
+
+    The same claim as the lens half, over the second body of numbered content.
+    It is scoped to the compose step on purpose: elsewhere in a selector a bold
+    number is a lens citation, and inside that step lenses are cited in
+    parentheses, so there the two namespaces do not collide.
+
+    This exists because all four sets were stated twice, in the catalog appendix
+    and in the selector, and all four had drifted: eight patterns were in an
+    appendix and absent from the selector that said it applied them.
+    """
+    before = len(failures)
+    total = 0
+    for d, cat_path in sorted(catalog_paths().items()):
+        cat = read(cat_path)
+        m = re.search(r"^## Appendix: Composition Patterns\b.*$", cat, re.M)
+        if not m:
+            # a catalog with no appendix is fine (communication states that exception), but a
+            # catalog whose selector has a compose step and no appendix to cite is not
+            if re.search(r"^## Step \d+: Compose", read(os.path.join(SKILLS, d, "SKILL.md")), re.M):
+                fail("reachability", f"{d}: its selector has a compose step but the catalog has no "
+                                     f"'## Appendix: Composition Patterns' for it to cite")
+            continue
+        body = cat[m.end():]
+        nxt = re.search(r"^## ", body, re.M)
+        if nxt:
+            body = body[:nxt.start()]
+        # Anything that looks like a pattern bullet must parse as one. A period for the colon,
+        # an asterisk bullet, the colon outside the bold, an indented line: each of those used to
+        # drop the pattern out of the checked set with no failure at all.
+        pats, seen_nums = {}, []
+        if len(re.findall(r"^## Appendix: Composition Patterns\b", cat, re.M)) > 1:
+            fail("reachability", f"{d}: the composition appendix heading appears more than once, so "
+                                 f"the parse stops at the second one and drops what follows")
+        for line in body.splitlines():
+            # anything shaped like a list item carrying bold text has to parse as a pattern:
+            # "- 7. **Title:**" and "7. **Title:**" used to leave the set with no failure at all
+            if not (re.match(r"^\s*(?:[-*+]\s+|\d+\.\s+)", line) and "**" in line):
+                continue
+            mm = re.match(r"^- \*\*(\d+)\. (.+?):\*\*", line)
+            if not mm:
+                fail("reachability",
+                     f"{d}: {line.strip()[:60]!r} sits in the composition appendix and does not "
+                     f"match '- **N. Title:**', so no check can see it")
+                continue
+            num = int(mm.group(1))
+            seen_nums.append(num)
+            pats[num] = mm.group(2)
+        if len(seen_nums) != len(set(seen_nums)):
+            dupes = sorted({x for x in seen_nums if seen_nums.count(x) > 1})
+            fail("reachability", f"{d}: composition pattern number {dupes} is used twice, so two "
+                                 f"patterns share one address")
+        if not pats:
+            fail("reachability", f"{d}: has a composition appendix whose patterns carry no numbers")
+            continue
+        claimed = re.search(r"This appendix contains (\d+) composition patterns", body)
+        if not claimed:
+            fail("reachability", f"{d}: the composition appendix states no count, so a dropped "
+                                 f"pattern leaves no trace")
+        elif int(claimed.group(1)) != len(pats):
+            fail("reachability", f"{d}: the composition appendix claims {claimed.group(1)} patterns "
+                                 f"and carries {len(pats)}")
+        if sorted(pats) != list(range(1, len(pats) + 1)):
+            fail("reachability", f"{d}: composition patterns are numbered {sorted(pats)}, not 1..N")
+        sel = read(os.path.join(SKILLS, d, "SKILL.md"))
+        step = re.search(r"^## Step \d+: Compose.*?(?=^## )", sel, re.M | re.S)
+        if not step:
+            fail("reachability", f"{d}: selector has no compose step to cite its patterns from")
+            continue
+        # Use the lens half's primitives rather than a second copy of its loop: the first
+        # draft re-implemented the match and dropped all three of its hardenings, so a
+        # neighbour's title word vouched across a digit, an empty title-word set failed open,
+        # and headings, code spans and "Rule 3" were all read as citations.
+        # keep "pattern 5" here: it is this half's own citation form, not noise
+        prose = routing_prose(step.group(0), strip_patterns=False)
+        missing = []
+        for n, title in sorted(pats.items()):
+            words = title_words(title)
+            hit = False
+            # A pattern is cited as a bold bare number beside a word from its own title, which
+            # is the one form in the repo and the one a lens citation cannot imitate: lenses are
+            # cited bare or parenthesised in these steps. Narrow on purpose. An earlier draft also
+            # matched "pattern #N" against the raw step, which bypassed every filter this function
+            # applies, fired for none of the 28, and let a code fence saying "do not apply them"
+            # certify all seven.
+            for mm in re.finditer(r"\*\*%d\*\*" % n, prose):
+                after = re.split(r"\d", prose[mm.end():mm.end() + 60])[0].lower()
+                if words and any(re.search(r"\b%s\b" % re.escape(w), after) for w in words):
+                    hit = True
+                    break
+            if not hit:
+                missing.append(n)
+        # the inverse direction, which the lens namespace has and this one did not: every
+        # "<catalog> pattern #N" written anywhere must resolve to a pattern that exists
+        for path in markdown_files():
+            for cite_nick, num in re.findall(r"\b(%s)\s+pattern\s+#(\d+)" % "|".join(CITE_NAMES), read(path)):
+                if CITE_NAMES[cite_nick] == d and int(num) not in pats:
+                    fail("reachability", f"{rel(path)} cites {cite_nick} pattern #{num}, which is "
+                                         f"not a pattern in that catalog")
+        total += len(pats)
+        if missing:
+            fail("reachability",
+                 f"{d}: composition pattern {', '.join(str(n) for n in missing)} is cited nowhere "
+                 f"in the compose step that says it applies them")
+    if len(failures) == before:
+        ok(f"reachability: {total} composition patterns, each cited by its selector's compose step")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--base", default=os.environ.get("INVARIANTS_BASE", ""),
@@ -664,6 +787,7 @@ def main():
     check_links()
     print("== Invariant 9: every lens is reachable from its selector ==")
     check_lens_reachability()
+    check_pattern_reachability()
     print()
     for n in notes:
         print(f"  note: {n}")

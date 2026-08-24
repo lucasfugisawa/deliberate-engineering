@@ -76,7 +76,7 @@ Deliberately skipped, and logged as Step 4 requires: **17** (no parsing, aggrega
 
 **Entering here directly.** These lenses are the same whether you arrived through `/deliberate-engineering:start` or called this phase yourself, but four things the router would have carried do not come with a direct call, so carry them here. The nine standing rules in `deliberate-engineering-rules` hold regardless, including the human gate on anything irreversible or outward-facing. Write your place at each checkpoint through `deliberate-engineering-state` (Rule 6), so a compaction or a new session resumes from what happened rather than from recall. Re-classify out loud if the work turns out heavier or lighter than it looked, and say what moved. And when the next thing you produce is a communication rather than code, consult `communication-collaboration-selector` before writing it.
 
-**Operator overrides.** Before applying the selected lenses, consult `deliberate-engineering-overrides`: honor any override on a lens you selected (disable / modify), and ask it for any operator-authored `add:` entry for this catalog, which carries no shipped number and so is invisible to a lookup keyed on your selection. Declare every deviation in the Output.
+**Operator overrides.** Before applying the selected lenses, consult `deliberate-engineering-overrides`: honor any override on a lens you selected (disable / modify), and ask it for any operator-authored `add: <catalog>` lens entry for this catalog, which carries no shipped number and so is invisible to a lookup keyed on your selection. An `add: <catalog> pattern` entry is not one of these; it is honored where the patterns are composed. Declare every deviation in the Output.
 
 **Each substantive lens emits an evidence artifact, and the artifact IS its completion criterion.** A lens has not run until it has produced, from THIS pass, the concrete trace of what it examined:
 
@@ -89,14 +89,19 @@ This is what makes a recalled review visibly incomplete: reused conclusions carr
 
 ## Step 4: Compose the passes
 
-Apply the composition patterns from the catalog's Appendix:
+The composition patterns are numbered in the catalog's Appendix: **1** lens rotation, **2** find then verify, **3** barrier when you need the whole, **4** scale to the ask, **5** discovery before remediation, **6** no silent truncation, **7** close with fresh eyes. Apply them, and read them there rather than here. This step used to restate a partial list, and the two copies drifted: three patterns existed only in the Appendix. An operator override addresses one as `review pattern #N`, and note that a pattern number is not a lens number, so cite a pattern as "pattern 6" and a lens as a bare "6".
 
-- **Rotate the lens each pass**: one strategy per pass, never the same angle twice.
-- **Find → verify**: find candidates broadly, then verify each adversarially (9 majority-refute) before acting on it. For unknown-size audits, loop until dry (6). ("Verify" here is lens 9's refutation vote *inside* review; confirming a candidate against reality is the `verification-strategy-selector`'s job, not this pattern's.)
+Two of them mean something in this phase that the Appendix does not say:
+
+- **Pattern 2 here**: "verify" is lens 9's refutation vote *inside* review; confirming a candidate against reality is the `verification-strategy-selector`'s job, not this pattern's. For an unknown-size audit, loop until dry with lens 6.
+- **Pattern 7 here**: the closing pass (3) must be independent of the edit history AND of the prior conclusions. In-context re-reading inherits what you already concluded, so it confirms rather than re-sees; dispatch it as a fresh-context agent, or defer it to a new session. Always.
+
+Two habits belong at this step and are lenses rather than patterns:
+
 - **Self-review your own fixes** (4): after editing, review what the fix may have broken, and first whether the fix reproduces the defect class it was fixing.
 - **Check coverage, then decide when to stop (10, 54)**: before the closing pass, run the completeness critic (10: what is missing, a modality not exercised, a claim not verified, a source not read?) and send what it finds into another round; then apply the stopping criterion (54: which classes of defect went unexamined, and is that judgment stated rather than reached by fatigue?), which earns its full weight on an exhaustive audit or a high-stakes change.
-- **CLOSE with a fresh-eyes pass (3) in a separate context**: the final pass must be independent of the edit history AND of the prior conclusions. In-context re-reading inherits what you already concluded, so it confirms rather than re-sees; dispatch it as a fresh-context agent (or defer to a new session). Always.
-- **Never silently truncate**: if you limited coverage (sampled, capped, skipped a group), **log what you deliberately skipped and why.** Truncating silently reads as "covered everything," which is a lie of omission.
+
+**Operator overrides on patterns.** Before composing, consult `deliberate-engineering-overrides` twice over: for any `disable` or `modify` on a composition pattern you are about to apply, addressed as `<catalog> pattern #N`; and for any `add: <catalog> pattern` entry, which carries no shipped number and so is invisible to a lookup keyed on what you selected. Both are honored here rather than at lens selection, because a pattern is applied to the lenses and not to the artifact. Declare every deviation in the Output.
 
 ## Step 5: Coexistence and precedence
 

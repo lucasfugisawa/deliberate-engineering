@@ -70,19 +70,18 @@ Open only the Parts matching your classification:
 
 **Entering here directly.** These lenses are the same whether you arrived through `/deliberate-engineering:start` or called this phase yourself, but four things the router would have carried do not come with a direct call, so carry them here. The nine standing rules in `deliberate-engineering-rules` hold regardless, including the human gate on anything irreversible or outward-facing. Write your place at each checkpoint through `deliberate-engineering-state` (Rule 6), so a compaction or a new session resumes from what happened rather than from recall. Re-classify out loud if the work turns out heavier or lighter than it looked, and say what moved. And when the next thing you produce is a communication rather than code, consult `communication-collaboration-selector` before writing it.
 
-**Operator overrides.** Before applying the selected lenses, consult `deliberate-engineering-overrides`: honor any override on a lens you selected (disable / modify), and ask it for any operator-authored `add:` entry for this catalog, which carries no shipped number and so is invisible to a lookup keyed on your selection. Declare every deviation in the Output.
+**Operator overrides.** Before applying the selected lenses, consult `deliberate-engineering-overrides`: honor any override on a lens you selected (disable / modify), and ask it for any operator-authored `add: <catalog>` lens entry for this catalog, which carries no shipped number and so is invisible to a lookup keyed on your selection. An `add: <catalog> pattern` entry is not one of these; it is honored where the patterns are composed. Declare every deviation in the Output.
 
 ## Step 4: Compose the response
 
-Apply the catalog's Appendix patterns:
+The composition patterns are numbered in the catalog's Appendix: **1** evidence before action, **2** restore then diagnose, **3** delegate the method own the judgment, **4** peacetime feeds wartime, **5** close the loop or it's theater, **6** no silent skipping. Apply them, and read them there rather than here. This step used to restate a partial list, and the two copies drifted: pattern 5 existed only in the Appendix. An operator override addresses one as `debug-operate pattern #N`, and a pattern number is not a strategy number, so cite a pattern as "pattern 2" and a strategy as a bare "2".
+
+Two standing-rule reminders belong at this step and are rules rather than patterns:
 
 - **Re-execute on re-invocation (Rule 3)**: resolve scope from a world-derived target, and recompute in fresh context rather than relaying a prior in-session conclusion.
-- **Evidence before action, except under degradation.** Establish what's true (Part A) before responding, but hold this in tension with restoration: when the service is degraded, you do *not* wait for perfect evidence. The Master Principle's second clause wins and you restore the baseline first. Name which way the tension resolves: degraded → restore; not degraded → keep gathering.
-- **Restore, then diagnose.** Under a live break, Part C precedes Part B. Get the baseline back to known-good, *then* hunt the cause in peacetime: diagnosing a live outage while it burns trades the whole team's time for your curiosity.
 - **You prepare the restore; the human fires it (Rule 1).** Part C's moves are outward and irreversible: a revert pushed to a shared baseline, a failover, shed or rate-limited load, a path disabled in production. "Don't wait for the author" (6) means don't block on the *original* author; it never means an agent pushes to a shared baseline on its own. Prepare the exact revert or containment step with its expected effect and blast radius, and hand it to the on-call responder to execute immediately. Under pressure the speed comes from having it ready, not from skipping the gate.
-- **Delegate the method, own the judgment.** Dispatch `superpowers:systematic-debugging` for the mechanics; this skill decides which evidence to trust and how to respond. Different jobs: don't reinvent the method.
-- **Peacetime feeds wartime.** Part D's hygiene is what makes Part A's evidence trustworthy in the *next* incident. Every shortcut taken in peacetime is a blind spot inherited mid-incident.
-- **No silent skipping.** If you couldn't establish a fact (lossy logs, sampled data, no access), **say so and name the limit**. An unestablished fact is a known unknown, never a quiet "fine"; never let an absence read as confirmation.
+
+**Operator overrides on patterns.** Before composing, consult `deliberate-engineering-overrides` twice over: for any `disable` or `modify` on a composition pattern you are about to apply, addressed as `<catalog> pattern #N`; and for any `add: <catalog> pattern` entry, which carries no shipped number and so is invisible to a lookup keyed on what you selected. Both are honored here rather than at lens selection, because a pattern is applied to the lenses and not to the artifact. Declare every deviation in the Output.
 
 ## Step 5: Coexistence and precedence
 

@@ -63,4 +63,6 @@ Communication is engineering *outward*: the same deliberate judgment applied to 
 
 ## Composition note
 
+*The other four catalogs carry a numbered Appendix of composition patterns, each addressable as `<catalog> pattern #N`. This one carries a single note instead, because what there is to say here is one relationship between lenses rather than a set of alternatives to chain. That makes it the one catalog with no pattern targets, which is a stated exception and not an oversight.*
+
 These lenses combine. Lens 4 (speak the reader's language) modulates the *form* of every other lens: a PR description (1) or an alternatives writeup (6) is phrased differently for an engineering versus a business reader. Lens 5 (no unresolvable context) is a constraint that rides on top of any outward-facing lens. Apply the lens that matches the artifact, then let audience set the register.

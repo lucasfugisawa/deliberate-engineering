@@ -29,6 +29,8 @@ Generalizable engineering judgment worth catalog content, **not** personal devia
 
 5. **Communication lenses**: a way of tuning a message to its reader and its artifact, a disclosure discipline, a handoff shape. A judgment about how engineering work is told, not about how it is built.
 
+6. **Composition patterns**: how the lenses of a phase chain together rather than what any one of them examines. Rotate the angle each pass; find broadly then verify adversarially; keep a discovery pass read-only. Capture one as `kind: pattern`. The test that separates it from a lens is what it acts on: a lens is applied to the artifact, a pattern is applied to the lenses.
+
 Rarely the judgment is not a lens at all but a change to the standing rules every session loads. That is contributable too, as a `rules` candidate, and it leaves the queue by a different route (see the format below).
 
 What does **not** produce a candidate: a one-session tactic with no sign of reuse; a judgment so specific to one employer/service/vendor that generalization destroys the principle; or a personal preference (that is an override, not a catalog entry).
@@ -46,8 +48,9 @@ Each candidate is one markdown file with frontmatter and two prose sections. The
 ```markdown
 ---
 target: review        # one of: review | verify | planning | debug | communication | rules
+kind: lens            # lens | pattern (a composition pattern chains lenses; rules ignore this)
 operation: add        # add | modify
-modifies: null        # if modify, the lens number, e.g. 35 (the rule number when target is rules); else null
+modifies: null        # if modify, the number within that kind, e.g. lens 35 or pattern 7 (the rule number when target is rules); else null
 status: pending
 date: 2026-06-27
 ---
@@ -61,7 +64,7 @@ When a change is gated behind a flag, confirm the flag has an owner, a removal d
 Flags without an owner or a removal date accumulate as silent risk; a default-on flag turns an incomplete rollout into a live incident. This lens makes the hygiene explicit at review time.
 ```
 
-Frontmatter carries `target` (review / verify / planning / debug / communication, or `rules` for a standing-rule change), `operation` (add / modify), `modifies` (the lens number if modify, the rule number when `target: rules` amends `Rule N`, else null), `status` (pending at capture), `date`. Body = the generalized principle + the rationale. All employer-neutral. All prose, no parser.
+Frontmatter carries `target` (review / verify / planning / debug / communication, or `rules` for a standing-rule change), `kind` (`lens` for a strategy applied to an artifact, `pattern` for a composition pattern that chains lenses together; the two are separately numbered, so `review #7` and `review pattern #7` are different content), `operation` (add / modify), `modifies` (the number within that kind if modify, the rule number when `target: rules` amends `Rule N`, else null), `status` (pending at capture), `date`. A `pattern` candidate is only valid for the four catalogs that carry a numbered appendix: the communication catalog has a prose composition note and no pattern targets. Body = the generalized principle + the rationale. All employer-neutral. All prose, no parser.
 
 `target: rules` is the one target that names no catalog: it carries a change to the standing rules themselves, either a new rule (`add`) or an amendment to `Rule N` (`modify`, with the rule number in `modifies`). Write it in the same shape, but expect a different exit: `promote` routes every `rules` candidate down the structural path, a full design cycle (brainstorm, spec, plan, build), never the append-only catalog edit. A standing rule is constitutional content that every session loads, so the shape that suits a catalog lens is the wrong shape for it.
 
@@ -70,7 +73,7 @@ Frontmatter carries `target` (review / verify / planning / debug / communication
 For each candidate, present:
 
 1. **The generalized principle**: the lens content as it would enter the catalog, fully employer-neutral. The specific is gone.
-2. **Target catalog and operation**: which catalog (review / verify / planning / debug / communication), or `rules` for a standing-rule change, and whether this is `add` (a new lens or rule) or `modify` (an amendment to an existing one, with its number). For a `rules` candidate, say plainly that it is a standing-rule change bound for a full design cycle, not a catalog edit, so the author approves it knowing what it costs.
+2. **Target catalog, kind and operation**: which catalog (review / verify / planning / debug / communication), or `rules` for a standing-rule change; whether it is a `lens` or a composition `pattern`, since the two are separately numbered and land in different places; and whether this is `add` (a new lens, pattern or rule) or `modify` (an amendment to an existing one, with its number). Say the kind out loud even when it is a lens: promotion branches on it, so an author who never hears it cannot approve it. For a `rules` candidate, say plainly that it is a standing-rule change bound for a full design cycle, not a catalog edit, so the author approves it knowing what it costs.
 3. **Rationale**: why this judgment matters, in one or two sentences.
 4. **Confirmation that generalization preserved the principle and lost the specific**: explicitly state this for each candidate, so the author knows the transformation was sound.
 
@@ -80,7 +83,7 @@ A worked candidate presentation:
 > 
 > **Generalized principle:** When a change is gated behind a feature flag, confirm the flag has an owner, a removal date, and a default-off safe state before merging.
 > 
-> **Target:** review (add)
+> **Target:** review, kind lens (add)
 > 
 > **Rationale:** Flags without an owner or a removal date accumulate as silent risk; a default-on flag turns an incomplete rollout into a live incident. This lens makes the hygiene explicit at review time.
 > 
@@ -111,7 +114,7 @@ If no judgment from this session is generalizable or worth catalog content, say 
 
 Report:
 
-1. The candidates shown: for each, the generalized principle, the target catalog, the operation, the rationale, and the confirmation that generalization preserved the principle and lost the specific.
+1. The candidates shown: for each, the generalized principle, the target catalog, the kind, the operation, the rationale, and the confirmation that generalization preserved the principle and lost the specific.
 2. Which candidates were approved, edited, or rejected.
 3. What was written: for each approved candidate, state the slug, the file path (`candidates/<slug>.md`), and confirm that promotion is a separate gated step.
 4. If no candidates were identified, state that explicitly.

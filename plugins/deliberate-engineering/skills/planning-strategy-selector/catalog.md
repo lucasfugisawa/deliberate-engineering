@@ -174,12 +174,12 @@ It sits *before* code exists. Where review judges an artifact and verification c
 
 ## Appendix: Composition Patterns
 
-*How to chain planning strategies together.*
+*How to chain strategies together. This appendix contains 7 composition patterns. Each pattern carries a permanent number, cited as `planning pattern #N` the way a lens is cited as `planning #N`, so an operator override can address one. Numbers are append-only here for the same reason they are for lenses: an address that moves is not an address.*
 
-- **Calibrate first:** Set ceremony (10) early: it decides how much of the rest of the catalog you even apply. A trivial-and-safe change may use almost none of it; say so.
-- **Scope down, then ground up:** First decline the speculative (Part A), then confirm what remains against the real codebase, data, and feasibility (Part B). Cutting before grounding wastes less investigation.
-- **Spike before you plan the unknown:** If feasibility is the blocker, retire it with a timeboxed spike (8) *before* committing to a plan: don't plan a build on an unproven assumption.
-- **Inventory before estimate:** For unknown-size work, the classified inventory (6) precedes any commitment to a plan or timeline: don't estimate what you haven't surveyed.
-- **Slice along the sequence:** Decomposition (11) and sequencing (12) compose: split along concern boundaries, then order the splits so every intermediate state is safe.
-- **Decisions carry recommendations:** Every fork captured in the plan pairs options with a recommendation (14); a plan full of open menus has deferred the planning, not done it.
-- **Don't over-plan the trivial:** Planning has a cost. When the work is trivial-and-safe, skip the spec, do it, and state that you judged it low-ceremony: the same calibration (10) applied to planning itself.
+- **1. Calibrate first:** Set ceremony (10) early: it decides how much of the rest of the catalog you even apply. A trivial-and-safe change may use almost none of it; say so.
+- **2. Scope down, then ground up:** First decline the speculative (Part A), then confirm what remains against the real codebase, data, and feasibility (Part B). Cutting before grounding wastes less investigation.
+- **3. Spike before you plan the unknown:** If feasibility is the blocker, retire it with a timeboxed spike (8) *before* committing to a plan: don't plan a build on an unproven assumption.
+- **4. Inventory before estimate:** For unknown-size work, the classified inventory (6) precedes any commitment to a plan or timeline: don't estimate what you haven't surveyed.
+- **5. Slice along the sequence:** Decomposition (11) and sequencing (12) compose: split along concern boundaries, then order the splits so every intermediate state is safe. For a schema or data change, keep each deploy step backward-compatible with the code still running (13).
+- **6. Decisions carry recommendations:** Every fork captured in the plan pairs options with a recommendation (14); a plan full of open menus has deferred the planning, not done it.
+- **7. Don't over-plan the trivial:** Planning has a cost. When the work is trivial-and-safe, skip the spec, do it, and state that you judged it low-ceremony: the same calibration (10) applied to planning itself.

@@ -71,6 +71,19 @@ def replace_line(t, relpath, prefix, new_line):
         fh.writelines(lines)
 
 
+
+def replace_all_lines(t, relpath, pattern, replacement):
+    """Rewrite every line matching pattern, for mutations that must hit a whole set."""
+    import re as _re
+    p = os.path.join(t, relpath)
+    with open(p, encoding="utf-8") as fh:
+        s = fh.read()
+    new = _re.sub(pattern, replacement, s, flags=_re.M)
+    assert new != s, f"setup failed: {pattern!r} matched nothing in {relpath}"
+    with open(p, "w", encoding="utf-8") as fh:
+        fh.write(new)
+
+
 CASES = []
 ACCEPTS = []
 
@@ -106,10 +119,26 @@ case("a citation pointing at no lens", "citations",
 case("a rule citation that is not a rule", "citations",
      lambda t: edit(t, f"{SK}/deliberate-engineering-router/SKILL.md", "Rule 1", "Rule 42"))
 
-case("dropping the override consult from a selector", "consult",
+def drop_every_consult(t, relpath):
+    """A selector now carries two consults, one for lenses and one for patterns.
+
+    Removing only the first leaves the skill still consulting the override layer, which
+    is what the consult check actually asks; that mutation is caught by the identical-block
+    guard instead. To test the consult check's own claim, both have to go.
+    """
+    for old in ("Before applying the selected lenses, consult `deliberate-engineering-overrides`",
+                "Before composing, consult `deliberate-engineering-overrides`"):
+        edit(t, relpath, old, old.replace("consult `deliberate-engineering-overrides`", "think about it"))
+
+
+case("dropping every override consult from a selector", "consult",
+     lambda t: drop_every_consult(t, f"{SK}/review-strategy-selector/SKILL.md"))
+
+case("dropping only the lens consult, leaving the pattern one", "identical",
      lambda t: edit(t, f"{SK}/review-strategy-selector/SKILL.md",
                     "**Operator overrides.** Before applying the selected lenses, consult `deliberate-engineering-overrides`",
-                    "**Operator overrides.** Before applying the selected lenses, think about it"))
+                    "**Operator overrides.** Before applying the selected lenses, think about it"),
+     expect="Operator overrides consult")
 
 case("an exemption with no reason", "consult",
      lambda t: open(os.path.join(t, "scripts", "consult-exemptions.txt"), "a").write(
@@ -206,6 +235,69 @@ case("an exemption whose reason is a token, not a reason", "reachability",
      lambda t: replace_line(t, "scripts/routing-exemptions.txt",
                             "lens review-strategy-selector 5:",
                             "lens review-strategy-selector 5: xxx yyy.\n"))
+
+case("a pattern bullet whose number sits outside the bold", "reachability",
+     lambda t: edit(t, f"{SK}/review-strategy-selector/catalog.md",
+                    "- **7. Close with fresh eyes:**", "- 7. **Close with fresh eyes:**"),
+     expect="does not match '- **N. Title:**'")
+
+case("a composition appendix heading that appears twice", "reachability",
+     lambda t: edit(t, f"{SK}/planning-strategy-selector/catalog.md",
+                    "- **5. Slice along the sequence:**",
+                    "## Appendix: Composition Patterns\n\n- **5. Slice along the sequence:**"),
+     expect="appears more than once")
+
+case("a composition appendix whose stated count is wrong", "reachability",
+     lambda t: edit(t, f"{SK}/verification-strategy-selector/catalog.md",
+                    "This appendix contains 8 composition patterns",
+                    "This appendix contains 9 composition patterns"),
+     expect="claims 9 patterns and carries 8")
+
+case("a pattern citation that resolves to no pattern", "reachability",
+     lambda t: edit(t, f"{SK}/deliberate-engineering-overrides/SKILL.md",
+                    "review pattern #7", "review pattern #77"),
+     expect="which is not a pattern in that catalog")
+
+case("a pattern bullet the appendix parser cannot recognise", "reachability",
+     lambda t: edit(t, f"{SK}/review-strategy-selector/catalog.md",
+                    "- **7. Close with fresh eyes:**", "- **7. Close with fresh eyes.**"),
+     expect="does not match '- **N. Title:**'")
+
+case("two composition patterns sharing one number", "reachability",
+     lambda t: edit(t, f"{SK}/review-strategy-selector/catalog.md",
+                    "- **7. Close with fresh eyes:**", "- **6. Close with fresh eyes:**"),
+     expect="is used twice")
+
+case("a compose step whose catalog has no appendix to cite", "reachability",
+     lambda t: edit(t, f"{SK}/planning-strategy-selector/catalog.md",
+                    "## Appendix: Composition Patterns", "## Appendix: Ways to combine these"),
+     expect="has no '## Appendix: Composition Patterns'")
+
+case("an appendix whose patterns carry no numbers at all", "reachability",
+     lambda t: replace_all_lines(t, f"{SK}/debug-operate-strategy-selector/catalog.md",
+                                 r"^- \*\*(\d+)\. ", "- **"),
+     expect="carry no numbers")
+
+case("a composition pattern the compose step never cites", "reachability",
+     lambda t: edit(t, f"{SK}/review-strategy-selector/SKILL.md",
+                    "**5** discovery before remediation, ", ""),
+     expect="composition pattern 5 is cited nowhere")
+
+case("a composition appendix whose patterns lost their numbers", "reachability",
+     lambda t: edit(t, f"{SK}/planning-strategy-selector/catalog.md",
+                    "- **1. Calibrate first:**", "- **Calibrate first:**"),
+     expect="numbered [2, 3, 4, 5, 6, 7], not 1..N")
+
+case("a compose step renamed so its patterns lose their home", "reachability",
+     lambda t: edit(t, f"{SK}/debug-operate-strategy-selector/SKILL.md",
+                    "## Step 4: Compose the response", "## Step 4: Put it together"),
+     expect="has no compose step")
+
+case("a lens left routed only by a composition-pattern citation", "reachability",
+     lambda t: edit(t, f"{SK}/review-strategy-selector/SKILL.md",
+                    "in play** \u2192 14 source-of-truth verification",
+                    "in play** \u2192 see pattern 14 source-of-truth verification"),
+     expect="is cited nowhere in its selector")
 
 case("a lens no step of its selector routes", "reachability",
      lambda t: edit(t, f"{SK}/review-strategy-selector/SKILL.md",

@@ -192,13 +192,13 @@ The review catalog's Part B (empirical validation, real-data validation, source-
 
 ## Appendix: Composition Patterns
 
-*How to chain verification strategies together.*
+*How to chain strategies together. This appendix contains 8 composition patterns. Each pattern carries a permanent number, cited as `verification pattern #N` the way a lens is cited as `verification #N`, so an operator override can address one. Numbers are append-only here for the same reason they are for lenses: an address that moves is not an address.*
 
-- **Expectation-first:** Pair every check with its pre-stated expected result (the Master Principle; mechanically, strategy 17). A check with no expectation can't fail loudly.
-- **Reproduce → fix → re-confirm:** Capture the failing baseline as evidence before the change (10), so the after-state proves causation rather than coincidence.
-- **Parity over argument:** For a change meant to preserve behavior, demonstrate equivalence by running the old and new paths on the same inputs and diffing (23), rather than reasoning that they match.
-- **Prove → re-prove:** Reach a conclusion, then re-verify it independently (5) before acting. The second pass is where the rationalized error dies.
-- **Promotion ladder:** Run the cheapest faithful verification at each environment gate (Part C); never skip a gate because the next one "will catch it."
-- **Calibrate depth to irreversibility:** A reversible config tweak needs a dry-run; a production data deletion needs the full mutation protocol (20–21) plus post-deploy confirmation (Part D).
-- **Capture, don't infer:** When the real payload/metric is obtainable, capture it (16); inference is a hypothesis, not verification.
-- **No silent skipping:** If a check couldn't be run faithfully (sandbox limit, no pre-prod), say so and name who/what is the authority for it (6): never let an unrun check read as a passed one.
+- **1. Expectation-first:** Pair every check with its pre-stated expected result (the Master Principle; mechanically, strategy 17). A check with no expectation can't fail loudly.
+- **2. Reproduce → fix → re-confirm:** Capture the failing baseline as evidence before the change (10), so the after-state proves causation rather than coincidence.
+- **3. Parity over argument:** For a change meant to preserve behavior, demonstrate equivalence by running the old and new paths on the same inputs and diffing (23), rather than reasoning that they match.
+- **4. Prove → re-prove:** Reach a conclusion, then re-verify it independently (5) before acting. The second pass is where the rationalized error dies.
+- **5. Promotion ladder:** Run the cheapest faithful verification at each environment gate (Part C); never skip a gate because the next one "will catch it."
+- **6. Calibrate depth to irreversibility:** Match the protocol to the cost of being wrong, not to the size of the change. A reversible config tweak needs a dry-run; a production data deletion needs the full mutation protocol (20–21) plus post-deploy confirmation (Part D).
+- **7. Capture, don't infer:** When the real payload/metric is obtainable, capture it (16); inference is a hypothesis, not verification.
+- **8. No silent skipping:** If a check couldn't be run faithfully (sandbox limit, no pre-prod), say so and name who/what is the authority for it (6): never let an unrun check read as a passed one.
