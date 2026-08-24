@@ -10,3 +10,5 @@ deliberate-engineering-promote: it edits catalogs rather than applying lenses; t
 deliberate-engineering-state: it records which lenses a selector already chose, in the working-note schema and its worked example; it applies none, so there is nothing for an override to change here. Established at source during the 0.12.0 review.
 
 deliberate-engineering-capture: it writes override entries and cites lens numbers as the targets they address (review #35: disable); the read side applying those overrides is the override skill itself, and a consult here would be the write side reading its own output.
+
+deliberate-engineering-contribute: it authors candidates for the catalog rather than applying lenses to a piece of work; the numbers it cites are example addresses showing that a lens number and a pattern number are separate namespaces (review #7 is not review pattern #7). Its sibling promote is exempt for the same reason.

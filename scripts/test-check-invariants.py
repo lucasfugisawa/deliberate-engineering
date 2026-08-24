@@ -207,6 +207,21 @@ case("an exemption whose reason is a token, not a reason", "reachability",
                             "lens review-strategy-selector 5:",
                             "lens review-strategy-selector 5: xxx yyy.\n"))
 
+case("a composition pattern the compose step never cites", "reachability",
+     lambda t: edit(t, f"{SK}/review-strategy-selector/SKILL.md",
+                    "**5** discovery before remediation, ", ""),
+     expect="composition pattern 5 is cited nowhere")
+
+case("a composition appendix whose patterns lost their numbers", "reachability",
+     lambda t: edit(t, f"{SK}/planning-strategy-selector/catalog.md",
+                    "- **1. Calibrate first:**", "- **Calibrate first:**"),
+     expect="numbered [2, 3, 4, 5, 6, 7], not 1..N")
+
+case("a compose step renamed so its patterns lose their home", "reachability",
+     lambda t: edit(t, f"{SK}/debug-operate-strategy-selector/SKILL.md",
+                    "## Step 4: Compose the response", "## Step 4: Put it together"),
+     expect="has no compose step")
+
 case("a lens left routed only by a composition-pattern citation", "reachability",
      lambda t: edit(t, f"{SK}/review-strategy-selector/SKILL.md",
                     "in play** \u2192 14 source-of-truth verification",

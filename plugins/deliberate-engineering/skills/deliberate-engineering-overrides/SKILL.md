@@ -17,7 +17,7 @@ This skill is the **read side** of the override layer. It consults the file, hon
 
 ## What is a target, and what is architecture
 
-Overrides target **named catalog lenses** (review #35, planning #12) and **standing rules** (Rule 1, Rule 2). Two things are deliberately not targets: the router's four routing axes (clarity, risk, reversibility, reach) and its genre → phase-sequence mapping. Those are the classification the whole dispatch rests on, so they are architecture rather than content, and this mechanism does not reach them.
+Overrides target **named catalog lenses** (review #35, planning #12), **composition patterns** (review pattern #7, verification pattern #4), and **standing rules** (Rule 1, Rule 2). A composition pattern prescribes how the lenses of a phase chain together, which is method rather than dispatch, so it is content on the same footing as a lens: an operator who closes with two fresh passes, or who folds remediation into discovery, is expressing exactly the practice this layer holds. The communication catalog carries a prose composition note rather than a numbered list, so it has no pattern targets. Two things are deliberately not targets: the router's four routing axes (clarity, risk, reversibility, reach) and its genre → phase-sequence mapping. Those are the classification the whole dispatch rests on, so they are architecture rather than content, and this mechanism does not reach them.
 
 The exemption is about *those two objects*, not about the router as a skill. The router does apply a named lens by citation: its ceremony-band step cites planning #10 for the method. Where it does, that lens's override applies exactly as it would inside the selector that owns the lens. An operator who has overridden planning #10 gets that override honored when the band is set, not only later when the planning selector runs.
 
@@ -65,7 +65,7 @@ The override file lives at `~/.claude/deliberate-engineering/overrides.md`. Each
 ```
 
 **Reading contract:**
-- Headers are `## <target>: <operation>` where target is `review #N`, `planning #N`, `verification #N` or `verify #N`, `debug-operate #N` or `debug #N`, `communication #N`, or `Rule N`, and operation is `disable`, `modify`, or `add`. A catalog may be cited by its catalog name or its command name (`verify` and `verification` mean the same catalog, as do `debug` and `debug-operate`), since this file is read by an agent, not a parser.
+- Headers are `## <target>: <operation>` where target is `review #N`, `planning #N`, `verification #N` or `verify #N`, `debug-operate #N` or `debug #N`, `communication #N`, `<catalog> pattern #N` for a composition pattern, or `Rule N`, and operation is `disable`, `modify`, or `add`. A catalog may be cited by its catalog name or its command name (`verify` and `verification` mean the same catalog, as do `debug` and `debug-operate`), since this file is read by an agent, not a parser.
 - For `add` entries, the header is `## add: <catalog>` where catalog is `review`, `planning`, `verification` or `verify`, `debug-operate` or `debug`, `communication`, or `rules`.
 - **disable** body: `**Why:**` (optional), the operator's note on why this lens is skipped.
 - **modify** body: `**Add:**` (required), the annotation to read alongside the shipped lens/rule text; the shipped text stays intact.

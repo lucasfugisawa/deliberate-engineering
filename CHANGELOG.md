@@ -2,6 +2,24 @@
 
 All notable changes to the `deliberate-engineering` plugin are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/), and the project aims at [Semantic Versioning](https://semver.org/) (pre-1.0: minor covers features and breaking changes, patch covers fixes).
 
+## [0.13.0] - 2026-08-24
+
+Composition patterns were second-class by omission. The override skill's own section titled "What is a target, and what is architecture" enumerates both categories, and patterns appeared in neither: not declared content, not declared architecture. Answering that question turned up something larger underneath it.
+
+**A note on the version.** `CONTRIBUTING.md` makes a minor mean a new skill, command, catalog or lens, and this is none of those. It is a minor anyway, by judgment rather than by the letter: an adopter can now write `## review pattern #7: modify` in their override file, and could not before. Twenty-eight pieces of shipped content became addressable, which is a capability rather than a fix.
+
+### Fixed
+- **Every composition pattern was stated twice, and all four copies had drifted.** The patterns live in each catalog's Appendix, and each selector's Step 4 restated them under a lead-in of the form "apply the composition patterns from the catalog's Appendix". The two lists disagreed in all four phases. Nine patterns existed only in the Appendix and were absent from the selector that claimed to apply them, among them review's discovery-before-remediation (keep a review pass read-only, report and stop rather than fixing as you go), verification's promotion ladder and parity-over-argument, and planning's spike-before-you-plan-the-unknown. The patterns that did appear in both were renamed between them: "Lens rotation" against "Rotate the lens each pass", "No silent truncation" against "Never silently truncate". Each Step 4 now cites by number instead of restating, which is the repair the axis-honesty release used, for the same reason: copies drift, and these already had.
+- **What was not deleted.** Several selector bullets carried phase-specific content the Appendix does not have, notably how debug-operate's evidence-before-action pattern resolves when the service is degraded, and the standing-rule reminders that are rules rather than patterns. Those stayed, now attached to the pattern number they extend rather than shadowing it.
+
+### Added
+- **Composition patterns are numbered and addressable.** Twenty-eight of them across four catalogs, each cited as `<catalog> pattern #N`, in a namespace of its own: `review #7` and `review pattern #7` are different content. The override layer names them as targets alongside lenses and standing rules, with the reasoning stated: a pattern prescribes how a phase's lenses chain, which is method rather than dispatch, so it is content on the same footing as a lens. The communication catalog keeps its prose composition note and takes no pattern targets, which is now a stated exception rather than an omission.
+- **`contribute` and `promote` can carry one.** The candidate format gains `kind: lens | pattern`, and promotion knows the Appendix as a destination. This closes the gap in the direction that first exposed it: a candidate of this shape had been reshaped into a lens because the mechanism could not express it, and was then dropped at the gate for being a lens that duplicated two others.
+
+### Tooling
+- **Invariant 9 covers both bodies of numbered content.** Every composition pattern must be cited by its selector's compose step, the same claim already made for lenses, scoped to that step because elsewhere in a selector a bold number is a lens citation. It also fails when an appendix's patterns carry no numbers or are numbered out of sequence, and when a compose step has been renamed out from under them. The lens half gained one strip: a pattern citation is removed before lens citations are read, because in the review catalog lens 6 is loop-until-dry and pattern 6 is no-silent-truncation. 38 mutation controls, four of them new, and 4 positive controls.
+- **`contribute` joins the stated consult exemptions.** Explaining the two namespaces required citing one, and the guard correctly flagged a skill that cites a lens number without applying lenses. It authors candidates rather than applying them, which is what its sibling `promote` is already exempt for.
+
 ## [0.12.3] - 2026-08-24
 
 The plugin's most repeated defect, taken at the root. Sixteen review lenses were unreachable in practice: fourteen now route, two are deliberately exempt and say why, and a guard proves the property from now on instead of a reader eventually noticing it.

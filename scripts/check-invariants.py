@@ -642,6 +642,61 @@ def check_lens_reachability():
            f"{n_ex} stated exemption(s)")
 
 
+def check_pattern_reachability():
+    """Every composition pattern is cited by its selector's compose step.
+
+    The same claim as the lens half, over the second body of numbered content.
+    It is scoped to the compose step on purpose: elsewhere in a selector a bold
+    number is a lens citation, and inside that step lenses are cited in
+    parentheses, so there the two namespaces do not collide.
+
+    This exists because all four sets were stated twice, in the catalog appendix
+    and in the selector, and all four had drifted: nine patterns were in an
+    appendix and absent from the selector that said it applied them.
+    """
+    before = len(failures)
+    total = 0
+    for d, cat_path in sorted(catalog_paths().items()):
+        cat = read(cat_path)
+        m = re.search(r"^## Appendix: Composition Patterns\s*$", cat, re.M)
+        if not m:
+            continue
+        body = cat[m.end():]
+        nxt = re.search(r"^## ", body, re.M)
+        if nxt:
+            body = body[:nxt.start()]
+        pats = {int(n): t for n, t in re.findall(r"^- \*\*(\d+)\. (.+?):\*\*", body, re.M)}
+        if not pats:
+            fail("reachability", f"{d}: has a composition appendix whose patterns carry no numbers")
+            continue
+        if sorted(pats) != list(range(1, len(pats) + 1)):
+            fail("reachability", f"{d}: composition patterns are numbered {sorted(pats)}, not 1..N")
+        sel = read(os.path.join(SKILLS, d, "SKILL.md"))
+        step = re.search(r"^## Step \d+: Compose.*?(?=^## )", sel, re.M | re.S)
+        if not step:
+            fail("reachability", f"{d}: selector has no compose step to cite its patterns from")
+            continue
+        prose = step.group(0)
+        missing = []
+        for n, title in sorted(pats.items()):
+            words = title_words(title)
+            hit = False
+            for mm in re.finditer(r"(?<![\w.\-#])%d(?![\d])" % n, prose):
+                after = prose[mm.end():mm.end() + 60].lower()
+                if not words or any(re.search(r"\b%s\b" % re.escape(w), after) for w in words):
+                    hit = True
+                    break
+            if not hit:
+                missing.append(n)
+        total += len(pats)
+        if missing:
+            fail("reachability",
+                 f"{d}: composition pattern {', '.join(str(n) for n in missing)} is cited nowhere "
+                 f"in the compose step that says it applies them")
+    if len(failures) == before:
+        ok(f"reachability: {total} composition patterns, each cited by its selector's compose step")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--base", default=os.environ.get("INVARIANTS_BASE", ""),
@@ -666,6 +721,7 @@ def main():
     check_links()
     print("== Invariant 9: every lens is reachable from its selector ==")
     check_lens_reachability()
+    check_pattern_reachability()
     print()
     for n in notes:
         print(f"  note: {n}")
