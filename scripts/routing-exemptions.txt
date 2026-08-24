@@ -5,8 +5,11 @@
 #
 # Format: group <skill-directory> <Part X>: <reason>
 #         lens  <skill-directory> <N>: <reason>
+#
+# A group exemption must open its reason with 'covers <numbers>.' naming exactly the
+# lenses it blankets, so a lens appended to that Part later cannot join it in silence.
 
-group review-strategy-selector Part E: Step 3 routes this group whole ("the matching Part-E group; open only the relevant subsection") because its lenses are domain surfaces a reviewer opens by domain (accessibility, mobile lifecycle, i18n, IaC, FinOps) rather than lenses selected one at a time against an axis.
+group review-strategy-selector Part E: covers 37-41, 43-49. Step 3 routes what remains of this group whole ("the matching Part-E group; open only the relevant subsection") because every lens left in it is a domain surface a reviewer opens by domain: accessibility, responsiveness, SPA state, mobile lifecycle, device compatibility, IaC, CI/CD, cost, disaster recovery, data pipelines, experiments, i18n. The two that were not domain surfaces are routed by number instead: 42, whose trigger is personal or financial data, and 51, whose trigger is a design proposal or a boundary move.
 
 lens review-strategy-selector 5: devil's advocate fires on "group decisions at risk of groupthink", which presupposes a human group to rotate the role through. An agent-conducted review has none, and the adversarial stance it would contribute is already routed as lens 2.
 

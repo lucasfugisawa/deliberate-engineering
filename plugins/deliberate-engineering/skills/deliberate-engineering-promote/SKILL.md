@@ -1,6 +1,6 @@
 ---
 name: deliberate-engineering-promote
-description: "Use on demand to drive a pending candidate into the catalog systematically. Runs the leak-audit gate, classifies isolated vs structural, then (isolated) edits the catalog append-only, runs skill-reviewer and deletes the promoted candidate file from the queue, or (structural) stops and recommends the proper design cycle. This is the promotion step of the author contribution flow: it drives a candidate into the shared catalog (working tree only, gated). Writes, all in the plugin repository's working tree and never committed: the catalog file, the selector that routes it, the counts those catalogs are stated in (README and the architecture doc), both version manifests and the CHANGELOG, plus the deletion of the promoted candidate; it also runs the consistency script. It is not the contribute skill, which captures candidates, nor the adopter capture skill, which writes your personal override file. Stays silent unless invoked."
+description: "Use on demand to drive a pending candidate into the catalog systematically. Runs the leak-audit gate, classifies isolated vs structural, then (isolated) edits the catalog append-only, runs skill-reviewer and deletes the promoted candidate file from the queue, or (structural) stops and recommends the proper design cycle. This is the promotion step of the author contribution flow: it drives a candidate into the shared catalog (working tree only, gated). Writes, all in the plugin repository's working tree and never committed: the catalog file, the selector that routes it, the counts those catalogs are stated in (README and the architecture doc), both version manifests, the CHANGELOG, and `scripts/routing-exemptions.txt` when a lens is deliberately left unrouted, plus the deletion of the promoted candidate; it also runs the consistency script. It is not the contribute skill, which captures candidates, nor the adopter capture skill, which writes your personal override file. Stays silent unless invoked."
 ---
 
 # Deliberate Engineering Promote
@@ -9,13 +9,13 @@ The third vertex of the authoring trio. Where `deliberate-engineering-capture` g
 
 ## Boundaries
 
-- **vs `contribute` (the capture half)**: `contribute` turns session judgment into a clean candidate in `candidates/`; this is the **promote** half. It takes a candidate from the queue, runs the gated promotion (leak audit, classify, catalog fit, review), and edits the catalog or recommends a design cycle. One gated pipeline, two skills.
+- **vs `contribute` (the capture half)**: `contribute` turns session judgment into a clean candidate in `candidates/`; this is the **promote** half. It takes a candidate from the queue, runs the gated promotion (leak audit, classify, catalog fit, routing, review), and edits the catalog and the selector that routes it, or recommends a design cycle. One gated pipeline, two skills.
 - **vs `deliberate-engineering-capture` (the adopter side)**: capture grows your *personal, private* override file; this edits the *shared, shipped* catalog. Opposite write-targets.
 - **On demand only**: never self-triggers; runs only via `/deliberate-engineering:promote` or an explicit request (e.g. "promote candidate X to the catalog"). No invocation → total silence.
 
 ## Flow overview
 
-Five steps in sequence: (1) the leak-audit blocking gate audits the candidate for surviving real specifics FIRST; on suspicion it blocks and edits nothing; (2) classify the candidate as isolated (add/modify a lens in an existing catalog) or structural (new catalog, reorg, rule change, and every `target: rules` candidate by construction); (3a) the isolated route edits the catalog file append-only, runs skill-reviewer, and removes the candidate file, all in the working tree; (3b) the structural route does NOT edit: it stops, summarizes why the candidate is structural, and recommends the proper brainstorm/spec/plan/build cycle, leaving the candidate pending; (4) the human gate: the skill ends WITHOUT commit/PR/push; (5) report what was done (isolated) or recommended (structural) and the candidate disposition. Nothing touches the catalog until the leak-audit gate passes.
+Five steps in sequence: (1) the leak-audit blocking gate audits the candidate for surviving real specifics FIRST; on suspicion it blocks and edits nothing; (2) classify the candidate as isolated (add/modify a lens in an existing catalog) or structural (new catalog, reorg, rule change, and every `target: rules` candidate by construction); (3a) the isolated route edits the catalog file append-only, routes the new lens from its selector, runs skill-reviewer, and removes the candidate file, all in the working tree; (3b) the structural route does NOT edit: it stops, summarizes why the candidate is structural, and recommends the proper brainstorm/spec/plan/build cycle, leaving the candidate pending; (4) the human gate: the skill ends WITHOUT commit/PR/push; (5) report what was done (isolated) or recommended (structural) and the candidate disposition. Nothing touches the catalog until the leak-audit gate passes.
 
 ## The leak-audit blocking gate
 
@@ -37,7 +37,7 @@ After the leak-audit gate passes, classify the candidate into one of two routes:
 
 On ambiguity (the candidate could be read either way, or you cannot tell which route applies), default to structural. Do NOT edit when in doubt; ask the author which route applies and wait for confirmation. The conservative default is structural (do not edit) to prevent silent catalog corruption.
 
-## The isolated route: edit, review, remove
+## The isolated route: edit, route, review, remove
 
 For an isolated candidate (add or modify), proceed with catalog promotion in the working tree:
 
@@ -57,11 +57,11 @@ Lenses are `### N. Title` blocks followed by three bullets (How it works / Objec
 
 ### Route the new lens from its selector
 
-A lens the selector never names is a lens never read: an agent opens only the sections a step points it to, so a catalog entry with no routing is shipped and unreachable. This has been the plugin's most repeated defect, fixed in v0.4.0, v0.4.1 and v0.12.2, and it was manufactured here, by a flow that edited the catalog and stopped.
+A lens the selector never names is a lens never read: an agent opens only the sections a step points it to, so a catalog entry with no routing is shipped and unreachable. This has been the plugin's most repeated defect, fixed in v0.4.0, v0.4.1 and v0.12.3. Those instances came from hand-authored catalog commits rather than from this flow. But this flow would produce the same state by construction, because it edited the catalog and stopped, and it is the one path where the gap can be closed instead of found later.
 
-So an `add` is not finished until the new lens is reachable from `SKILL.md` in the same directory. Put its number in the Step 3 bullet whose trigger matches the lens's own "When most valuable", or in the Step 2 band or Step 4 composition list when the lens governs depth or sequencing rather than a class of change. Do not invent a trigger: if the lens's own body names no condition a selector step could key on, that is a finding about the lens, not a licence to leave it unrouted.
+So an `add` is not finished until the new lens is reachable from `SKILL.md` in the same directory. Put its number in the step that selects lenses, in the bullet whose trigger matches the lens's own "When most valuable", or in the ceremony-band or composition step when the lens governs depth or sequencing rather than a class of change. Read the target selector's own headings first: the five do not number their steps alike, and in the communication selector lens selection is Step 2, not Step 3. Do not invent a trigger: if the lens's own body names no condition a selector step could key on, that is a finding about the lens, not a licence to leave it unrouted.
 
-If the lens genuinely should not be routed, say why in `scripts/routing-exemptions.txt`. That file is also where a Part routed as a whole group is declared. Invariant 9 in `scripts/check-invariants.py` fails on an unrouted, undeclared lens, on an exemption with no reason, and on one naming a Part or lens that does not exist.
+If the lens genuinely should not be routed, say why in `scripts/routing-exemptions.txt`. That file is also where a Part routed as a whole group is declared. Invariant 9 in `scripts/check-invariants.py` fails on an unrouted, undeclared lens; on an exemption with no reason, stated twice, or naming a directory, Part or lens that does not exist; and on an exemption gone dead, whether because the selector now routes the lens or because a lens joined the Part a group exemption blankets. A citation has to carry the lens's name, a bare numeral is not routing.
 
 A `modify` does not require this, but check anyway: if the amendment changed the lens's trigger, the selector bullet that routes it may now be keyed to the wrong condition.
 
@@ -103,9 +103,9 @@ Renumbering is the one act this skill will never perform, under any circumstance
 
 The promote skill edits the catalog and removes the candidate file in the **working tree only**. It produces a git diff ready to be reviewed and committed by the human. It NEVER commits, NEVER opens a PR, NEVER pushes: those outward-facing, irreversible acts are the human's. This is the human gate (Rule 1): the skill prepares the artifact, the human triggers the publication.
 
-The catalog edit and the candidate removal are **atomic in the working tree**: they happen together, ready to be committed as one unit. The candidate file is removed because its content has been promoted into the catalog: leaving it pending after a successful promotion would be a false signal. But the removal is reversible until the human commits (it is a working-tree deletion, not a pushed deletion), which is why removing the candidate before publication is safe.
+The catalog edit, the routing edit and the candidate removal are **atomic in the working tree**: they happen together, ready to be committed as one unit. The candidate file is removed because its content has been promoted into the catalog: leaving it pending after a successful promotion would be a false signal. But the removal is reversible until the human commits (it is a working-tree deletion, not a pushed deletion), which is why removing the candidate before publication is safe.
 
-On the isolated route, the state transitions are: candidate `pending` in `candidates/` → (after promotion) candidate removed from `candidates/` AND lens added/modified in `catalog.md`, both in the working tree → (after human commit) candidate gone, catalog published. On the structural route, the candidate stays `pending`: the promote skill does not touch it.
+On the isolated route, the state transitions are: candidate `pending` in `candidates/` → (after promotion) candidate removed from `candidates/` AND lens added/modified in `catalog.md` AND routed from `SKILL.md` or stated in `routing-exemptions.txt`, both in the working tree → (after human commit) candidate gone, catalog published. On the structural route, the candidate stays `pending`: the promote skill does not touch it.
 
 ## Error handling
 

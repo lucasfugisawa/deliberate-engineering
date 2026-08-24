@@ -124,28 +124,66 @@ case("a doubled word", "artifacts",
 
 
 
+EX = lambda t: os.path.join(t, "scripts", "routing-exemptions.txt")
+
+
+def append_exemption(t, line):
+    with open(EX(t), "a", encoding="utf-8") as fh:
+        fh.write(line)
+
+
 case("a lens no step of its selector routes", "reachability",
      lambda t: edit(t, f"{SK}/review-strategy-selector/SKILL.md",
-                    "in play** → 14 source-of-truth verification",
-                    "in play** -> source-of-truth verification"))
+                    "in play** \u2192 14 source-of-truth verification",
+                    "in play** \u2192 source-of-truth verification"))
 
-case("a lens appended to a catalog and routed nowhere", "reachability",
-     lambda t: edit(t, f"{SK}/planning-strategy-selector/catalog.md",
-                    "\n## Part B",
-                    "\n### 99. A lens nobody routed\n\n- **How it works:** it does not matter.\n"
-                    "- **Objective:** to be unreachable.\n- **When most valuable:** never.\n\n## Part B"))
+case("a lens left routed only by a coincidental numeral", "reachability",
+     lambda t: edit(t, f"{SK}/review-strategy-selector/SKILL.md",
+                    "- **Self-review your own fixes** (4):",
+                    "- **Self-review your own fixes**:"))
+
+case("a lens left routed only by another catalog's citation", "reachability",
+     lambda t: edit(t, f"{SK}/review-strategy-selector/SKILL.md",
+                    "22 error-handling adequacy",
+                    "error-handling adequacy (verification #22)"))
+
+case("a lens appended to a Part a group exemption blankets", "reachability",
+     lambda t: edit(t, f"{SK}/review-strategy-selector/catalog.md",
+                    "\n## Appendix: Composition Patterns",
+                    "\n### 56. A lens that joined the blanket\n\n- **How it works:** it appends.\n"
+                    "- **Objective:** to slip in under Part E.\n- **When most valuable:** never.\n"
+                    "\n## Appendix: Composition Patterns"))
+
+case("a lens under a Part heading the guard does not recognize", "reachability",
+     lambda t: edit(t, f"{SK}/review-strategy-selector/catalog.md",
+                    "\n## Appendix: Composition Patterns",
+                    "\n## Part F: Agent-authored change\n\n### 56. Provenance of an agent-written hunk"
+                    "\n\n- **How it works:** it does not matter.\n- **Objective:** to inherit Part E.\n"
+                    "- **When most valuable:** never.\n\n## Appendix: Composition Patterns"))
 
 case("a group exemption with no reason", "reachability",
-     lambda t: open(os.path.join(t, "scripts", "routing-exemptions.txt"), "a").write(
-         "\ngroup planning-strategy-selector Part C:\n"))
+     lambda t: append_exemption(t, "\ngroup planning-strategy-selector Part C:\n"))
 
-case("a group exemption naming a Part that does not exist", "reachability",
-     lambda t: open(os.path.join(t, "scripts", "routing-exemptions.txt"), "a").write(
-         "\ngroup communication-collaboration-selector Part Q: the flat catalog has no Parts at all.\n"))
+case("a group exemption that names no covered set", "reachability",
+     lambda t: append_exemption(t, "\ngroup planning-strategy-selector Part C: opened whole.\n"))
+
+case("a group exemption naming a Part its catalog does not have", "reachability",
+     lambda t: append_exemption(t, "\ngroup review-strategy-selector Part Q: covers 1. no such Part.\n"))
+
+case("a group exemption for a Part whose lenses are all routed", "reachability",
+     lambda t: append_exemption(t, "\ngroup planning-strategy-selector Part A: covers 1. all four already route.\n"))
+
+case("an exemption for a directory that owns no catalog", "reachability",
+     lambda t: append_exemption(t, "\nlens deliberate-engineering-router 3: a skill with no catalog.\n"))
 
 case("a lens exemption naming a lens that does not exist", "reachability",
-     lambda t: open(os.path.join(t, "scripts", "routing-exemptions.txt"), "a").write(
-         "\nlens review-strategy-selector 999: no such lens.\n"))
+     lambda t: append_exemption(t, "\nlens review-strategy-selector 999: no such lens.\n"))
+
+case("a lens exemption for a lens the selector does route", "reachability",
+     lambda t: append_exemption(t, "\nlens review-strategy-selector 25: it is routed, so this is dead.\n"))
+
+case("an exemption stated twice", "reachability",
+     lambda t: append_exemption(t, "\nlens review-strategy-selector 5: a contradictory second reason.\n"))
 
 
 def main():

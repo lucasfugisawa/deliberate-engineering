@@ -10,8 +10,9 @@ name: consistency
 # Alongside it, check-invariants.py guards the structural invariants that are
 # not counts: a lens number is a permanent address, every citation resolves,
 # every lens-applying skill consults the override layer, no catalog or command
-# is invisible, named-section references resolve, and passages claimed identical
-# are identical. Its own negative controls run here too, because a check nobody
+# is invisible, named-section references resolve, passages claimed identical are
+# identical, no doubled word or conflict marker ships, every relative link and
+# anchor resolves, and every lens is reachable from its own selector. Its own negative controls run here too, because a check nobody
 # has watched fail is not a check.
 #
 # No judgment, no version decision: pure invariants (Rule 1 stays the
