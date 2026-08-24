@@ -658,7 +658,8 @@ def check_lens_reachability():
         if unrouted:
             fail("reachability",
                  f"{d}: lens {', '.join(str(n) for n in unrouted)} is cited nowhere in its "
-                 f"selector and declared in no exemption")
+                 f"selector. Route it from SKILL.md by number and title word, or declare it in "
+                 f"scripts/routing-exemptions.txt with a reason")
     if len(failures) == before:
         n_ex = sum(len(v) for v in ex_lenses.values()) + sum(len(v) for v in groups.values())
         ok(f"reachability: {total} lenses, each cited by its selector or covered by one of "
@@ -769,7 +770,8 @@ def check_pattern_reachability():
         if missing:
             fail("reachability",
                  f"{d}: composition pattern {', '.join(str(n) for n in missing)} is cited nowhere "
-                 f"in the compose step that says it applies them")
+                 f"in the compose step that says it applies them. Add it to that step's "
+                 f"enumeration as a bold number beside a word from its own title")
     if len(failures) == before:
         ok(f"reachability: {total} composition patterns, each cited by its selector's compose step")
 
@@ -805,6 +807,12 @@ def main():
     if failures:
         print(f"\nInvariant check FAILED: {len(failures)} problem(s).")
         return 1
+    if not args.base:
+        print("\nInvariant check OK: eight of nine invariants hold. Append-only numbering was NOT "
+              "checked, because no --base revision was given; run with --base origin/main to check "
+              "the one invariant that decides whether a published lens number still means what it "
+              "meant.")
+        return 0
     print("\nInvariant check OK: all nine invariants hold.")
     return 0
 
