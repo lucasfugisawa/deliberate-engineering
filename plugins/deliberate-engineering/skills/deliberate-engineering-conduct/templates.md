@@ -1,6 +1,6 @@
 # Conductor template
 
-The one contract that carries an irreversibility cluster, read on demand from `SKILL.md` when you conduct one, not loaded up front. Like the orchestration contracts, it **prescribes the fields, not the formatting**: keep the fields your cluster needs, and name the labels, columns, and stations for *your* cluster. The examples below span a git merge cascade, a batch data mutation, and a teardown on purpose, because the contract is cluster-kind-agnostic; the git set is never the schema.
+The one contract that carries an irreversibility cluster, read from `SKILL.md` before you author a conduction's contract. Like the orchestration contracts, it **prescribes the fields, not the formatting**: keep the fields your cluster needs, and name the labels, columns, and stations for *your* cluster. The examples below span a git merge cascade, a batch data mutation, and a teardown on purpose, because the contract is cluster-kind-agnostic; the git set is never the schema.
 
 One contract, rewritten as the cluster advances. The agent **generates** the world-state fields from a live read (git / gh / the relevant CLIs) and hand-writes the judgment fields; the operator executes every irreversible action.
 

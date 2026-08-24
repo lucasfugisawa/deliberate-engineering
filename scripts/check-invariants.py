@@ -776,6 +776,84 @@ def check_pattern_reachability():
         ok(f"reachability: {total} composition patterns, each cited by its selector's compose step")
 
 
+COMPANION_HEAD_LINES = 12
+DEAD_IDIOM = "read on demand"
+
+
+def check_companion_load():
+    """A skill has to point at its companion file where the pointer actually fires.
+
+    Two narrow checks, narrow on purpose. An external run measured one pointer form
+    producing no read at all: `conduct` described `templates.md` as "read on demand"
+    forty-one lines into its body, an agent authored the entire artifact without it, and
+    every required field of the contract was missing from the result. The selectors,
+    whose pointers sit in the first dozen body lines, were measured opening their
+    catalog unprompted under the same instruction.
+
+    So: no SKILL.md may use the idiom measured not to fire, and every top-level
+    companion .md must be named inside the first COMPANION_HEAD_LINES lines of its
+    SKILL.md body. Neither check proves a pointer fires. Together they pin the two
+    properties that separated the pointer that fired from the one that did not.
+
+    Scope is top-level .md siblings of SKILL.md. A template/ subdirectory holds
+    scaffolding to copy rather than a document to read, and is out of scope.
+
+    Exemptions live in scripts/companion-exemptions.txt, one '<dir>/<file>: reason'
+    per line, so an exemption is a stated decision rather than a silent skip.
+    """
+    exempt = {}
+    ex_path = os.path.join(ROOT, "scripts", "companion-exemptions.txt")
+    if os.path.isfile(ex_path):
+        for line in read(ex_path).splitlines():
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            if ":" not in line:
+                fail("companion", f"companion-exemptions.txt: '{line}' is not '<dir>/<file>: <reason>'")
+                continue
+            key, reason = line.split(":", 1)
+            if not reason.strip():
+                fail("companion", f"companion-exemptions.txt: {key.strip()} is exempted with no reason")
+            exempt[key.strip()] = reason.strip()
+
+    problems = []
+    seen_keys = set()
+    for d in skill_dirs():
+        sk = os.path.join(SKILLS, d, "SKILL.md")
+        if not os.path.isfile(sk):
+            continue
+        body = re.sub(r"^---\n.*?\n---\n", "", read(sk), flags=re.S)
+        lines = body.splitlines()
+        if DEAD_IDIOM in body:
+            fail("companion",
+                 f"{d}/SKILL.md uses \"{DEAD_IDIOM}\", the pointer form an external run measured "
+                 "as producing no read. Say what to read and when, in the imperative.")
+        for f in sorted(os.listdir(os.path.join(SKILLS, d))):
+            if not f.endswith(".md") or f == "SKILL.md":
+                continue
+            key = f"{d}/{f}"
+            seen_keys.add(key)
+            at = next((i + 1 for i, ln in enumerate(lines) if f in ln), None)
+            if at is not None and at <= COMPANION_HEAD_LINES:
+                continue
+            if key in exempt:
+                ok(f"companion: {key} exempted ({exempt[key]})")
+                continue
+            where = f"body line {at}" if at else "never named in the body"
+            problems.append((key, where))
+
+    for key, where in problems:
+        fail("companion",
+             f"{key} is named {where} of its SKILL.md, past the first {COMPANION_HEAD_LINES}. "
+             "Move the pointer to the head of the body where the ones measured to fire live, "
+             "or add it to scripts/companion-exemptions.txt with a reason.")
+    stale = sorted(set(exempt) - seen_keys)
+    for key in stale:
+        fail("companion", f"companion-exemptions.txt exempts {key}, which is not a companion file")
+    if not problems and not stale:
+        ok(f"companion: every operative companion is pointed at early ({len(exempt)} stated exemption(s))")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--base", default=os.environ.get("INVARIANTS_BASE", ""),
@@ -801,6 +879,8 @@ def main():
     print("== Invariant 9: every lens is reachable from its selector ==")
     check_lens_reachability()
     check_pattern_reachability()
+    print("== Invariant 10: every companion file is pointed at where the pointer fires ==")
+    check_companion_load()
     print()
     for n in notes:
         print(f"  note: {n}")
@@ -810,11 +890,11 @@ def main():
     # key on the note, not on the flag: append-only also skips when the base is unresolvable,
     # which is the likelier case on a fresh clone that has not fetched origin
     if any(n.startswith("append-only numbering: skipped") for n in notes):
-        print("\nInvariant check OK: eight of nine invariants hold. Append-only numbering was NOT "
+        print("\nInvariant check OK: nine of ten invariants hold. Append-only numbering was NOT "
               "checked, so nothing here proves a published lens number still means what it meant. "
               "Run with --base pointing at a revision this clone can resolve.")
         return 0
-    print("\nInvariant check OK: all nine invariants hold.")
+    print("\nInvariant check OK: all ten invariants hold.")
     return 0
 
 
