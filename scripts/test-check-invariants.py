@@ -482,7 +482,13 @@ def main():
 
         for name, mutate in ACCEPTS:
             tree = fresh_tree(stack)
-            mutate(tree)
+            try:
+                mutate(tree)
+            except AssertionError as e:
+                print(f"  FAIL: {name} -> this control could not set itself up: {e}")
+                print(f"        Update its anchor in scripts/test-check-invariants.py.")
+                failures.append(name)
+                continue
             r = run_guard(tree)
             if r.returncode == 0:
                 print(f"  ok: {name} -> accepted, as it must be")
@@ -496,7 +502,16 @@ def main():
             if needs_git:
                 git_snapshot(tree)
                 base = "HEAD"
-            mutate(tree)
+            try:
+                mutate(tree)
+            except AssertionError as e:
+                print(f"  FAIL: {name} -> this control could not set itself up: {e}")
+                print(f"        A control anchors on literal text in the repository. If you changed "
+                      f"that text deliberately, update this control's anchor in "
+                      f"scripts/test-check-invariants.py; the control, not your change, is what is "
+                      f"stale.")
+                failures.append(name)
+                continue
             r = run_guard(tree, base=base)
             caught = r.returncode != 0 and re.search(rf"FAIL \[{re.escape(check)}\]", r.stdout)
             right_branch = expect is None or expect in r.stdout
@@ -515,7 +530,10 @@ def main():
 
     print()
     if failures:
-        print(f"Negative controls FAILED: {len(failures)} mutation(s) went unnoticed: {failures}")
+        print(f"Controls FAILED: {len(failures)}: {failures}")
+        print("A control fails either because the guard missed its mutation, or because the control "
+              "could not set itself up against the current repository text. The lines above say "
+              "which.")
         return 1
     print(f"Controls OK: {len(CASES)} mutations each caught by its own check, "
           f"{len(ACCEPTS)} documented routing forms each accepted.")
