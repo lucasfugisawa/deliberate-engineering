@@ -236,6 +236,28 @@ case("an exemption whose reason is a token, not a reason", "reachability",
                             "lens review-strategy-selector 5:",
                             "lens review-strategy-selector 5: xxx yyy.\n"))
 
+case("a pattern bullet whose number sits outside the bold", "reachability",
+     lambda t: edit(t, f"{SK}/review-strategy-selector/catalog.md",
+                    "- **7. Close with fresh eyes:**", "- 7. **Close with fresh eyes:**"),
+     expect="does not match '- **N. Title:**'")
+
+case("a composition appendix heading that appears twice", "reachability",
+     lambda t: edit(t, f"{SK}/planning-strategy-selector/catalog.md",
+                    "- **5. Slice along the sequence:**",
+                    "## Appendix: Composition Patterns\n\n- **5. Slice along the sequence:**"),
+     expect="appears more than once")
+
+case("a composition appendix whose stated count is wrong", "reachability",
+     lambda t: edit(t, f"{SK}/verification-strategy-selector/catalog.md",
+                    "This appendix contains 8 composition patterns",
+                    "This appendix contains 9 composition patterns"),
+     expect="claims 9 patterns and carries 8")
+
+case("a pattern citation that resolves to no pattern", "reachability",
+     lambda t: edit(t, f"{SK}/deliberate-engineering-overrides/SKILL.md",
+                    "review pattern #7", "review pattern #77"),
+     expect="which is not a pattern in that catalog")
+
 case("a pattern bullet the appendix parser cannot recognise", "reachability",
      lambda t: edit(t, f"{SK}/review-strategy-selector/catalog.md",
                     "- **7. Close with fresh eyes:**", "- **7. Close with fresh eyes.**"),

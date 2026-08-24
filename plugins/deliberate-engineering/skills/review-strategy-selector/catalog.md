@@ -372,7 +372,7 @@ Strategies **compose**. The strongest pattern is to *rotate the lens each pass* 
 
 ## Appendix: Composition Patterns
 
-*How to chain strategies together. Each pattern carries a permanent number, cited as `review pattern #N` the way a lens is cited as `review #N`, so an operator override can address one. Numbers are append-only here for the same reason they are for lenses: an address that moves is not an address.*
+*How to chain strategies together. This appendix contains 7 composition patterns. Each pattern carries a permanent number, cited as `review pattern #N` the way a lens is cited as `review #N`, so an operator override can address one. Numbers are append-only here for the same reason they are for lenses: an address that moves is not an address.*
 
 - **1. Lens rotation:** A different strategy per pass; do not repeat the same angle.
 - **2. Find → verify pipeline:** Find candidates broadly, then verify each adversarially (voting/refutation) before acting.

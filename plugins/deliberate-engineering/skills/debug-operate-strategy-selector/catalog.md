@@ -150,7 +150,7 @@ It is also **distinct from verification.** Verification *confirms an expectation
 
 ## Appendix: Composition Patterns
 
-*How to chain these strategies across the arc of an incident. Each pattern carries a permanent number, cited as `debug-operate pattern #N` the way a lens is cited as `debug-operate #N`, so an operator override can address one. Numbers are append-only here for the same reason they are for lenses: an address that moves is not an address.*
+*How to chain these strategies across the arc of an incident. This appendix contains 6 composition patterns. Each pattern carries a permanent number, cited as `debug-operate pattern #N` the way a lens is cited as `debug-operate #N`, so an operator override can address one. Numbers are append-only here for the same reason they are for lenses: an address that moves is not an address.*
 
 - **1. Evidence before action:** Establish what's true (Part A) before you respond, but hold this in tension with restoration. When the service is degraded, you do *not* wait for perfect evidence; the Master Principle's second clause overrides the first, and you restore the shared baseline first. Name the tension explicitly so you know which way it resolves: degraded → restore; not degraded → keep gathering.
 - **2. Restore, then diagnose:** Under a live break, Part C (revert/restore) precedes Part B (root-cause). Get the baseline back to known-good, *then* hunt the cause in peacetime: diagnosing a live outage while it burns trades the whole team's time for your curiosity. When there's no clean baseline to revert to, contain the blast radius first (17) to stop the spread, then diagnose.

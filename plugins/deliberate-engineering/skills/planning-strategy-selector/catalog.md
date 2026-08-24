@@ -174,7 +174,7 @@ It sits *before* code exists. Where review judges an artifact and verification c
 
 ## Appendix: Composition Patterns
 
-*How to chain strategies together. Each pattern carries a permanent number, cited as `planning pattern #N` the way a lens is cited as `planning #N`, so an operator override can address one. Numbers are append-only here for the same reason they are for lenses: an address that moves is not an address.*
+*How to chain strategies together. This appendix contains 7 composition patterns. Each pattern carries a permanent number, cited as `planning pattern #N` the way a lens is cited as `planning #N`, so an operator override can address one. Numbers are append-only here for the same reason they are for lenses: an address that moves is not an address.*
 
 - **1. Calibrate first:** Set ceremony (10) early: it decides how much of the rest of the catalog you even apply. A trivial-and-safe change may use almost none of it; say so.
 - **2. Scope down, then ground up:** First decline the speculative (Part A), then confirm what remains against the real codebase, data, and feasibility (Part B). Cutting before grounding wastes less investigation.

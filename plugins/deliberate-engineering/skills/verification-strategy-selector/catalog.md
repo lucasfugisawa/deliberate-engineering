@@ -192,7 +192,7 @@ The review catalog's Part B (empirical validation, real-data validation, source-
 
 ## Appendix: Composition Patterns
 
-*How to chain strategies together. Each pattern carries a permanent number, cited as `verification pattern #N` the way a lens is cited as `verification #N`, so an operator override can address one. Numbers are append-only here for the same reason they are for lenses: an address that moves is not an address.*
+*How to chain strategies together. This appendix contains 8 composition patterns. Each pattern carries a permanent number, cited as `verification pattern #N` the way a lens is cited as `verification #N`, so an operator override can address one. Numbers are append-only here for the same reason they are for lenses: an address that moves is not an address.*
 
 - **1. Expectation-first:** Pair every check with its pre-stated expected result (the Master Principle; mechanically, strategy 17). A check with no expectation can't fail loudly.
 - **2. Reproduce → fix → re-confirm:** Capture the failing baseline as evidence before the change (10), so the after-state proves causation rather than coincidence.

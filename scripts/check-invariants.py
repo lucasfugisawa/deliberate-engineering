@@ -483,8 +483,11 @@ def routing_prose(sel_text, strip_patterns=True):
     sel_text = re.sub(r"https?://\S+", " ", sel_text)
     # "pattern 6" is a composition pattern, a separate numbering from the lenses; without this
     # strip a pattern citation can be read as a lens citation and route a lens nobody routed
-    kinds = "step|rule|axis|part|pattern" if strip_patterns else "step|rule|axis|part"
-    sel_text = re.sub(r"(?i)(?<!-)\b(?:%s)[ \t]+\d+" % kinds, " ", sel_text)
+    # substitute a digit rather than a space: the window in routed_lenses cuts at the next
+    # digit, so blanking one widens it, and a sentence declining a lens started routing it
+    sel_text = re.sub(r"(?i)\b(?:step|rule|axis|part)[ \t]+\d+", " 0 ", sel_text)
+    if strip_patterns:
+        sel_text = re.sub(r"(?i)(?<!-)\bpattern[ \t]+\d+", " 0 ", sel_text)
     sel_text = re.sub(
         r"(?i)\b(?:review|verification|verify|planning|debug-operate|debug|communication)[ \t]+#\d+",
         " ", sel_text)
@@ -683,8 +686,13 @@ def check_pattern_reachability():
         # an asterisk bullet, the colon outside the bold, an indented line: each of those used to
         # drop the pattern out of the checked set with no failure at all.
         pats, seen_nums = {}, []
+        if len(re.findall(r"^## Appendix: Composition Patterns\b", cat, re.M)) > 1:
+            fail("reachability", f"{d}: the composition appendix heading appears more than once, so "
+                                 f"the parse stops at the second one and drops what follows")
         for line in body.splitlines():
-            if not re.match(r"^\s*[-*+] \*\*", line):
+            # anything shaped like a list item carrying bold text has to parse as a pattern:
+            # "- 7. **Title:**" and "7. **Title:**" used to leave the set with no failure at all
+            if not (re.match(r"^\s*(?:[-*+]\s+|\d+\.\s+)", line) and "**" in line):
                 continue
             mm = re.match(r"^- \*\*(\d+)\. (.+?):\*\*", line)
             if not mm:
@@ -702,6 +710,13 @@ def check_pattern_reachability():
         if not pats:
             fail("reachability", f"{d}: has a composition appendix whose patterns carry no numbers")
             continue
+        claimed = re.search(r"This appendix contains (\d+) composition patterns", body)
+        if not claimed:
+            fail("reachability", f"{d}: the composition appendix states no count, so a dropped "
+                                 f"pattern leaves no trace")
+        elif int(claimed.group(1)) != len(pats):
+            fail("reachability", f"{d}: the composition appendix claims {claimed.group(1)} patterns "
+                                 f"and carries {len(pats)}")
         if sorted(pats) != list(range(1, len(pats) + 1)):
             fail("reachability", f"{d}: composition patterns are numbered {sorted(pats)}, not 1..N")
         sel = read(os.path.join(SKILLS, d, "SKILL.md"))
@@ -719,18 +734,26 @@ def check_pattern_reachability():
         for n, title in sorted(pats.items()):
             words = title_words(title)
             hit = False
-            # the canonical address is "<catalog> pattern #N", which the bare-number scan below
-            # cannot see, because a preceding "#" is excluded there to keep anchors out
-            if re.search(r"(?i)\bpattern\s*#%d(?![\d])" % n, step.group(0)):
-                hit = True
-            for mm in re.finditer(r"(?<![\w.\-#])%d(?![\d])" % n, prose):
-                if hit:
-                    break
+            # A pattern is cited as a bold bare number beside a word from its own title, which
+            # is the one form in the repo and the one a lens citation cannot imitate: lenses are
+            # cited bare or parenthesised in these steps. Narrow on purpose. An earlier draft also
+            # matched "pattern #N" against the raw step, which bypassed every filter this function
+            # applies, fired for none of the 28, and let a code fence saying "do not apply them"
+            # certify all seven.
+            for mm in re.finditer(r"\*\*%d\*\*" % n, prose):
                 after = re.split(r"\d", prose[mm.end():mm.end() + 60])[0].lower()
                 if words and any(re.search(r"\b%s\b" % re.escape(w), after) for w in words):
                     hit = True
+                    break
             if not hit:
                 missing.append(n)
+        # the inverse direction, which the lens namespace has and this one did not: every
+        # "<catalog> pattern #N" written anywhere must resolve to a pattern that exists
+        for path in markdown_files():
+            for cite_nick, num in re.findall(r"\b(%s)\s+pattern\s+#(\d+)" % "|".join(CITE_NAMES), read(path)):
+                if CITE_NAMES[cite_nick] == d and int(num) not in pats:
+                    fail("reachability", f"{rel(path)} cites {cite_nick} pattern #{num}, which is "
+                                         f"not a pattern in that catalog")
         total += len(pats)
         if missing:
             fail("reachability",
