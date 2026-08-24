@@ -46,21 +46,24 @@ Assess each axis. These, not line count, set the depth.
 
 - **Trivial-and-safe** → minimal: baseline (1) plus a 34 *scan* (did this diff introduce a comment that shouldn't exist, or a reference the reader can't resolve?) and a stated rationale for stopping (see "When NOT to pile on"). A solo in-context pass is fine here, **but the reuse-vs-recompute declaration (Rule 3) is mandatory**: if this re-runs an earlier pass, say whether you recomputed or reused, and why.
 - **Standard** → a small set of targeted lenses (typically 2–4) for the non-trivial axes; **dispatch each substantive lens to a fresh-context subagent** as the default unit of work so the lens recomputes rather than recalls, and each returns its evidence artifact (Task: see "Compose the passes"). Close with fresh eyes (3).
-- **Risky / irreversible / ambiguous / money-or-data** → full adversarial depth in fresh-context fan-out: per-PR as the default unit, **per-(PR × lens) for the critical lenses (25, 28, 26)**; adversarial majority-refute (2, 9) on top; close with a fresh-eyes pass (3) run as a *literally separate* fresh-context agent, not an in-context re-read.
+- **Risky / irreversible / ambiguous / money-or-data** → full adversarial depth in fresh-context fan-out: per-PR as the default unit, **per-(PR × lens) for the critical lenses (25, 28, 26)**; adversarial majority-refute (2, 9) on top; where the design space is wide and being wrong is expensive, run 8 judge panel (several independent attempts, scored, the best synthesized); close with a fresh-eyes pass (3) run as a *literally separate* fresh-context agent, not an in-context re-read.
 
 ## Step 3: Select lenses from the catalog
 
 Open the catalog **groups** matching your non-trivial axes and pick lenses. Read only those sections.
 
-- **Always, first (Requirement)** → 25 functional correctness / requirement conformance: does it do what was actually asked? The most important lens.
-- **Any diff that adds or edits source (not keyed to an axis)** → 34 readability/maintainability: comment necessity and concision, plus the reader-resolvability check (Rule 9) on every comment the diff introduces. This defect class does not correlate with risk; it rides along in trivial changes as readily as in critical ones, which is why it is routed here rather than under an axis.
+- **Always, first (Requirement)** → 25 functional correctness / requirement conformance: does it do what was actually asked? The most important lens. Pair it with 11 change-size / reviewability before going deep: a change too large to review well hides defects from every lens that follows.
+- **Any diff that adds or edits source (not keyed to an axis)** → 34 readability/maintainability: comment necessity and concision, plus the reader-resolvability check (Rule 9) on every comment the diff introduces. This defect class does not correlate with risk; it rides along in trivial changes as readily as in critical ones, which is why it is routed here rather than under an axis. Once the change is correct and before the design hardens, add 35 simplification / YAGNI.
 - **Money / data / production (Risk)** → 26 security, 27 performance, 28 data integrity, 30 observability; add 2 adversarial, 20 pre-mortem.
 - **Migrations / backfills / destructive (Reversibility)** → 23 concurrency, 24 reversibility/rollback, 28 data integrity, 31 operability/rollout, 16 coverage analysis.
-- **Ambiguous intent (Requirement clarity)** → 15 assumption/invariant audit, 32 cross-document consistency, 13 validation against real data, 50 spec self-review.
+- **Ambiguous intent (Requirement clarity)** → 15 assumption/invariant audit, 32 cross-document consistency, 13 validation against real data, 50 spec self-review; add 19 apparent-contradiction reconciliation when the artifact contradicts an established norm, or a rule carries temporal or contextual nuance.
 - **Implementation reviewed against a spec/intent** → 52 spec-conformance audit (alignment-not-correctness, drift taxonomy, discovery-only), with 25.
 - **Wide blast radius (Reach)** → 55 blast-radius/change-impact (map every caller/consumer the change reaches), 29 contract/API, 32 cross-service consistency, 18 test-quality.
-- **External-dependency / error paths** → 21 silent-failure hunting, 22 error-handling adequacy.
-- **Frontend / mobile / infra / data / experiments** → the matching Part-D / Part-E group; open only the relevant subsection.
+- **External dependencies, added or updated, and their error paths** → 36 dependency / supply-chain review whenever a library is added or bumped (provenance, transitive reach, build security), 21 silent-failure hunting, 22 error-handling adequacy.
+- **Parsing, aggregation, time windows, pagination, or semantics a reading cannot settle (NULL handling, non-guaranteed ordering, idempotence)** → 17 boundary / edge-case, and 12 empirical validation: execute it rather than reason about it.
+- **Introduces or reshapes a type or a domain model** → 33 type-design / invariant-expression: can the type make the illegal state unrepresentable?
+- **More than one branch, worktree, or repository in play** → 14 source-of-truth verification: confirm you are reading the canonical copy before judging it.
+- **Frontend / mobile / infra / data / experiments** → the matching Part-E group; open only the relevant subsection.
 
 **Worked example (change writes production data via a backfill):** Non-trivial on Risk + Reversibility + Reach. Selected lenses: **25** (functional correctness: does it backfill what the requirement meant?), **23** (concurrency: backfill contends with live writes), **24** (reversibility: is there a bounded way back?), **28** (data integrity: invariants/transactions hold?), **2** (adversarial: try to break it), closed with **3** (fresh eyes). Skipped frontend/i18n groups, logged as not applicable.
 
