@@ -173,6 +173,33 @@ You can write that file by hand, or let the agent help: run `/deliberate-enginee
 **Apply:** Review the diff for any breaking changes (removed endpoints, changed request/response shapes, deleted fields). If a breaking change is present and the version is not a major bump, flag it. Non-breaking additions (new optional fields, new endpoints) are fine.
 ```
 
+Two operations the block above does not show. `modify` keeps the shipped text intact and reads your annotation alongside it, in a field named `**Add:**`; where the two conflict, your annotation governs, because it is your practice. And `add` has three header forms, one per kind of content:
+
+```markdown
+## planning #12: modify
+
+**Add:** Verify the sequence only at the aggregate boundary, not at every internal step.
+
+## review pattern #7: disable
+
+**Why:** We close with two fresh passes rather than one, and the second is the one that counts.
+
+## add: review pattern
+
+**Name:** Two-reader close
+
+**Apply:** Run the closing fresh-eyes pass twice with different reviewers before calling the review done.
+
+## add: rules
+
+**Name:** Staging deploys need no gate
+
+**Apply:** For deploys to staging only, proceed without stopping for approval.
+```
+
+`**When:**` is required on an `add: <catalog>` lens, because a lens fires on a condition. It is optional on `add: rules` and on `add: <catalog> pattern`, because a standing rule and a composition pattern both hold unconditionally, and where you do write one it reads as scope rather than as a gate.
+
+
 Overrides are one of four things the plugin keeps under `~/.claude/deliberate-engineering/`, all opt-in and all absent by default: the override file, the voice profile, the state notes it falls back to when a repository cannot host them, and the working directory a voice build uses. The override file changes *what the agent does*; the voice profile changes *how what it writes sounds*. The profile is a directory at `~/.claude/deliberate-engineering/voice/`: `core.md` for what's true of your writing everywhere, `registers/<lang>.md` for what changes with the language, `archetypes/<type>.md` for what changes with the kind of communication (a DM is not a design doc). `deliberate-engineering-voice` normally reads it after the communication lenses have shaped the message, and applies it as the surface layer; it is also reachable directly for a one-off draft with no phase behind it, loading at most three files per draft (the core, the matching register, the matching archetype) and falling back to two, declared, when one has no match. Precedence runs explicit instruction > voice profile > default style; where a lens and the profile genuinely conflict, the lens wins on substance and the profile wins on surface. It names the files it loaded when it fires, it never licenses breaking a standing rule (the Rule 1 gate and the Rule 9 resolvability bar hold regardless of how you write), and it does nothing and says nothing when the directory is absent. The plugin ships the mechanism, the contract, a template, a bootstrap method, and a guided build path (`deliberate-engineering-voice-build`, the `/deliberate-engineering:voice-build` command, which runs that method from collection to a finished profile and keeps the interview and the blind A/B human); no profile content ships, and the corpus and the profile are kept out of every repository by a best-effort check the build runs, it declines to write where it cannot confirm the path is out of a repository, and it cannot enforce that: an agent can ignore an instruction and nothing outside it blocks the write: it lowers the risk of a leak rather than removing it. The README's *Sound like yourself* section is the overview; `contract.md` next to the skill is the full layout; the walkthrough is the [voice-build guide](guides/voice-build.md).
 
 ### Contribute: ship judgment to everyone
