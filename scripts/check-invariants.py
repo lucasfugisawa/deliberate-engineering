@@ -443,6 +443,91 @@ def check_links():
         ok(f"links: {checked} relative link(s) and anchor(s), all resolve")
 
 
+def cited_lens_numbers(sel_text):
+    """Lens numbers a selector cites, scanning routing prose only.
+
+    Excludes what looks like a lens number and is not: a heading ("## Step 5"
+    once cost an hour of measuring), a standing rule, an axis ordinal, an
+    ordered-list marker, a version string.
+    """
+    out = set()
+    for line in sel_text.splitlines():
+        if line.lstrip().startswith("#"):
+            continue
+        line = re.sub(r"^\s*\d+\.\s", "  ", line)
+        line = re.sub(r"\b(?:Step|Rule|axis)\s+\d+", " ", line)
+        line = re.sub(r"\b\d+\.\d+(?:\.\d+)?\b", " ", line)
+        out.update(int(m) for m in re.findall(r"(?<![\w.])(\d{1,3})(?![\d])", line))
+    return out
+
+
+def check_lens_reachability():
+    """Every lens is reachable from its own selector.
+
+    The inverse of invariant 2: that one proves a citation resolves to a lens,
+    this one proves a lens is reachable from a citation. Two routing forms count,
+    a number citation and a group pointer covering the lens's Part, but only the
+    second is declared, because a group pointer is prose no check can tell from
+    any other mention of a Part. scripts/routing-exemptions.txt carries those and
+    the lenses deliberately left unrouted, each with its reason.
+    """
+    groups, ex_lenses = {}, {}
+    ex_path = os.path.join(ROOT, "scripts", "routing-exemptions.txt")
+    bad = len(failures)
+    if os.path.isfile(ex_path):
+        for line in read(ex_path).splitlines():
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            if ":" not in line:
+                fail("reachability", f"routing-exemptions.txt: '{line}' is not '<kind> <dir> <target>: <reason>'")
+                continue
+            head, reason = line.split(":", 1)
+            toks = head.split()
+            if not reason.strip():
+                fail("reachability", f"routing-exemptions.txt: '{head.strip()}' is exempted with no reason")
+                continue
+            if len(toks) >= 3 and toks[0] == "group":
+                groups.setdefault(toks[1], set()).add(" ".join(toks[2:]))
+            elif len(toks) == 3 and toks[0] == "lens" and toks[2].isdigit():
+                ex_lenses.setdefault(toks[1], set()).add(int(toks[2]))
+            else:
+                fail("reachability", f"routing-exemptions.txt: '{head.strip()}' is neither a group nor a lens exemption")
+
+    total = 0
+    for d, cat_path in sorted(catalog_paths().items()):
+        cat = read(cat_path)
+        sel = read(os.path.join(SKILLS, d, "SKILL.md"))
+        lens_part, cur = {}, None
+        for line in cat.splitlines():
+            m = re.match(r"^## (Part [A-E])", line)
+            if m:
+                cur = m.group(1)
+            m = re.match(r"^### (\d+)\.", line)
+            if m:
+                lens_part[int(m.group(1))] = cur
+        real_parts = {p for p in lens_part.values() if p}
+        for part in sorted(groups.get(d, set())):
+            if part not in real_parts:
+                fail("reachability", f"routing-exemptions.txt: {d} has no {part}")
+        for n in sorted(ex_lenses.get(d, set())):
+            if n not in lens_part:
+                fail("reachability", f"routing-exemptions.txt: {d} has no lens {n}")
+        cited = cited_lens_numbers(sel)
+        unrouted = [n for n, part in sorted(lens_part.items())
+                    if n not in cited
+                    and part not in groups.get(d, set())
+                    and n not in ex_lenses.get(d, set())]
+        total += len(lens_part)
+        if unrouted:
+            fail("reachability",
+                 f"{d}: lens {', '.join(str(n) for n in unrouted)} reachable from no step of its "
+                 f"selector and declared in no exemption")
+    if len(failures) == bad:
+        n_ex = sum(len(v) for v in ex_lenses.values()) + sum(len(v) for v in groups.values())
+        ok(f"reachability: all {total} lenses reachable from their selector ({n_ex} stated exemption(s))")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--base", default=os.environ.get("INVARIANTS_BASE", ""),
@@ -465,13 +550,15 @@ def main():
     check_text_artifacts()
     print("== Invariant 8: every relative link and anchor resolves ==")
     check_links()
+    print("== Invariant 9: every lens is reachable from its selector ==")
+    check_lens_reachability()
     print()
     for n in notes:
         print(f"  note: {n}")
     if failures:
         print(f"\nInvariant check FAILED: {len(failures)} problem(s).")
         return 1
-    print("\nInvariant check OK: all eight invariants hold.")
+    print("\nInvariant check OK: all nine invariants hold.")
     return 0
 
 

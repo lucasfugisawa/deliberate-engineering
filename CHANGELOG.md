@@ -2,6 +2,20 @@
 
 All notable changes to the `deliberate-engineering` plugin are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/), and the project aims at [Semantic Versioning](https://semver.org/) (pre-1.0: minor covers features and breaking changes, patch covers fixes).
 
+## [0.12.3] - 2026-08-24
+
+The plugin's most repeated defect, this time taken at the root. Eleven review lenses were unreachable in practice: nine now route, two are deliberately exempt and say so, the flow that manufactured the state writes the selector too, and a guard proves the property instead of a reader eventually noticing it.
+
+### Fixed
+- **Three engineering-quality lenses sat behind a frontend door.** Part D is titled "Engineering-quality Lenses", but the only pointer reaching it was keyed to "frontend / mobile / infra / data / experiments". Lenses 33 (type-design), 35 (simplification / YAGNI) and 36 (dependency / supply-chain) were cited by no number, so a backend review with no frontend, infra, data or experiment angle never reached simplification or supply-chain review, even though their own triggers are "after functionality is correct" and "when adding or updating libs". The group pointer now covers Part E alone, which is what its key actually describes, and the three route by number under the conditions their own bodies state.
+- **Six review lenses appeared nowhere in their selector.** Lens 8 (judge panel) now routes into the risky band; 11 (change-size / reviewability, whose own scope is "any PR/CL") pairs with the always-first lens; 12 and 17 route under a new trigger for semantics a reading cannot settle (NULL handling, non-guaranteed ordering, idempotence); 14 routes when more than one branch or worktree is in play; 19 routes under the ambiguity axis. Lenses 5 and 7 stay unrouted on purpose: both fire on properties of a human organization, groupthink in a group decision and onboarding in a large team, which an agent-conducted review does not have. That is now a stated exemption rather than a silence.
+
+### Changed
+- **`promote` writes the selector, not only the catalog.** The flow edited the catalog, updated the counts, ran the reviewer and deleted the candidate, and never touched the file that routes the new lens. So every lens promoted through the plugin's own contribution flow landed unreachable by construction, which is where this defect class kept coming from. Promotion now carries a routing step between the catalog edit and the review, and the candidate file is not deleted while its lens is unrouted, because deleting it is what makes the promotion look finished.
+
+### Tooling
+- **Invariant 9: every lens is reachable from its own selector.** The exact inverse of invariant 2, which proved that every citation resolves to a lens and never that every lens is reachable from a citation. Two routing forms count, a number citation and a group pointer covering the lens's Part, and only the second is declared, in `scripts/routing-exemptions.txt`, because a group pointer is prose that no check can distinguish from any other mention of a Part. 123 lenses verified, three stated exemptions, and the guard fails on an exemption with no reason or one naming a Part or lens that does not exist. Five new negative controls, nineteen in total.
+
 ## [0.12.2] - 2026-08-23
 
 One lens amendment, contributed through the plugin's own `contribute` and `promote` flow run against itself, plus routing for two Part A lenses that no selector step reached.

@@ -1,0 +1,13 @@
+# Lenses reachable from their selector without a number citation, and lenses
+# deliberately left unrouted, each with its reason. An exemption is a stated
+# decision: one that belongs here for a bad reason is a finding, and one that is
+# missing entirely is a defect the check will catch.
+#
+# Format: group <skill-directory> <Part X>: <reason>
+#         lens  <skill-directory> <N>: <reason>
+
+group review-strategy-selector Part E: Step 3 routes this group whole ("the matching Part-E group; open only the relevant subsection") because its lenses are domain surfaces a reviewer opens by domain (accessibility, mobile lifecycle, i18n, IaC, FinOps) rather than lenses selected one at a time against an axis.
+
+lens review-strategy-selector 5: devil's advocate fires on "group decisions at risk of groupthink", which presupposes a human group to rotate the role through. An agent-conducted review has none, and the adversarial stance it would contribute is already routed as lens 2.
+
+lens review-strategy-selector 7: checklist-based review fires on "large teams, onboarding, areas prone to recurring oversights", all properties of a human organization rather than of the change under review. Routing it would push org ceremony into a per-change classification.

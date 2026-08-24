@@ -123,6 +123,31 @@ case("a doubled word", "artifacts",
      lambda t: edit(t, "README.md", "One mental model runs", "One mental mental model runs"))
 
 
+
+case("a lens no step of its selector routes", "reachability",
+     lambda t: edit(t, f"{SK}/review-strategy-selector/SKILL.md",
+                    "in play** → 14 source-of-truth verification",
+                    "in play** -> source-of-truth verification"))
+
+case("a lens appended to a catalog and routed nowhere", "reachability",
+     lambda t: edit(t, f"{SK}/planning-strategy-selector/catalog.md",
+                    "\n## Part B",
+                    "\n### 99. A lens nobody routed\n\n- **How it works:** it does not matter.\n"
+                    "- **Objective:** to be unreachable.\n- **When most valuable:** never.\n\n## Part B"))
+
+case("a group exemption with no reason", "reachability",
+     lambda t: open(os.path.join(t, "scripts", "routing-exemptions.txt"), "a").write(
+         "\ngroup planning-strategy-selector Part C:\n"))
+
+case("a group exemption naming a Part that does not exist", "reachability",
+     lambda t: open(os.path.join(t, "scripts", "routing-exemptions.txt"), "a").write(
+         "\ngroup communication-collaboration-selector Part Q: the flat catalog has no Parts at all.\n"))
+
+case("a lens exemption naming a lens that does not exist", "reachability",
+     lambda t: open(os.path.join(t, "scripts", "routing-exemptions.txt"), "a").write(
+         "\nlens review-strategy-selector 999: no such lens.\n"))
+
+
 def main():
     stack = []
     failures = []
