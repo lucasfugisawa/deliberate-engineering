@@ -5,8 +5,10 @@ The sibling script, check-consistency.sh, guards every count the docs state.
 This one guards the invariants that are not numbers: that a lens number is a
 permanent address, that every citation resolves, that every skill applying a
 lens consults the override layer, that prose counts of skills and commands
-match what is on disk, that a named section referenced somewhere exists, and
-that passages the text claims are identical are identical.
+match what is on disk, that a named section referenced somewhere exists, that
+passages the text claims are identical are identical, that no doubled word or
+conflict marker ships, that every relative link and anchor resolves, and that
+every lens is reachable from its own selector.
 
 Run from the repository root: python3 scripts/check-invariants.py
 Compare against a base revision (append-only numbering needs one):
@@ -443,6 +445,201 @@ def check_links():
         ok(f"links: {checked} relative link(s) and anchor(s), all resolve")
 
 
+TITLE_STOPWORDS = {
+    "the", "and", "for", "not", "its", "with", "this", "that", "from",
+    "review", "lens", "your", "own", "what", "when", "how",
+}
+
+
+def title_words(title):
+    """Words distinctive enough to identify a lens by name."""
+    return {w for w in re.findall(r"[a-z]{4,}", title.lower()) if w not in TITLE_STOPWORDS}
+
+
+def routing_prose(sel_text):
+    """The selector text a routing citation could live in.
+
+    Frontmatter is metadata, a heading routes nothing, and a code span, a URL, a
+    step or rule reference, or a citation of another catalog ("verification #22")
+    all carry digits that are not this catalog's lens numbers.
+
+    Block structure is deliberately NOT parsed. An earlier version stripped
+    fences, indented blocks, HTML and tables, and did more harm than good: a
+    four-backtick fence paired with the next ordinary one and erased twenty-eight
+    lenses, and a four-space list continuation read as a code block killed a real
+    citation. What survives that removal is a false negative, which is the safe
+    direction, and it is stated as a limit rather than papered over.
+    """
+    sel_text = re.sub(r"^---\n.*?\n---\n", "", sel_text, flags=re.S)
+    sel_text = re.sub(r"`[^`\n]*`", " ", sel_text)
+    sel_text = re.sub(r"https?://\S+", " ", sel_text)
+    sel_text = re.sub(r"(?i)\b(?:step|rule|axis|part)[ \t]+\d+", " ", sel_text)
+    sel_text = re.sub(
+        r"(?i)\b(?:review|verification|verify|planning|debug-operate|debug|communication)[ \t]+#\d+",
+        " ", sel_text)
+    return "\n".join(l for l in sel_text.split("\n") if not l.lstrip().startswith("#"))
+
+
+def routed_lenses(sel_text, lens_titles):
+    """Lens numbers this selector actually routes.
+
+    A citation has to carry the lens's identity, not merely its digits. Three
+    forms qualify: the number followed by a word from the lens's own title
+    ("25 functional correctness"), the number inside parentheses holding only
+    numbers ("(2, 9)"), and the number introduced as a lens ("lens 5"). A bare
+    numeral is not a citation: "the classification (4 axes)" and "a 600-line
+    helper" were both routing lenses before this was tightened.
+    """
+    prose = routing_prose(sel_text)
+    routed = set()
+    for m in re.finditer(r"\((\s*\d{1,3}(?:\s*,\s*\d{1,3})*\s*)\)", prose):
+        routed.update(int(x) for x in re.findall(r"\d+", m.group(1)))
+    for n, title in lens_titles.items():
+        if n in routed:
+            continue
+        words = title_words(title)
+        for m in re.finditer(r"(?<![\w.\-#])%d(?![\d])" % n, prose):
+            if re.search(r"\blens(?:es)?\s*\**\s*$", prose[max(0, m.start() - 14):m.start()].lower()):
+                routed.add(n)
+                break
+            # only up to the next digit: a neighbour's name must not vouch for this one
+            # Two bounds, and the window is narrow on purpose. The cut at the next digit stops a
+            # neighbour vouching. The character cap stops a mention far from its number counting:
+            # widening it to 160 made a lens named in the worked example's skip log read as routed,
+            # which is a sentence saying the lens was NOT used. Narrow costs a real citation whose
+            # name sits far from its number; wide costs the difference between using and declining.
+            after = re.split(r"\d", prose[m.end():m.end() + 60])[0].lower()
+            if words and any(re.search(r"\b%s\b" % re.escape(w), after) for w in words):
+                routed.add(n)
+                break
+    return routed
+
+
+def check_lens_reachability():
+    """Every lens is reachable from its own selector.
+
+    The inverse of invariant 2: that one proves a citation resolves to a lens,
+    this one proves a lens is reachable from a citation. Two routing forms
+    count, a number citation and a group pointer covering the lens's Part, but
+    only the second is declared, because a group pointer is prose no check can
+    tell from any other mention of a Part. scripts/routing-exemptions.txt
+    carries those and the lenses deliberately left unrouted, each with a reason,
+    and an exemption that has gone dead is itself a failure.
+    """
+    groups, ex_lenses, seen = {}, {}, set()
+    ex_path = os.path.join(ROOT, "scripts", "routing-exemptions.txt")
+    before = len(failures)
+    if os.path.isfile(ex_path):
+        for line in read(ex_path).splitlines():
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            if ":" not in line:
+                fail("reachability", f"routing-exemptions.txt: '{line}' is not '<kind> <dir> <target>: <reason>'")
+                continue
+            head, reason = line.split(":", 1)
+            toks = head.split()
+            if len(re.findall(r"[a-z]{3,}", reason.lower())) < 4:
+                fail("reachability", f"routing-exemptions.txt: '{head.strip()}' is exempted with no reason")
+                continue
+            key = " ".join(toks)
+            if key in seen:
+                fail("reachability", f"routing-exemptions.txt: '{key}' is exempted twice")
+                continue
+            seen.add(key)
+            if len(toks) >= 3 and toks[0] == "group":
+                # A group exemption is a blanket, so it has to name what it covers:
+                # without the list, a lens appended to that Part later joins the
+                # exemption in silence, which is the defect this invariant exists for.
+                m = re.match(r"(?i)\s*covers ([\d,\s-]+)\.", reason)
+                if not m:
+                    fail("reachability", f"routing-exemptions.txt: '{head.strip()}' must open its "
+                                         f"reason with 'covers <numbers>.' naming the lenses it blankets")
+                    continue
+                covered = set()
+                for chunk in m.group(1).split(","):
+                    chunk = chunk.strip()
+                    if "-" in chunk:
+                        a, b = chunk.split("-", 1)
+                        if not (a.strip().isdigit() and b.strip().isdigit()) or int(a) > int(b) or int(b) - int(a) > 999:
+                            fail("reachability", f"routing-exemptions.txt: '{head.strip()}' covers a range that is reversed, unbounded, or not numeric: '{chunk}'")
+                            continue
+                        covered.update(range(int(a), int(b) + 1))
+                    elif chunk:
+                        covered.add(int(chunk))
+                groups.setdefault(toks[1], {})[" ".join(toks[2:])] = covered
+            elif len(toks) == 3 and toks[0] == "lens" and re.fullmatch(r"[1-9]\d*", toks[2]):
+                ex_lenses.setdefault(toks[1], set()).add(int(toks[2]))
+            else:
+                fail("reachability", f"routing-exemptions.txt: '{head.strip()}' is neither a group nor a lens exemption")
+
+    catalogs = catalog_paths()
+    for d in sorted(set(groups) | set(ex_lenses)):
+        if d not in catalogs:
+            fail("reachability", f"routing-exemptions.txt: {d} owns no catalog, so it routes nothing")
+
+    total = 0
+    for d, cat_path in sorted(catalogs.items()):
+        cat = read(cat_path)
+        titles, lens_part, cur = {}, {}, None
+        for line in cat.splitlines():
+            if re.match(r"^###\s*\d", line) and not re.match(r"^### [1-9]\d*\. \S", line):
+                fail("reachability",
+                     f"{d}: {line.strip()!r} looks like a lens heading and does not match "
+                     f"'### N. Title', so every count and every check reads it as absent")
+            if line.startswith("## "):
+                m = re.match(r"^## (Part [A-Z]+)\b", line)
+                # any other second-level heading ends the current Part, so a lens
+                # under Part F or under the Appendix cannot inherit Part E's exemption
+                cur = m.group(1) if m else None
+            m = re.match(r"^### (\d+)\. (.+)$", line)
+            if m:
+                titles[int(m.group(1))] = m.group(2)
+                lens_part[int(m.group(1))] = cur
+        real_parts = {p for p in lens_part.values() if p}
+        routed = routed_lenses(read(os.path.join(SKILLS, d, "SKILL.md")), titles)
+        blanketed = set()
+        for part, covered in sorted(groups.get(d, {}).items()):
+            if part not in real_parts:
+                fail("reachability", f"routing-exemptions.txt: {d} has no {part}")
+                continue
+            members = {n for n, p in lens_part.items() if p == part}
+            if members <= routed:
+                fail("reachability", f"routing-exemptions.txt: {d} {part} is exempted but every lens in it is routed")
+            actual = members - routed
+            if covered != actual:
+                joined = sorted(actual - covered)
+                dropped = sorted(covered - actual)
+                detail = []
+                if joined:
+                    detail.append(f"lens {', '.join(map(str, joined))} joined it since it was written")
+                if dropped:
+                    detail.append(f"lens {', '.join(map(str, dropped))} no longer needs it")
+                fail("reachability", f"routing-exemptions.txt: {d} {part} covers the wrong set ("
+                                     f"{'; '.join(detail)})")
+            blanketed |= covered
+        for n in sorted(ex_lenses.get(d, set())):
+            if n not in lens_part:
+                fail("reachability", f"routing-exemptions.txt: {d} has no lens {n}")
+            elif n in routed:
+                fail("reachability", f"routing-exemptions.txt: {d} lens {n} is exempted but the selector routes it")
+            elif n in blanketed:
+                fail("reachability", f"routing-exemptions.txt: {d} lens {n} is exempted and already blanketed by its Part's group exemption")
+        unrouted = [n for n, part in sorted(lens_part.items())
+                    if n not in routed
+                    and n not in blanketed
+                    and n not in ex_lenses.get(d, set())]
+        total += len(lens_part)
+        if unrouted:
+            fail("reachability",
+                 f"{d}: lens {', '.join(str(n) for n in unrouted)} is cited nowhere in its "
+                 f"selector and declared in no exemption")
+    if len(failures) == before:
+        n_ex = sum(len(v) for v in ex_lenses.values()) + sum(len(v) for v in groups.values())
+        ok(f"reachability: {total} lenses, each cited by its selector or covered by one of "
+           f"{n_ex} stated exemption(s)")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--base", default=os.environ.get("INVARIANTS_BASE", ""),
@@ -465,13 +662,15 @@ def main():
     check_text_artifacts()
     print("== Invariant 8: every relative link and anchor resolves ==")
     check_links()
+    print("== Invariant 9: every lens is reachable from its selector ==")
+    check_lens_reachability()
     print()
     for n in notes:
         print(f"  note: {n}")
     if failures:
         print(f"\nInvariant check FAILED: {len(failures)} problem(s).")
         return 1
-    print("\nInvariant check OK: all eight invariants hold.")
+    print("\nInvariant check OK: all nine invariants hold.")
     return 0
 
 

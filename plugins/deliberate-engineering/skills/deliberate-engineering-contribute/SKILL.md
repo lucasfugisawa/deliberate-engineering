@@ -12,7 +12,7 @@ This is contributor tooling: it runs against a local clone of the `deliberate-en
 ## Boundaries
 
 - **vs `deliberate-engineering-capture` (the adopter side)**: capture grows your *personal, private* override file from the deviations and patterns you brought; this proposes lenses for the *shared, shipped* catalog. Opposite write-targets.
-- **vs `promote`**. This **captures**: it turns judgment into a clean candidate file in `candidates/`. `promote` **elevates**: leak-audit, classify, edit the catalog. This skill writes candidates only: never the catalog, never a commit, PR, or push.
+- **vs `promote`**. This **captures**: it turns judgment into a clean candidate file in `candidates/`. `promote` **elevates**: leak-audit, classify, edit the catalog, route the lens from its selector. This skill writes candidates only: never the catalog, never a commit, PR, or push.
 - **On demand only**: never self-triggers; runs only via `/deliberate-engineering:contribute` or an explicit request (e.g. "capture this as a catalog candidate," "propose this tactic for the catalog"). No invocation → total silence; it never proposes candidates unprompted.
 
 ## What it observes
