@@ -372,12 +372,12 @@ Strategies **compose**. The strongest pattern is to *rotate the lens each pass* 
 
 ## Appendix: Composition Patterns
 
-*How to chain strategies together.*
+*How to chain strategies together. Each pattern carries a permanent number, cited as `review pattern #N` the way a lens is cited as `review #N`, so an operator override can address one. Numbers are append-only here for the same reason they are for lenses: an address that moves is not an address.*
 
-- **Lens rotation:** A different strategy per pass; do not repeat the same angle.
-- **Find → verify pipeline:** Find candidates broadly, then verify each adversarially (voting/refutation) before acting.
-- **Barrier when you need the whole:** Only synchronize between phases when the next phase needs *all* findings together (e.g. global dedup before expensive verification).
-- **Scale to the ask:** "Find bugs" → few finders, simple vote. "Exhaustive audit" → large finder pool + 3–5 adversarial votes + synthesis.
-- **Discovery before remediation:** Keep a review pass read-only: report what you find and stop, rather than fixing as you go. Findings stay trustworthy and complete when the audit doesn't mutate the artifact mid-pass; remediation is a separate, later step.
-- **No silent truncation:** If the review limited coverage (top-N, sampling, no retry), **log** what was left out: truncating silently reads as "covered everything."
-- **Close with fresh eyes:** The last pass should be independent of the edit history.
+- **1. Lens rotation:** A different strategy per pass; do not repeat the same angle.
+- **2. Find → verify pipeline:** Find candidates broadly, then verify each adversarially (voting/refutation) before acting.
+- **3. Barrier when you need the whole:** Only synchronize between phases when the next phase needs *all* findings together (e.g. global dedup before expensive verification).
+- **4. Scale to the ask:** "Find bugs" → few finders, simple vote. "Exhaustive audit" → large finder pool + 3–5 adversarial votes + synthesis.
+- **5. Discovery before remediation:** Keep a review pass read-only: report what you find and stop, rather than fixing as you go. Findings stay trustworthy and complete when the audit doesn't mutate the artifact mid-pass; remediation is a separate, later step.
+- **6. No silent truncation:** If the review limited coverage (top-N, sampling, no retry), **log** what was left out: truncating silently reads as "covered everything."
+- **7. Close with fresh eyes:** The last pass should be independent of the edit history.

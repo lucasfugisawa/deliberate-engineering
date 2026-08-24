@@ -207,6 +207,12 @@ case("an exemption whose reason is a token, not a reason", "reachability",
                             "lens review-strategy-selector 5:",
                             "lens review-strategy-selector 5: xxx yyy.\n"))
 
+case("a lens left routed only by a composition-pattern citation", "reachability",
+     lambda t: edit(t, f"{SK}/review-strategy-selector/SKILL.md",
+                    "in play** \u2192 14 source-of-truth verification",
+                    "in play** \u2192 see pattern 14 source-of-truth verification"),
+     expect="is cited nowhere in its selector")
+
 case("a lens no step of its selector routes", "reachability",
      lambda t: edit(t, f"{SK}/review-strategy-selector/SKILL.md",
                     "in play** \u2192 14 source-of-truth verification",

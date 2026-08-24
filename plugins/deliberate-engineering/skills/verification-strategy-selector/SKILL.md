@@ -72,14 +72,13 @@ Open only the parts matching your classification:
 
 ## Step 4: Compose the verification
 
-Apply the catalog's Appendix patterns:
+The composition patterns are numbered in the catalog's Appendix: **1** expectation-first, **2** reproduce then fix then re-confirm, **3** parity over argument, **4** prove then re-prove, **5** promotion ladder, **6** calibrate depth to irreversibility, **7** capture don't infer, **8** no silent skipping. Read them there rather than here. This step used to restate a partial list, and the two copies drifted: three patterns existed only in the Appendix. An operator override addresses one as `verification pattern #N`, and a pattern number is not a strategy number, so cite a pattern as "pattern 5" and a strategy as a bare "5".
+
+Two of them carry a strategy citation this phase depends on: pattern 4 re-verifies through strategy 5, and pattern 7 captures through strategy 16.
+
+Two standing-rule reminders belong at this step and are rules rather than patterns:
 
 - **Re-execute on re-invocation (Rule 3)**: resolve scope from a world-derived target, and recompute in fresh context rather than relaying a prior in-session conclusion.
-- **Expectation-first**: every check carries its expected result *before* you observe the actual one. A check with no stated expectation can't fail loudly.
-- **Prove → re-prove**: reach a conclusion, then re-verify it independently (5) before acting. The second pass is where the rationalized error dies.
-- **Calibrate depth to irreversibility**: match the protocol to the cost of being wrong, not to the diff size.
-- **Capture, don't infer**: when the real payload/metric is obtainable, capture it (16); inference is a hypothesis, not verification.
-- **No silent skipping**: if a check couldn't be run faithfully (sandbox limit, no pre-prod), **say so and name the authority for it** (6). An unrun check must never read as a passed one.
 - **The evidence is yours; the trigger is not (Rule 1).** This selector owns the Part C promotion gates and the Part E mutation protocol, which sit directly in front of the plugin's hardest gate: verification prepares the evidence, states the go/no-go, and **stops** at the merge, the deploy, the promotion, or the destructive write for the human to trigger. Rule 2 holds alongside it: on a system you don't own, stay read-only unless the operator has said otherwise, which makes a dry-run (8) the default shape of a mutation check.
 
 ## Step 5: Coexistence and precedence

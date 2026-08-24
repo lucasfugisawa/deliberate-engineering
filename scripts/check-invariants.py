@@ -473,7 +473,9 @@ def routing_prose(sel_text):
     sel_text = re.sub(r"^---\n.*?\n---\n", "", sel_text, flags=re.S)
     sel_text = re.sub(r"`[^`\n]*`", " ", sel_text)
     sel_text = re.sub(r"https?://\S+", " ", sel_text)
-    sel_text = re.sub(r"(?i)\b(?:step|rule|axis|part)[ \t]+\d+", " ", sel_text)
+    # "pattern 6" is a composition pattern, a separate numbering from the lenses; without this
+    # strip a pattern citation can be read as a lens citation and route a lens nobody routed
+    sel_text = re.sub(r"(?i)\b(?:step|rule|axis|part|pattern)[ \t]+\d+", " ", sel_text)
     sel_text = re.sub(
         r"(?i)\b(?:review|verification|verify|planning|debug-operate|debug|communication)[ \t]+#\d+",
         " ", sel_text)

@@ -74,15 +74,16 @@ Open only the Parts matching your classification:
 
 ## Step 4: Compose the response
 
-Apply the catalog's Appendix patterns:
+The composition patterns are numbered in the catalog's Appendix: **1** evidence before action, **2** restore then diagnose, **3** delegate the method own the judgment, **4** peacetime feeds wartime, **5** close the loop or it's theater, **6** no silent skipping. Read them there rather than here. This step used to restate a partial list, and the two copies drifted: pattern 5 existed only in the Appendix. An operator override addresses one as `debug-operate pattern #N`, and a pattern number is not a strategy number, so cite a pattern as "pattern 2" and a strategy as a bare "2".
+
+One of them resolves differently in this phase than the Appendix states:
+
+- **Pattern 1 under degradation.** Establish what's true before responding, but hold that in tension with restoration: when the service is degraded you do *not* wait for perfect evidence, the Master Principle's second clause wins, and pattern 2 takes over. Name which way the tension resolved: degraded means restore first; not degraded means keep gathering.
+
+Two standing-rule reminders belong at this step and are rules rather than patterns:
 
 - **Re-execute on re-invocation (Rule 3)**: resolve scope from a world-derived target, and recompute in fresh context rather than relaying a prior in-session conclusion.
-- **Evidence before action, except under degradation.** Establish what's true (Part A) before responding, but hold this in tension with restoration: when the service is degraded, you do *not* wait for perfect evidence. The Master Principle's second clause wins and you restore the baseline first. Name which way the tension resolves: degraded → restore; not degraded → keep gathering.
-- **Restore, then diagnose.** Under a live break, Part C precedes Part B. Get the baseline back to known-good, *then* hunt the cause in peacetime: diagnosing a live outage while it burns trades the whole team's time for your curiosity.
 - **You prepare the restore; the human fires it (Rule 1).** Part C's moves are outward and irreversible: a revert pushed to a shared baseline, a failover, shed or rate-limited load, a path disabled in production. "Don't wait for the author" (6) means don't block on the *original* author; it never means an agent pushes to a shared baseline on its own. Prepare the exact revert or containment step with its expected effect and blast radius, and hand it to the on-call responder to execute immediately. Under pressure the speed comes from having it ready, not from skipping the gate.
-- **Delegate the method, own the judgment.** Dispatch `superpowers:systematic-debugging` for the mechanics; this skill decides which evidence to trust and how to respond. Different jobs: don't reinvent the method.
-- **Peacetime feeds wartime.** Part D's hygiene is what makes Part A's evidence trustworthy in the *next* incident. Every shortcut taken in peacetime is a blind spot inherited mid-incident.
-- **No silent skipping.** If you couldn't establish a fact (lossy logs, sampled data, no access), **say so and name the limit**. An unestablished fact is a known unknown, never a quiet "fine"; never let an absence read as confirmation.
 
 ## Step 5: Coexistence and precedence
 
