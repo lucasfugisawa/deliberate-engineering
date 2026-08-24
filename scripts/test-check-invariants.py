@@ -462,8 +462,9 @@ case("an exemption that is neither a group nor a lens", "reachability",
      expect="is neither a group nor a lens exemption")
 
 case("a composition appendix that states no count", "reachability",
-     lambda t: edit(t, f"{SK}/review-strategy-selector/catalog.md",
-                    "This appendix contains 7 composition patterns. ", ""),
+     # anchored on the sentence shape, not on the number, so adding a pattern does not stale it
+     lambda t: replace_all_lines(t, f"{SK}/review-strategy-selector/catalog.md",
+                                 r"This appendix contains \d+ composition patterns\. ", ""),
      expect="states no count")
 
 

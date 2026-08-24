@@ -2,6 +2,23 @@
 
 All notable changes to the `deliberate-engineering` plugin are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/), and the project aims at [Semantic Versioning](https://semver.org/) (pre-1.0: minor covers features and breaking changes, patch covers fixes).
 
+## [0.14.0] - 2026-08-24
+
+The plugin was run from outside for the first time: on a small service written for the purpose, by fresh agents told to do an ordinary review and to report friction as first-time users. Six cycles of internal audit had left it extremely well verified against itself and unverified against anything else. This is what that test returned.
+
+Worth recording first, because it is the load-bearing result: both agents reached the same findings independently, and both said unprompted that they had expected to call the ceremony disproportionate on sixty-nine lines of Python and did not. The lighter pass either would have run by default would have missed the durability and atomicity defects, because those only surface when the code is actually executed across process boundaries.
+
+### Added
+- **Review pattern 8: do not hand a dispatched agent your hypothesis.** The conducting agent formed an early hypothesis that a fee calculation truncated, wrote it into three subagent prompts as a directive ("report how many amounts diverge, state which direction the error goes"), and all three refused it: exhaustive sweeps found zero divergence anywhere realistic. What saved the report was an instruction the agent invented on its own, asking the independent reviewer what it would push back on. Nothing in the plugin asked for that. This is the characteristic failure mode of a design that dispatches its lenses, because contamination travels in the brief and no number of independent agents dilutes it, and six internal cycles could not have found it: it only appears when the plugin conducts real work on an artifact whose answer nobody knows in advance.
+- **A completeness precondition in the review selector.** The test repository had no entrypoint, no caller and migrations starting at 003, and several findings blurred between built wrong and not built yet with no help from the catalog. Step 3 now asks first whether the artifact is whole enough to judge.
+
+### Changed
+- **Review 3 now has two jobs.** The fresh-eyes pass was described as arriving without the history of prior edits, aimed at the author's bias about their own work. It is now also told to say what it would defend the artifact against, because a reviewer only asked to find things finds things. Its objective names the second job: catching a finding the earlier passes invented rather than found.
+- **The read-only contradiction is resolved.** Rule 6 tells every selector to checkpoint through the state skill, which writes into the repository, while the review phase's own composition pattern says to keep the pass read-only. An operator who asked for no file changes got an instruction to change files. All four selectors now say to hold that state in the session and say so, rather than quietly doing either one.
+- **The execute-versus-read-only seam is stated.** Lens 12 already prescribed a disposable environment; nothing tied that to the read-only rule, and running code in place leaves build artifacts that are themselves a change. Pattern 5 now says read-only is about the artifact under review, and names that as the reason lens 12 works from a copy.
+- **The fan-out no longer assumes a pull request.** The risky band prescribed "per-PR as the default unit", and reviewing existing code before running it, which is an ordinary situation, has no pull request and no diff. The unit is now whatever the review is scoped to. The same bullet drops the assumption that touching money implies an attack surface, and gives batching guidance, because read literally the band meant one agent per lens and a dozen re-reads of a small file.
+- **The source bullet covers code you are about to run**, not only a diff that adds or edits it.
+
 ## [0.13.1] - 2026-08-24
 
 An audit ran the inverse of the one that shipped as 0.12.1. That one asked whether every claim the documentation makes is true. This one asked what the plugin can do that the documentation never mentions, and it had never been run.
