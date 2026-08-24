@@ -10,6 +10,8 @@ The second is why this release exists. The contract that `conduct` is built arou
 
 ### Fixed
 - **`conduct` and `orchestrate` now tell you to read their contract, at the top of the body.** Both described their `templates.md` as "read on demand", forty-one and seventy-four lines into their bodies. The five selectors and `voice-build` carry an imperative in the first dozen lines, and the review selector was measured under identical instructions opening its catalog unprompted and quoting the sentence that sent it. One form fired and one did not. The pointer is now imperative and early in both, and the duplicate mention at the old site is gone rather than reworded, so the instruction has one home.
+- **The `conduct` and `orchestrate` commands no longer summarise the method they delegate.** Both reproduced their contract's disciplines inline ("re-derive world state before every gate, keep the gate state in a per-item station table, run a between-step verification battery with expected values"), which reads as the instruction set and cost one agent the whole contract: it quoted that paragraph as everything it had received and never invoked the skill. The five phase commands do not do this. All five name the source and stop, in the same construction: "select and apply the matching lenses from the catalog". The same two skills that buried their companion pointer also summarised their contract at the command, which is one authorial pattern rather than two slips. Both now name the contract, say outright that the description is not a substitute for reading it, and stop.
+
 - **The change to `orchestrate` is parity, not evidence.** Its text shape was identical and its fix is justified by the rule the other six already follow. It was never observed to fail: the probe that would have shown it stopped before the authoring step its pointer is gated on. Identical phrasing is not a demonstrated defect and this entry does not claim one.
 
 ### Added
@@ -18,6 +20,10 @@ The second is why this release exists. The contract that `conduct` is built arou
 
 ### Note on what this does not establish
 That the contract is right. It was never exercised, so its destructive-hemisphere fields remain as unpiloted as the skill's own honest-limitation section says. This release moves the problem one step earlier: before a contract can be wrong in the field, it has to arrive there.
+
+**And that these fixes work.** The A/B built to verify them could not discriminate: both arms were told to read `SKILL.md` out of a directory, and an agent already reading that directory reads the second file the first one names, so both produced a full conductor doc. The real invocation is a materially weaker prompt than that. The fixes are unmeasured, not disproven, and measuring them needs the fixed version installed and invoked through the command. That is an open obligation this release does not discharge.
+
+What did get stronger is the result underneath. Four agents have now conducted this cluster, two through the plugin as installed and two given the skill body directly, and all four finished with the database byte-identical, the column intact and nothing deployed.
 
 ## [0.14.0] - 2026-08-24
 
