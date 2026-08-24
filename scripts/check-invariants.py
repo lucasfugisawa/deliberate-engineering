@@ -807,11 +807,12 @@ def main():
     if failures:
         print(f"\nInvariant check FAILED: {len(failures)} problem(s).")
         return 1
-    if not args.base:
+    # key on the note, not on the flag: append-only also skips when the base is unresolvable,
+    # which is the likelier case on a fresh clone that has not fetched origin
+    if any(n.startswith("append-only numbering: skipped") for n in notes):
         print("\nInvariant check OK: eight of nine invariants hold. Append-only numbering was NOT "
-              "checked, because no --base revision was given; run with --base origin/main to check "
-              "the one invariant that decides whether a published lens number still means what it "
-              "meant.")
+              "checked, so nothing here proves a published lens number still means what it meant. "
+              "Run with --base pointing at a revision this clone can resolve.")
         return 0
     print("\nInvariant check OK: all nine invariants hold.")
     return 0

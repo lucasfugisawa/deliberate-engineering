@@ -530,7 +530,10 @@ def main():
 
     print()
     if failures:
-        print(f"Negative controls FAILED: {len(failures)} mutation(s) went unnoticed: {failures}")
+        print(f"Controls FAILED: {len(failures)}: {failures}")
+        print("A control fails either because the guard missed its mutation, or because the control "
+              "could not set itself up against the current repository text. The lines above say "
+              "which.")
         return 1
     print(f"Controls OK: {len(CASES)} mutations each caught by its own check, "
           f"{len(ACCEPTS)} documented routing forms each accepted.")
