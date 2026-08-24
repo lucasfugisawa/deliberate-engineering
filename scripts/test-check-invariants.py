@@ -195,8 +195,7 @@ case("a lens exemption for a lens its Part already blankets", "reachability",
      expect="already blanketed by")
 
 case("a covers range that runs backwards", "reachability",
-     lambda t: edit(t, "scripts/routing-exemptions.txt", "covers 37-41, 43, 44, 47-49.",
-                    "covers 41-37, 43, 44, 47-49."),
+     lambda t: edit(t, "scripts/routing-exemptions.txt", "covers 37-41", "covers 41-37"),
      expect="reversed, unbounded, or not numeric")
 
 case("a lens heading numbered with a leading zero", "reachability",
@@ -228,7 +227,15 @@ case("a lens appended to a Part a group exemption blankets", "reachability",
                     "\n## Appendix: Composition Patterns",
                     "\n### 56. A lens that joined the blanket\n\n- **How it works:** it appends.\n"
                     "- **Objective:** to slip in under Part E.\n- **When most valuable:** never.\n"
-                    "\n## Appendix: Composition Patterns"))
+                    "\n## Appendix: Composition Patterns"),
+     expect="joined it since it was written")
+
+case("a blanketed lens routed by number, leaving its pin stale", "reachability",
+     lambda t: edit(t, f"{SK}/review-strategy-selector/SKILL.md",
+                    "- **Frontend / mobile / infra / data / experiments** \u2192",
+                    "- **Terraform or CloudFormation** \u2192 43 infrastructure-as-code review.\n"
+                    "- **Frontend / mobile / infra / data / experiments** \u2192"),
+     expect="no longer needs it")
 
 case("a lens under a Part heading the guard does not recognize", "reachability",
      lambda t: edit(t, f"{SK}/review-strategy-selector/catalog.md",
@@ -265,7 +272,8 @@ case("a lens exemption for a lens the selector does route", "reachability",
      expect="but the selector routes it")
 
 case("an exemption stated twice", "reachability",
-     lambda t: append_exemption(t, "\nlens review-strategy-selector 5: a contradictory second reason.\n"))
+     lambda t: append_exemption(t, "\nlens review-strategy-selector 5: a contradictory second reason stated for a lens that already has one.\n"),
+     expect="is exempted twice")
 
 
 def main():

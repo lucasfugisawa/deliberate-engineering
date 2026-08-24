@@ -503,6 +503,11 @@ def routed_lenses(sel_text, lens_titles):
                 routed.add(n)
                 break
             # only up to the next digit: a neighbour's name must not vouch for this one
+            # Two bounds, and the window is narrow on purpose. The cut at the next digit stops a
+            # neighbour vouching. The character cap stops a mention far from its number counting:
+            # widening it to 160 made a lens named in the worked example's skip log read as routed,
+            # which is a sentence saying the lens was NOT used. Narrow costs a real citation whose
+            # name sits far from its number; wide costs the difference between using and declining.
             after = re.split(r"\d", prose[m.end():m.end() + 60])[0].lower()
             if words and any(re.search(r"\b%s\b" % re.escape(w), after) for w in words):
                 routed.add(n)
