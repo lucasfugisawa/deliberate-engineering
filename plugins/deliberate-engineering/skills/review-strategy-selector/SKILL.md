@@ -101,6 +101,8 @@ Two habits belong at this step and are lenses rather than patterns:
 - **Self-review your own fixes** (4): after editing, review what the fix may have broken, and first whether the fix reproduces the defect class it was fixing.
 - **Check coverage, then decide when to stop (10, 54)**: before the closing pass, run the completeness critic (10: what is missing, a modality not exercised, a claim not verified, a source not read?) and send what it finds into another round; then apply the stopping criterion (54: which classes of defect went unexamined, and is that judgment stated rather than reached by fatigue?), which earns its full weight on an exhaustive audit or a high-stakes change.
 
+**Operator overrides on patterns.** Before applying these, consult `deliberate-engineering-overrides` for any override on a composition pattern you are about to apply, addressed as `<catalog> pattern #N` and carrying `disable` or `modify` the same way a lens override does. A pattern override is honored here rather than at lens selection, because a pattern is applied to the lenses and not to the artifact. Declare every deviation in the Output.
+
 ## Step 5: Coexistence and precedence
 
 When other reviewers or engines are present (e.g. a PR-review toolkit, a feature-development flow), **THIS skill decides which to invoke** for the change at hand. It may invoke their agents as *tactics*: e.g. dispatch a silent-failure hunter, a type-design analyzer, or a test analyzer to execute a selected lens.

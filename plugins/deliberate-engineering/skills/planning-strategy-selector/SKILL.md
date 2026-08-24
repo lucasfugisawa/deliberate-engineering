@@ -71,6 +71,8 @@ The composition patterns are numbered in the catalog's Appendix: **1** calibrate
 
 Five of them name the lenses they compose, in the Appendix itself: pattern 1 through lens 10, pattern 3 through lens 8, pattern 4 through lens 6, pattern 5 through lenses 11, 12 and 13, and pattern 6 through lens 14. Two are worth naming here because they decide how much of the catalog you open at all: pattern 1, which sets ceremony before anything else, and pattern 7, which is the licence to stop early and say so.
 
+**Operator overrides on patterns.** Before applying these, consult `deliberate-engineering-overrides` for any override on a composition pattern you are about to apply, addressed as `<catalog> pattern #N` and carrying `disable` or `modify` the same way a lens override does. A pattern override is honored here rather than at lens selection, because a pattern is applied to the lenses and not to the artifact. Declare every deviation in the Output.
+
 ## Step 5: Coexistence and precedence
 
 When a planning or brainstorming engine is present (e.g. `superpowers`), **run its process** and apply these lenses to the decisions within it: this skill decides *what to build and how much process*, the engine handles *how to plan*. It never requires removing any other tool. When the work then moves to implementation, the deliberate flow continues into review and verification.

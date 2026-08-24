@@ -79,6 +79,8 @@ Two standing-rule reminders belong at this step and are rules rather than patter
 - **Re-execute on re-invocation (Rule 3)**: resolve scope from a world-derived target, and recompute in fresh context rather than relaying a prior in-session conclusion.
 - **The evidence is yours; the trigger is not (Rule 1).** This selector owns the Part C promotion gates and the Part E mutation protocol, which sit directly in front of the plugin's hardest gate: verification prepares the evidence, states the go/no-go, and **stops** at the merge, the deploy, the promotion, or the destructive write for the human to trigger. Rule 2 holds alongside it: on a system you don't own, stay read-only unless the operator has said otherwise, which makes a dry-run (8) the default shape of a mutation check.
 
+**Operator overrides on patterns.** Before applying these, consult `deliberate-engineering-overrides` for any override on a composition pattern you are about to apply, addressed as `<catalog> pattern #N` and carrying `disable` or `modify` the same way a lens override does. A pattern override is honored here rather than at lens selection, because a pattern is applied to the lenses and not to the artifact. Declare every deviation in the Output.
+
 ## Step 5: Coexistence and precedence
 
 When other tooling is present (CI, a review toolkit, a test runner), **THIS skill decides what evidence the claim needs** and may invoke those tools as *tactics*: e.g. trust CI as the authority for DB-backed tests (6), or dispatch a test analyzer to judge a suite. It never requires removing any other tool; it orchestrates the evidence-gathering and delegates where a present tool is the right authority, noting the delegation.

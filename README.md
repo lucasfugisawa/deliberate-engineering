@@ -180,7 +180,7 @@ flowchart TD
 
 ## Make it yours
 
-The plugin is opinionated, and it's meant to become yours. A personal override file takes precedence over any shipped lens or rule it can address, which is every catalog lens and every standing rule, but not the router's own classification axes or its genre-to-phase map, which stay architecture. Entries are addressed by stable id (`review #35`, `verify #14`, `Rule 2`): disable one you don't want, annotate one with a note of your own, or add your own strategy or rule. The agent always declares when an override changed what it did, and you can even loosen a safety rule, which it honors while calling out the raised autonomy. It's opt-in: no file, no change.
+The plugin is opinionated, and it's meant to become yours. A personal override file takes precedence over any shipped lens or rule it can address, which is every catalog lens, every numbered composition pattern and every standing rule, but not the router's own classification axes or its genre-to-phase map, which stay architecture. Entries are addressed by stable id (`review #35`, `verify #14`, `Rule 2`): disable one you don't want, annotate one with a note of your own, or add your own strategy or rule. The agent always declares when an override changed what it did, and you can even loosen a safety rule, which it honors while calling out the raised autonomy. It's opt-in: no file, no change.
 
 You don't have to write it by hand: `/deliberate-engineering:capture` (or just ask) distills the session you just had into ready-to-paste blocks, appended only on your approval.
 

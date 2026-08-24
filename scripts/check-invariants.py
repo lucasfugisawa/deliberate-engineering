@@ -330,6 +330,14 @@ def check_section_refs():
 
 IDENTICAL_BLOCKS = [
     (
+        "Operator overrides on patterns consult",
+        "**Operator overrides on patterns.** Before applying these",
+        [
+            "planning-strategy-selector", "review-strategy-selector",
+            "verification-strategy-selector", "debug-operate-strategy-selector",
+        ],
+    ),
+    (
         "Operator overrides consult",
         "**Operator overrides.** Before applying the selected lenses",
         [

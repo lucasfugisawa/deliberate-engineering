@@ -119,10 +119,26 @@ case("a citation pointing at no lens", "citations",
 case("a rule citation that is not a rule", "citations",
      lambda t: edit(t, f"{SK}/deliberate-engineering-router/SKILL.md", "Rule 1", "Rule 42"))
 
-case("dropping the override consult from a selector", "consult",
+def drop_every_consult(t, relpath):
+    """A selector now carries two consults, one for lenses and one for patterns.
+
+    Removing only the first leaves the skill still consulting the override layer, which
+    is what the consult check actually asks; that mutation is caught by the identical-block
+    guard instead. To test the consult check's own claim, both have to go.
+    """
+    for old in ("Before applying the selected lenses, consult `deliberate-engineering-overrides`",
+                "Before applying these, consult `deliberate-engineering-overrides`"):
+        edit(t, relpath, old, old.replace("consult `deliberate-engineering-overrides`", "think about it"))
+
+
+case("dropping every override consult from a selector", "consult",
+     lambda t: drop_every_consult(t, f"{SK}/review-strategy-selector/SKILL.md"))
+
+case("dropping only the lens consult, leaving the pattern one", "identical",
      lambda t: edit(t, f"{SK}/review-strategy-selector/SKILL.md",
                     "**Operator overrides.** Before applying the selected lenses, consult `deliberate-engineering-overrides`",
-                    "**Operator overrides.** Before applying the selected lenses, think about it"))
+                    "**Operator overrides.** Before applying the selected lenses, think about it"),
+     expect="Operator overrides consult")
 
 case("an exemption with no reason", "consult",
      lambda t: open(os.path.join(t, "scripts", "consult-exemptions.txt"), "a").write(

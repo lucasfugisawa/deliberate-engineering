@@ -28,6 +28,8 @@ Counts and versions are mechanically enforced: `scripts/check-consistency.sh` ch
 
 This structure makes lenses composable and context-aware: a selector reasons about which lenses a specific change calls for by matching the change's characteristics to each lens's *when most valuable* clause. A lens should teach a deliberate practice, not provide a static checklist: composable (rotate the lens each pass; find → verify; close with fresh eyes), context-aware (selected by the classification its own selector runs: risk, reversibility, requirement clarity, and reach for planning and review; evidence type and irreversibility for verification; the expectation gate for debug; audience and artifact for communication), and empirically grounded (validate claims rather than assume them).
 
+
+**A composition pattern is shaped differently.** It lives as one numbered bullet in that catalog's `## Appendix: Composition Patterns`, `- **N. Title:** one or two sentences`, and it is numbered in its own namespace: `review pattern #7` is not `review #7`. The test that separates the two is what the thing acts on. A lens is applied to the artifact under review; a pattern is applied to the lenses. A pattern is not finished until every selector compose step that should run it cites it by number and name, which `scripts/check-invariants.py` enforces.
 ## How to contribute a lens
 
 Contribution is assisted and gated: you do not hand-edit a catalog and open a PR. Run the author tools from a local clone of this repository (they operate on the repo's own catalogs and `candidates/` queue):
@@ -43,7 +45,7 @@ A release is any change to the shipped plugin that reaches adopters. The version
 
 When publishing a release:
 
-1. **Bump the version in lockstep**: `plugins/deliberate-engineering/.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` must carry the **same** version. Pre-1.0: a new skill, command, catalog, or lens is a **minor** (`0.x.0`); a pure fix is a **patch** (`0.x.y`). The override-file relocation in 0.2.0 was technically breaking, but pre-1.0 minor already covers that. The client offers an update only when the version *string* changes: without a bump, adopters never see the release.
+1. **Bump the version in lockstep**: `plugins/deliberate-engineering/.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` must carry the **same** version. Pre-1.0: a new skill, command, catalog, lens, or composition pattern is a **minor** (`0.x.0`); a pure fix is a **patch** (`0.x.y`). So is anything that makes shipped content addressable that was not, since an adopter gains something they could not write before. The override-file relocation in 0.2.0 was technically breaking, but pre-1.0 minor already covers that. The client offers an update only when the version *string* changes: without a bump, adopters never see the release.
 2. **Update `CHANGELOG.md`**: a new section for the version (Added / Changed / Fixed), newest first.
 3. **Tag the release**: annotated tag `vX.Y.Z` on the release commit, pushed alongside `main`.
 
