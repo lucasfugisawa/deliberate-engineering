@@ -1,6 +1,6 @@
 ---
 name: deliberate-engineering-promote
-description: "Use on demand to drive a pending candidate into the catalog systematically. Runs the leak-audit gate, classifies isolated vs structural, then (isolated) edits the catalog append-only, runs skill-reviewer and deletes the promoted candidate file from the queue, or (structural) stops and recommends the proper design cycle. This is the promotion step of the author contribution flow: it drives a candidate into the shared catalog (working tree only, gated). Writes, all in the plugin repository's working tree and never committed: the catalog file, the selector that routes it, the counts those catalogs are stated in (README and the architecture doc), both version manifests, the CHANGELOG, and `scripts/routing-exemptions.txt` when a lens is deliberately left unrouted, plus the deletion of the promoted candidate; it also runs the consistency script. It is not the contribute skill, which captures candidates, nor the adopter capture skill, which writes your personal override file. Stays silent unless invoked."
+description: "Use on demand to drive a pending candidate into the catalog systematically. Runs the leak-audit gate, classifies isolated vs structural, then (isolated) edits the catalog append-only, routes the new lens from its selector, runs skill-reviewer and deletes the promoted candidate file from the queue, or (structural) stops and recommends the proper design cycle. This is the promotion step of the author contribution flow: it drives a candidate into the shared catalog (working tree only, gated). Writes, all in the plugin repository's working tree and never committed: the catalog file, the selector that routes it, the counts those catalogs are stated in (README and the architecture doc), both version manifests, the CHANGELOG, and `scripts/routing-exemptions.txt` when a lens is deliberately left unrouted, plus the deletion of the promoted candidate; it also runs the consistency script. It is not the contribute skill, which captures candidates, nor the adopter capture skill, which writes your personal override file. Stays silent unless invoked."
 ---
 
 # Deliberate Engineering Promote
@@ -57,11 +57,11 @@ Lenses are `### N. Title` blocks followed by three bullets (How it works / Objec
 
 ### Route the new lens from its selector
 
-A lens the selector never names is a lens never read: an agent opens only the sections a step points it to, so a catalog entry with no routing is shipped and unreachable. This has been the plugin's most repeated defect, fixed in v0.4.0, v0.4.1 and v0.12.3. Those instances came from hand-authored catalog commits rather than from this flow. But this flow would produce the same state by construction, because it edited the catalog and stopped, and it is the one path where the gap can be closed instead of found later.
+A lens the selector never names is a lens never read: an agent opens only the sections a step points it to, so a catalog entry with no routing is shipped and unreachable. This has been the plugin's most repeated defect, fixed in v0.4.0, v0.4.1, v0.12.2 and v0.12.3. Those instances came from hand-authored catalog commits rather than from this flow. But this flow would produce the same state by construction, because it edited the catalog and stopped, and it is the one path where the gap can be closed instead of found later.
 
 So an `add` is not finished until the new lens is reachable from `SKILL.md` in the same directory. Put its number in the step that selects lenses, in the bullet whose trigger matches the lens's own "When most valuable", or in the ceremony-band or composition step when the lens governs depth or sequencing rather than a class of change. Read the target selector's own headings first: the five do not number their steps alike, and in the communication selector lens selection is Step 2, not Step 3. Do not invent a trigger: if the lens's own body names no condition a selector step could key on, that is a finding about the lens, not a licence to leave it unrouted.
 
-If the lens genuinely should not be routed, say why in `scripts/routing-exemptions.txt`. That file is also where a Part routed as a whole group is declared. Invariant 9 in `scripts/check-invariants.py` fails on an unrouted, undeclared lens; on an exemption with no reason, stated twice, or naming a directory, Part or lens that does not exist; and on an exemption gone dead, whether because the selector now routes the lens or because a lens joined the Part a group exemption blankets. A citation has to carry the lens's name, a bare numeral is not routing.
+If the lens genuinely should not be routed, say why in `scripts/routing-exemptions.txt`. That file is also where a Part routed as a whole group is declared. Invariant 9 in `scripts/check-invariants.py` fails on an unrouted, undeclared lens; on an exemption with no reason, stated twice, or naming a directory, Part or lens that does not exist; and on an exemption gone dead, whether because the selector now routes the lens or because a lens joined the Part a group exemption blankets. A citation has to carry the lens's identity: its number beside a word from its own title, a numbers-only parenthesis, or the number introduced by the word lens. A numeral loose in a sentence is not routing.
 
 A `modify` does not require this, but check anyway: if the amendment changed the lens's trigger, the selector bullet that routes it may now be keyed to the wrong condition.
 
@@ -71,7 +71,7 @@ Appending a lens changes numbers that several files state, and `scripts/check-co
 
 ### Run skill-reviewer
 
-After editing the catalog file in the working tree, invoke the `plugin-dev:skill-reviewer` agent to review the catalog file's quality. Pass the catalog file path resolved above and the context that a new lens was added or an existing lens was modified. The reviewer checks for: consistency with existing lenses, formatting adherence, clarity of the principle, and whether the lens fits the catalog's voice.
+After editing the catalog file in the working tree, invoke the `plugin-dev:skill-reviewer` agent to review the catalog file's quality. Pass the catalog file path resolved above, the selector file you routed it from, and the context that a new lens was added or an existing lens was modified. The reviewer checks for: consistency with existing lenses, formatting adherence, clarity of the principle, and whether the lens fits the catalog's voice.
 
 If the skill-reviewer rejects the edit or flags a quality issue, report the findings and STOP. Do NOT proceed to remove the candidate file, do NOT commit over the rejection. The author addresses the reviewer's findings (either by editing the catalog in the working tree or by revising the candidate and re-promoting), then re-invokes promotion or commits manually.
 
@@ -101,7 +101,7 @@ Renumbering is the one act this skill will never perform, under any circumstance
 
 ## States, atomicity, the human gate
 
-The promote skill edits the catalog and removes the candidate file in the **working tree only**. It produces a git diff ready to be reviewed and committed by the human. It NEVER commits, NEVER opens a PR, NEVER pushes: those outward-facing, irreversible acts are the human's. This is the human gate (Rule 1): the skill prepares the artifact, the human triggers the publication.
+The promote skill edits the catalog, routes the lens from its selector, and removes the candidate file in the **working tree only**. It produces a git diff ready to be reviewed and committed by the human. It NEVER commits, NEVER opens a PR, NEVER pushes: those outward-facing, irreversible acts are the human's. This is the human gate (Rule 1): the skill prepares the artifact, the human triggers the publication.
 
 The catalog edit, the routing edit and the candidate removal are **atomic in the working tree**: they happen together, ready to be committed as one unit. The candidate file is removed because its content has been promoted into the catalog: leaving it pending after a successful promotion would be a false signal. But the removal is reversible until the human commits (it is a working-tree deletion, not a pushed deletion), which is why removing the candidate before publication is safe.
 
@@ -137,9 +137,9 @@ For an isolated promotion:
 
 1. **Gate result:** leak-audit passed.
 2. **Classification:** isolated. Add (with assigned lens number and placement) or modify (with lens number edited in place).
-3. **What was edited:** the catalog file path, the specific lens block added/modified, the skill-reviewer result (pass or findings).
+3. **What was edited:** the catalog file path, the specific lens block added/modified, the selector file and the bullet that now routes it (or the exemption stated for it in `scripts/routing-exemptions.txt`), the skill-reviewer result (pass or findings).
 4. **Candidate disposition:** removed from `candidates/` (or removal-failure flag if the removal failed).
-5. **Human gate reminder:** the catalog edit and candidate removal are in the working tree; commit/PR/push is your decision.
+5. **Human gate reminder:** the catalog edit, the routing edit and the candidate removal are in the working tree; commit/PR/push is your decision.
 
 For a structural promotion:
 

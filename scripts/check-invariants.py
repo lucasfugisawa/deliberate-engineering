@@ -465,7 +465,14 @@ def routing_prose(sel_text):
     those was demonstrated to route a lens that no step actually names.
     """
     sel_text = re.sub(r"^---\n.*?\n---\n", "", sel_text, flags=re.S)
+    sel_text = re.sub(r"(?ms)^\s*(```|~~~).*?^\s*\1\s*$", " ", sel_text)
     sel_text = re.sub(r"`[^`\n]*`", " ", sel_text)
+    sel_text = re.sub(r"(?s)<!--.*?-->", " ", sel_text)
+    sel_text = re.sub(r"<[^>\n]+>", " ", sel_text)
+    sel_text = "\n".join(
+        " " if (l.startswith("    ") or l.lstrip().startswith((">", "|")) or re.match(r"\s*\[\^", l))
+        else l
+        for l in sel_text.split("\n"))
     sel_text = re.sub(r"https?://\S+", " ", sel_text)
     sel_text = re.sub(r"(?i)\b(?:step|rule|axis|part)\s+\d+", " ", sel_text)
     sel_text = re.sub(
@@ -493,7 +500,7 @@ def routed_lenses(sel_text, lens_titles):
             continue
         words = title_words(title)
         for m in re.finditer(r"(?<![\w.\-#])%d(?![\d])" % n, prose):
-            if re.search(r"\blenses?\s+$", prose[max(0, m.start() - 8):m.start()].lower()):
+            if re.search(r"\blens(?:es)?\s*\**\s*$", prose[max(0, m.start() - 14):m.start()].lower()):
                 routed.add(n)
                 break
             # only up to the next digit: a neighbour's name must not vouch for this one
@@ -528,18 +535,19 @@ def check_lens_reachability():
                 continue
             head, reason = line.split(":", 1)
             toks = head.split()
-            if not re.search(r"[a-z]{3}", reason.lower()):
+            if len(re.findall(r"[a-z]{3,}", reason.lower())) < 4:
                 fail("reachability", f"routing-exemptions.txt: '{head.strip()}' is exempted with no reason")
                 continue
-            if head.strip() in seen:
-                fail("reachability", f"routing-exemptions.txt: '{head.strip()}' is exempted twice")
+            key = " ".join(toks)
+            if key in seen:
+                fail("reachability", f"routing-exemptions.txt: '{key}' is exempted twice")
                 continue
-            seen.add(head.strip())
+            seen.add(key)
             if len(toks) >= 3 and toks[0] == "group":
                 # A group exemption is a blanket, so it has to name what it covers:
                 # without the list, a lens appended to that Part later joins the
                 # exemption in silence, which is the defect this invariant exists for.
-                m = re.match(r"\s*covers ([\d,\s-]+)\.", reason)
+                m = re.match(r"(?i)\s*covers ([\d,\s-]+)\.", reason)
                 if not m:
                     fail("reachability", f"routing-exemptions.txt: '{head.strip()}' must open its "
                                          f"reason with 'covers <numbers>.' naming the lenses it blankets")
@@ -549,6 +557,9 @@ def check_lens_reachability():
                     chunk = chunk.strip()
                     if "-" in chunk:
                         a, b = chunk.split("-", 1)
+                        if not (a.strip().isdigit() and b.strip().isdigit()) or int(a) > int(b) or int(b) - int(a) > 999:
+                            fail("reachability", f"routing-exemptions.txt: '{head.strip()}' covers a range that is reversed, unbounded, or not numeric: '{chunk}'")
+                            continue
                         covered.update(range(int(a), int(b) + 1))
                     elif chunk:
                         covered.add(int(chunk))
@@ -568,6 +579,10 @@ def check_lens_reachability():
         cat = read(cat_path)
         titles, lens_part, cur = {}, {}, None
         for line in cat.splitlines():
+            if re.match(r"^#{2,6}\s*\d", line) and not re.match(r"^### \d+\. \S", line):
+                fail("reachability",
+                     f"{d}: {line.strip()!r} looks like a lens heading and does not match "
+                     f"'### N. Title', so every count and every check reads it as absent")
             if line.startswith("## "):
                 m = re.match(r"^## (Part [A-Z]+)\b", line)
                 # any other second-level heading ends the current Part, so a lens
@@ -604,6 +619,8 @@ def check_lens_reachability():
                 fail("reachability", f"routing-exemptions.txt: {d} has no lens {n}")
             elif n in routed:
                 fail("reachability", f"routing-exemptions.txt: {d} lens {n} is exempted but the selector routes it")
+            elif n in blanketed:
+                fail("reachability", f"routing-exemptions.txt: {d} lens {n} is exempted and already blanketed by its Part's group exemption")
         unrouted = [n for n, part in sorted(lens_part.items())
                     if n not in routed
                     and n not in blanketed
@@ -611,11 +628,12 @@ def check_lens_reachability():
         total += len(lens_part)
         if unrouted:
             fail("reachability",
-                 f"{d}: lens {', '.join(str(n) for n in unrouted)} reachable from no step of its "
+                 f"{d}: lens {', '.join(str(n) for n in unrouted)} is cited nowhere in its "
                  f"selector and declared in no exemption")
     if len(failures) == before:
         n_ex = sum(len(v) for v in ex_lenses.values()) + sum(len(v) for v in groups.values())
-        ok(f"reachability: all {total} lenses reachable from their selector ({n_ex} stated exemption(s))")
+        ok(f"reachability: {total} lenses, each cited by its selector or covered by one of "
+           f"{n_ex} stated exemption(s)")
 
 
 def main():

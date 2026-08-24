@@ -12,8 +12,8 @@ name: consistency
 # every lens-applying skill consults the override layer, no catalog or command
 # is invisible, named-section references resolve, passages claimed identical are
 # identical, no doubled word or conflict marker ships, every relative link and
-# anchor resolves, and every lens is reachable from its own selector. Its own negative controls run here too, because a check nobody
-# has watched fail is not a check.
+# anchor resolves, and every lens is cited by its own selector. Its own controls
+# run here too, because a check nobody has watched fail is not a check.
 #
 # No judgment, no version decision: pure invariants (Rule 1 stays the
 # maintainer's). Runnable locally: ./scripts/check-consistency.sh and

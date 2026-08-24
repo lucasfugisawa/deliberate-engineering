@@ -58,11 +58,36 @@ def git_snapshot(tree):
         subprocess.run(["git"] + args, cwd=tree, check=True, env=env, capture_output=True)
 
 
+
+def replace_line(t, relpath, prefix, new_line):
+    """Swap the whole line starting with prefix, so a mutation cannot leave a tail behind."""
+    p = os.path.join(t, relpath)
+    with open(p, encoding="utf-8") as fh:
+        lines = fh.readlines()
+    hit = [i for i, l in enumerate(lines) if l.startswith(prefix)]
+    assert len(hit) == 1, f"setup failed: {prefix!r} matched {len(hit)} lines in {relpath}"
+    lines[hit[0]] = new_line
+    with open(p, "w", encoding="utf-8") as fh:
+        fh.writelines(lines)
+
+
 CASES = []
+ACCEPTS = []
 
 
 def case(name, check, mutate, needs_git=False):
     CASES.append((name, check, mutate, needs_git))
+
+
+def accepts(name, mutate):
+    """A positive control: this routing form must KEEP the guard green.
+
+    Every mutation control asserts a check fires. That is half the contract, and
+    the missing half is what let a broken routing form ship: `lenses?` parses as
+    "lense" plus an optional s, so the documented `lens N` citation never matched
+    and no control noticed, because none exercised the form.
+    """
+    ACCEPTS.append((name, mutate))
 
 
 case("renumbering a catalog", "append-only",
@@ -132,6 +157,51 @@ def append_exemption(t, line):
         fh.write(line)
 
 
+ONLY_14 = ("in play** \u2192 14 source-of-truth verification: confirm you are reading the "
+           "canonical copy before judging it.")
+
+accepts("the lens-N form routes",
+        lambda t: edit(t, f"{SK}/review-strategy-selector/SKILL.md", ONLY_14,
+                       "in play** \u2192 apply lens 14 before judging anything."))
+
+accepts("the plural lenses-N form routes",
+        lambda t: edit(t, f"{SK}/review-strategy-selector/SKILL.md", ONLY_14,
+                       "in play** \u2192 among the lenses 14 belongs here."))
+
+accepts("the numbers-only parenthesis form routes",
+        lambda t: edit(t, f"{SK}/review-strategy-selector/SKILL.md", ONLY_14,
+                       "in play** \u2192 source-of-truth checking, lens (14)."))
+
+accepts("the number-beside-its-title-word form routes",
+        lambda t: edit(t, f"{SK}/review-strategy-selector/SKILL.md", ONLY_14,
+                       "in play** \u2192 14 source-of-truth checking."))
+
+case("a lens routed only inside a fenced code block", "reachability",
+     lambda t: edit(t, f"{SK}/review-strategy-selector/SKILL.md", ONLY_14,
+                    "in play** \u2192 see the example.\n\n```\n14 source-of-truth verification\n```"))
+
+case("a lens routed only inside an HTML comment", "reachability",
+     lambda t: edit(t, f"{SK}/review-strategy-selector/SKILL.md", ONLY_14,
+                    "in play** \u2192 check the canonical copy.\n\n<!-- 14 source-of-truth verification -->"))
+
+case("a lens heading that looks like a lens and is malformed", "reachability",
+     lambda t: edit(t, f"{SK}/planning-strategy-selector/catalog.md",
+                    "### 20.", "### 20"))
+
+case("an exemption duplicated with different whitespace", "reachability",
+     lambda t: append_exemption(t, "\nlens  review-strategy-selector  5: a second and contradictory reason for it.\n"))
+
+case("a lens exemption for a lens its Part already blankets", "reachability",
+     lambda t: append_exemption(t, "\nlens review-strategy-selector 44: already inside the Part E blanket.\n"))
+
+case("a covers range that runs backwards", "reachability",
+     lambda t: edit(t, "scripts/routing-exemptions.txt", "covers 37-41, 43-49.", "covers 41-37, 43-49."))
+
+case("an exemption whose reason is a token, not a reason", "reachability",
+     lambda t: replace_line(t, "scripts/routing-exemptions.txt",
+                            "lens review-strategy-selector 5:",
+                            "lens review-strategy-selector 5: xxx yyy.\n"))
+
 case("a lens no step of its selector routes", "reachability",
      lambda t: edit(t, f"{SK}/review-strategy-selector/SKILL.md",
                     "in play** \u2192 14 source-of-truth verification",
@@ -199,6 +269,16 @@ def main():
             return 1
         print("  ok: clean tree passes (the guard is quiet when nothing is broken)")
 
+        for name, mutate in ACCEPTS:
+            tree = fresh_tree(stack)
+            mutate(tree)
+            r = run_guard(tree)
+            if r.returncode == 0:
+                print(f"  ok: {name} -> accepted, as it must be")
+            else:
+                print(f"  FAIL: {name} -> the guard rejected a documented routing form")
+                failures.append(name)
+
         for name, check, mutate, needs_git in CASES:
             tree = fresh_tree(stack)
             base = None
@@ -221,7 +301,8 @@ def main():
     if failures:
         print(f"Negative controls FAILED: {len(failures)} mutation(s) went unnoticed: {failures}")
         return 1
-    print(f"Negative controls OK: {len(CASES)} mutations, each caught by its own check.")
+    print(f"Controls OK: {len(CASES)} mutations each caught by its own check, "
+          f"{len(ACCEPTS)} documented routing forms each accepted.")
     return 0
 
 
