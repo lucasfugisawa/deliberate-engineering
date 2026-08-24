@@ -74,11 +74,7 @@ Open only the Parts matching your classification:
 
 ## Step 4: Compose the response
 
-The composition patterns are numbered in the catalog's Appendix: **1** evidence before action, **2** restore then diagnose, **3** delegate the method own the judgment, **4** peacetime feeds wartime, **5** close the loop or it's theater, **6** no silent skipping. Read them there rather than here. This step used to restate a partial list, and the two copies drifted: pattern 5 existed only in the Appendix. An operator override addresses one as `debug-operate pattern #N`, and a pattern number is not a strategy number, so cite a pattern as "pattern 2" and a strategy as a bare "2".
-
-One of them resolves differently in this phase than the Appendix states:
-
-- **Pattern 1 under degradation.** Establish what's true before responding, but hold that in tension with restoration: when the service is degraded you do *not* wait for perfect evidence, the Master Principle's second clause wins, and pattern 2 takes over. Name which way the tension resolved: degraded means restore first; not degraded means keep gathering.
+The composition patterns are numbered in the catalog's Appendix: **1** evidence before action, **2** restore then diagnose, **3** delegate the method own the judgment, **4** peacetime feeds wartime, **5** close the loop or it's theater, **6** no silent skipping. Apply them, and read them there rather than here. This step used to restate a partial list, and the two copies drifted: pattern 5 existed only in the Appendix. An operator override addresses one as `debug-operate pattern #N`, and a pattern number is not a strategy number, so cite a pattern as "pattern 2" and a strategy as a bare "2".
 
 Two standing-rule reminders belong at this step and are rules rather than patterns:
 

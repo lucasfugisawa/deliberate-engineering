@@ -71,6 +71,19 @@ def replace_line(t, relpath, prefix, new_line):
         fh.writelines(lines)
 
 
+
+def replace_all_lines(t, relpath, pattern, replacement):
+    """Rewrite every line matching pattern, for mutations that must hit a whole set."""
+    import re as _re
+    p = os.path.join(t, relpath)
+    with open(p, encoding="utf-8") as fh:
+        s = fh.read()
+    new = _re.sub(pattern, replacement, s, flags=_re.M)
+    assert new != s, f"setup failed: {pattern!r} matched nothing in {relpath}"
+    with open(p, "w", encoding="utf-8") as fh:
+        fh.write(new)
+
+
 CASES = []
 ACCEPTS = []
 
@@ -206,6 +219,26 @@ case("an exemption whose reason is a token, not a reason", "reachability",
      lambda t: replace_line(t, "scripts/routing-exemptions.txt",
                             "lens review-strategy-selector 5:",
                             "lens review-strategy-selector 5: xxx yyy.\n"))
+
+case("a pattern bullet the appendix parser cannot recognise", "reachability",
+     lambda t: edit(t, f"{SK}/review-strategy-selector/catalog.md",
+                    "- **7. Close with fresh eyes:**", "- **7. Close with fresh eyes.**"),
+     expect="does not match '- **N. Title:**'")
+
+case("two composition patterns sharing one number", "reachability",
+     lambda t: edit(t, f"{SK}/review-strategy-selector/catalog.md",
+                    "- **7. Close with fresh eyes:**", "- **6. Close with fresh eyes:**"),
+     expect="is used twice")
+
+case("a compose step whose catalog has no appendix to cite", "reachability",
+     lambda t: edit(t, f"{SK}/planning-strategy-selector/catalog.md",
+                    "## Appendix: Composition Patterns", "## Appendix: Ways to combine these"),
+     expect="has no '## Appendix: Composition Patterns'")
+
+case("an appendix whose patterns carry no numbers at all", "reachability",
+     lambda t: replace_all_lines(t, f"{SK}/debug-operate-strategy-selector/catalog.md",
+                                 r"^- \*\*(\d+)\. ", "- **"),
+     expect="carry no numbers")
 
 case("a composition pattern the compose step never cites", "reachability",
      lambda t: edit(t, f"{SK}/review-strategy-selector/SKILL.md",

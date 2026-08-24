@@ -456,7 +456,7 @@ def title_words(title):
     return {w for w in re.findall(r"[a-z]{4,}", title.lower()) if w not in TITLE_STOPWORDS}
 
 
-def routing_prose(sel_text):
+def routing_prose(sel_text, strip_patterns=True):
     """The selector text a routing citation could live in.
 
     Frontmatter is metadata, a heading routes nothing, and a code span, a URL, a
@@ -475,7 +475,8 @@ def routing_prose(sel_text):
     sel_text = re.sub(r"https?://\S+", " ", sel_text)
     # "pattern 6" is a composition pattern, a separate numbering from the lenses; without this
     # strip a pattern citation can be read as a lens citation and route a lens nobody routed
-    sel_text = re.sub(r"(?i)\b(?:step|rule|axis|part|pattern)[ \t]+\d+", " ", sel_text)
+    kinds = "step|rule|axis|part|pattern" if strip_patterns else "step|rule|axis|part"
+    sel_text = re.sub(r"(?i)(?<!-)\b(?:%s)[ \t]+\d+" % kinds, " ", sel_text)
     sel_text = re.sub(
         r"(?i)\b(?:review|verification|verify|planning|debug-operate|debug|communication)[ \t]+#\d+",
         " ", sel_text)
@@ -658,14 +659,38 @@ def check_pattern_reachability():
     total = 0
     for d, cat_path in sorted(catalog_paths().items()):
         cat = read(cat_path)
-        m = re.search(r"^## Appendix: Composition Patterns\s*$", cat, re.M)
+        m = re.search(r"^## Appendix: Composition Patterns\b.*$", cat, re.M)
         if not m:
+            # a catalog with no appendix is fine (communication states that exception), but a
+            # catalog whose selector has a compose step and no appendix to cite is not
+            if re.search(r"^## Step \d+: Compose", read(os.path.join(SKILLS, d, "SKILL.md")), re.M):
+                fail("reachability", f"{d}: its selector has a compose step but the catalog has no "
+                                     f"'## Appendix: Composition Patterns' for it to cite")
             continue
         body = cat[m.end():]
         nxt = re.search(r"^## ", body, re.M)
         if nxt:
             body = body[:nxt.start()]
-        pats = {int(n): t for n, t in re.findall(r"^- \*\*(\d+)\. (.+?):\*\*", body, re.M)}
+        # Anything that looks like a pattern bullet must parse as one. A period for the colon,
+        # an asterisk bullet, the colon outside the bold, an indented line: each of those used to
+        # drop the pattern out of the checked set with no failure at all.
+        pats, seen_nums = {}, []
+        for line in body.splitlines():
+            if not re.match(r"^\s*[-*+] \*\*", line):
+                continue
+            mm = re.match(r"^- \*\*(\d+)\. (.+?):\*\*", line)
+            if not mm:
+                fail("reachability",
+                     f"{d}: {line.strip()[:60]!r} sits in the composition appendix and does not "
+                     f"match '- **N. Title:**', so no check can see it")
+                continue
+            num = int(mm.group(1))
+            seen_nums.append(num)
+            pats[num] = mm.group(2)
+        if len(seen_nums) != len(set(seen_nums)):
+            dupes = sorted({x for x in seen_nums if seen_nums.count(x) > 1})
+            fail("reachability", f"{d}: composition pattern number {dupes} is used twice, so two "
+                                 f"patterns share one address")
         if not pats:
             fail("reachability", f"{d}: has a composition appendix whose patterns carry no numbers")
             continue
@@ -676,16 +701,26 @@ def check_pattern_reachability():
         if not step:
             fail("reachability", f"{d}: selector has no compose step to cite its patterns from")
             continue
-        prose = step.group(0)
+        # Use the lens half's primitives rather than a second copy of its loop: the first
+        # draft re-implemented the match and dropped all three of its hardenings, so a
+        # neighbour's title word vouched across a digit, an empty title-word set failed open,
+        # and headings, code spans and "Rule 3" were all read as citations.
+        # keep "pattern 5" here: it is this half's own citation form, not noise
+        prose = routing_prose(step.group(0), strip_patterns=False)
         missing = []
         for n, title in sorted(pats.items()):
             words = title_words(title)
             hit = False
+            # the canonical address is "<catalog> pattern #N", which the bare-number scan below
+            # cannot see, because a preceding "#" is excluded there to keep anchors out
+            if re.search(r"(?i)\bpattern\s*#%d(?![\d])" % n, step.group(0)):
+                hit = True
             for mm in re.finditer(r"(?<![\w.\-#])%d(?![\d])" % n, prose):
-                after = prose[mm.end():mm.end() + 60].lower()
-                if not words or any(re.search(r"\b%s\b" % re.escape(w), after) for w in words):
-                    hit = True
+                if hit:
                     break
+                after = re.split(r"\d", prose[mm.end():mm.end() + 60])[0].lower()
+                if words and any(re.search(r"\b%s\b" % re.escape(w), after) for w in words):
+                    hit = True
             if not hit:
                 missing.append(n)
         total += len(pats)

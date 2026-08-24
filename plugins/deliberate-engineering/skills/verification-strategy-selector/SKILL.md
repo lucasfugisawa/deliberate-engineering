@@ -72,9 +72,7 @@ Open only the parts matching your classification:
 
 ## Step 4: Compose the verification
 
-The composition patterns are numbered in the catalog's Appendix: **1** expectation-first, **2** reproduce then fix then re-confirm, **3** parity over argument, **4** prove then re-prove, **5** promotion ladder, **6** calibrate depth to irreversibility, **7** capture don't infer, **8** no silent skipping. Read them there rather than here. This step used to restate a partial list, and the two copies drifted: three patterns existed only in the Appendix. An operator override addresses one as `verification pattern #N`, and a pattern number is not a strategy number, so cite a pattern as "pattern 5" and a strategy as a bare "5".
-
-Two of them carry a strategy citation this phase depends on: pattern 4 re-verifies through strategy 5, and pattern 7 captures through strategy 16.
+The composition patterns are numbered in the catalog's Appendix: **1** expectation-first, **2** reproduce then fix then re-confirm, **3** parity over argument, **4** prove then re-prove, **5** promotion ladder, **6** calibrate depth to irreversibility, **7** capture don't infer, **8** no silent skipping. Apply them, and read them there rather than here. This step used to restate a partial list, and the two copies drifted: three patterns existed only in the Appendix. An operator override addresses one as `verification pattern #N`, and a pattern number is not a strategy number, so cite a pattern as "pattern 5" and a strategy as a bare "5".
 
 Two standing-rule reminders belong at this step and are rules rather than patterns:
 

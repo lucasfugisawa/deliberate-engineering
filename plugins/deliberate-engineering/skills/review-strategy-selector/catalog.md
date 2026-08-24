@@ -379,5 +379,5 @@ Strategies **compose**. The strongest pattern is to *rotate the lens each pass* 
 - **3. Barrier when you need the whole:** Only synchronize between phases when the next phase needs *all* findings together (e.g. global dedup before expensive verification).
 - **4. Scale to the ask:** "Find bugs" → few finders, simple vote. "Exhaustive audit" → large finder pool + 3–5 adversarial votes + synthesis.
 - **5. Discovery before remediation:** Keep a review pass read-only: report what you find and stop, rather than fixing as you go. Findings stay trustworthy and complete when the audit doesn't mutate the artifact mid-pass; remediation is a separate, later step.
-- **6. No silent truncation:** If the review limited coverage (top-N, sampling, no retry), **log** what was left out: truncating silently reads as "covered everything."
+- **6. No silent truncation:** If the review limited coverage (top-N, sampling, no retry), **log what you deliberately skipped and why**: truncating silently reads as "covered everything," which is a lie of omission.
 - **7. Close with fresh eyes:** The last pass should be independent of the edit history.

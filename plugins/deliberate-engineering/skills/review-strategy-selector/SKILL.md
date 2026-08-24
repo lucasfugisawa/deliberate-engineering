@@ -89,13 +89,12 @@ This is what makes a recalled review visibly incomplete: reused conclusions carr
 
 ## Step 4: Compose the passes
 
-The composition patterns are numbered in the catalog's Appendix: **1** lens rotation, **2** find then verify, **3** barrier when you need the whole, **4** scale to the ask, **5** discovery before remediation, **6** no silent truncation, **7** close with fresh eyes. Read them there rather than here. This step used to restate a partial list, and the two copies drifted: three patterns existed only in the Appendix. An operator override addresses one as `review pattern #N`, and note that a pattern number is not a lens number, so cite a pattern as "pattern 6" and a lens as a bare "6".
+The composition patterns are numbered in the catalog's Appendix: **1** lens rotation, **2** find then verify, **3** barrier when you need the whole, **4** scale to the ask, **5** discovery before remediation, **6** no silent truncation, **7** close with fresh eyes. Apply them, and read them there rather than here. This step used to restate a partial list, and the two copies drifted: three patterns existed only in the Appendix. An operator override addresses one as `review pattern #N`, and note that a pattern number is not a lens number, so cite a pattern as "pattern 6" and a lens as a bare "6".
 
-Three of them mean something in this phase that the Appendix does not say:
+Two of them mean something in this phase that the Appendix does not say:
 
 - **Pattern 2 here**: "verify" is lens 9's refutation vote *inside* review; confirming a candidate against reality is the `verification-strategy-selector`'s job, not this pattern's. For an unknown-size audit, loop until dry with lens 6.
-- **Pattern 5 here**: this is why a review pass reports and stops. Fixing as you go mutates the artifact the remaining lenses are judging, so their findings stop being about the thing you were asked to review.
-- **Pattern 7 here**: the closing pass must be independent of the edit history AND of the prior conclusions. In-context re-reading inherits what you already concluded, so it confirms rather than re-sees; dispatch it as a fresh-context agent, or defer it to a new session. Always.
+- **Pattern 7 here**: the closing pass (3) must be independent of the edit history AND of the prior conclusions. In-context re-reading inherits what you already concluded, so it confirms rather than re-sees; dispatch it as a fresh-context agent, or defer it to a new session. Always.
 
 Two habits belong at this step and are lenses rather than patterns:
 

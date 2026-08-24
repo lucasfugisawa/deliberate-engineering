@@ -199,6 +199,6 @@ The review catalog's Part B (empirical validation, real-data validation, source-
 - **3. Parity over argument:** For a change meant to preserve behavior, demonstrate equivalence by running the old and new paths on the same inputs and diffing (23), rather than reasoning that they match.
 - **4. Prove → re-prove:** Reach a conclusion, then re-verify it independently (5) before acting. The second pass is where the rationalized error dies.
 - **5. Promotion ladder:** Run the cheapest faithful verification at each environment gate (Part C); never skip a gate because the next one "will catch it."
-- **6. Calibrate depth to irreversibility:** A reversible config tweak needs a dry-run; a production data deletion needs the full mutation protocol (20–21) plus post-deploy confirmation (Part D).
+- **6. Calibrate depth to irreversibility:** Match the protocol to the cost of being wrong, not to the size of the change. A reversible config tweak needs a dry-run; a production data deletion needs the full mutation protocol (20–21) plus post-deploy confirmation (Part D).
 - **7. Capture, don't infer:** When the real payload/metric is obtainable, capture it (16); inference is a hypothesis, not verification.
 - **8. No silent skipping:** If a check couldn't be run faithfully (sandbox limit, no pre-prod), say so and name who/what is the authority for it (6): never let an unrun check read as a passed one.

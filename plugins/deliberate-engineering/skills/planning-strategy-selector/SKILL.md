@@ -67,9 +67,9 @@ Open only the parts matching your non-trivial axes:
 
 ## Step 4: Compose the plan
 
-The composition patterns are numbered in the catalog's Appendix: **1** calibrate first, **2** scope down then ground up, **3** spike before you plan the unknown, **4** inventory before estimate, **5** slice along the sequence, **6** decisions carry recommendations, **7** don't over-plan the trivial. Read them there rather than here. This step used to restate a partial list, and the two copies drifted: patterns 3 and 7 existed only in the Appendix. An operator override addresses one as `planning pattern #N`, and a pattern number is not a lens number, so cite a pattern as "pattern 5" and a lens as a bare "5".
+The composition patterns are numbered in the catalog's Appendix: **1** calibrate first, **2** scope down then ground up, **3** spike before you plan the unknown, **4** inventory before estimate, **5** slice along the sequence, **6** decisions carry recommendations, **7** don't over-plan the trivial. Apply them, and read them there rather than here. This step used to restate a partial list, and the two copies drifted: pattern 7 existed only in the Appendix. An operator override addresses one as `planning pattern #N`, and a pattern number is not a lens number, so cite a pattern as "pattern 5" and a lens as a bare "5".
 
-Each of them names the lenses it composes, in the Appendix itself: pattern 1 runs through lens 10, pattern 3 through lens 8, pattern 4 through lens 6, pattern 5 through lenses 11, 12 and 13, and pattern 6 through lens 14. Two are worth stating here because they decide how much of the catalog you open at all: **pattern 1**, which sets ceremony before anything else, and **pattern 7**, which is the licence to stop early and say so.
+Five of them name the lenses they compose, in the Appendix itself: pattern 1 through lens 10, pattern 3 through lens 8, pattern 4 through lens 6, pattern 5 through lenses 11, 12 and 13, and pattern 6 through lens 14. Two are worth naming here because they decide how much of the catalog you open at all: pattern 1, which sets ceremony before anything else, and pattern 7, which is the licence to stop early and say so.
 
 ## Step 5: Coexistence and precedence
 
