@@ -1,6 +1,6 @@
 # Orchestration templates
 
-The three contracts that carry a program, read on demand from `SKILL.md` when you author one, not loaded up front. Each skeleton **prescribes the fields, not the formatting**: the fields are the part that made real handoffs work, so keep them all; the headings, order, and prose are yours to adapt. Start flat and grow a structure only when a section actually overflows.
+The three contracts that carry a program, read from `SKILL.md` before you author one. Each skeleton **prescribes the fields, not the formatting**: the fields are the part that made real handoffs work, so keep them all; the headings, order, and prose are yours to adapt. Start flat and grow a structure only when a section actually overflows.
 
 Two of these are per-dispatch (handoff, work report); the tracker is per-program and rewritten on every disposition. The orchestration session **generates** the mechanical fields from a live-state read at dispatch and hand-writes only the judgment fields (marked below); a worker fills the whole work report.
 

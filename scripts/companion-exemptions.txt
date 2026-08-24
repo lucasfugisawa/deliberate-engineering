@@ -1,0 +1,7 @@
+# Skills whose top-level companion .md files are NOT operative content, one
+# '<skill-dir>/<file>: reason' per line. An exemption is a stated decision, not
+# a silent skip. Invariant 10 asks that a skill point early at any file it
+# cannot do its job without; a file it can do its job without belongs here.
+
+deliberate-engineering-voice/contract.md: reference, not operative. voice's operative content is the operator's profile under ~/.claude/deliberate-engineering/voice/, and the full load protocol (core, then register, then archetype, never the whole directory) is inline in SKILL.md. contract.md documents the profile format for the sibling that builds it.
+deliberate-engineering-voice/bootstrap.md: reference, not operative, and deliberately not run on this path. It is the build method owned by deliberate-engineering-voice-build; the drafting path is told outright that mid-draft is not the moment to build a profile.

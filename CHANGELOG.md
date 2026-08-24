@@ -2,6 +2,23 @@
 
 All notable changes to the `deliberate-engineering` plugin are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/), and the project aims at [Semantic Versioning](https://semver.org/) (pre-1.0: minor covers features and breaking changes, patch covers fixes).
 
+## [0.14.1] - 2026-08-24
+
+`conduct` was run from outside for the first time, on a destructive database cutover with five thousand real rows and a genuine point of no return. Two things came back. The first is the best result this plugin has: **Rule 1 held as behaviour, not as text.** Both agents had the machine, a brief that said ship and do the work, and a runbook whose own words were "should be fine", and both finished with the database byte-identical, the column intact and nothing deployed. Nothing had ever tested that.
+
+The second is why this release exists. The contract that `conduct` is built around never reached either agent. One of them authored the entire artifact, gates and expected values and rollback, which is exactly the moment its pointer says the file is due, and the read never happened. Across both runs, twelve of the contract's required-core fields appear zero times, and neither produced a conductor doc.
+
+### Fixed
+- **`conduct` and `orchestrate` now tell you to read their contract, at the top of the body.** Both described their `templates.md` as "read on demand", forty-one and seventy-four lines into their bodies. The five selectors and `voice-build` carry an imperative in the first dozen lines, and the review selector was measured under identical instructions opening its catalog unprompted and quoting the sentence that sent it. One form fired and one did not. The pointer is now imperative and early in both, and the duplicate mention at the old site is gone rather than reworded, so the instruction has one home.
+- **The change to `orchestrate` is parity, not evidence.** Its text shape was identical and its fix is justified by the rule the other six already follow. It was never observed to fail: the probe that would have shown it stopped before the authoring step its pointer is gated on. Identical phrasing is not a demonstrated defect and this entry does not claim one.
+
+### Added
+- **Invariant 10: every companion file is pointed at where the pointer fires.** Two narrow checks. No `SKILL.md` may use "read on demand", the one construction measured to produce no read; and every top-level companion `.md` must be named inside the first twelve lines of its `SKILL.md` body, where every pointer observed to fire lives. Neither proves a pointer fires, and the invariant says so in its own docstring. Together they pin the two properties that separated the pointer that fired from the one that did not. Exemptions live in `scripts/companion-exemptions.txt` with a stated reason; `deliberate-engineering-voice` holds the only two, because its operative content is the operator's profile and its load protocol is inline.
+- **Six mutation controls and one positive control for it**, taking the suite to sixty-nine and five. Each of the invariant's five `fail()` calls was disarmed in turn and the suite turned red on the control that names it, not on a neighbour. Three of the six controls were green for the wrong reason first: one used `str.replace(old, new, 0)`, which replaces nothing; one removed a mention from a line that carried two; and one landed a boundary test one line outside the window it was testing.
+
+### Note on what this does not establish
+That the contract is right. It was never exercised, so its destructive-hemisphere fields remain as unpiloted as the skill's own honest-limitation section says. This release moves the problem one step earlier: before a contract can be wrong in the field, it has to arrive there.
+
 ## [0.14.0] - 2026-08-24
 
 The plugin was run from outside for the first time: on a small service written for the purpose, by fresh agents told to do an ordinary review and to report friction as first-time users. Six cycles of internal audit had left it extremely well verified against itself and unverified against anything else. This is what that test returned.

@@ -7,6 +7,8 @@ description: "Use when the engineering work is a program too large for one sessi
 
 The deliberate layer of *running a program that will not fit in one session*. Where the router conducts the phases **within** a session and the four selectors each own one phase's method, this skill orchestrates the units of work **across** sessions: it decides what to dispatch, drafts the contract that lets a fresh session execute it, verifies what returns against primary evidence, dispositions it, and keeps one authoritative record of where the whole program stands. It is an **orchestrator, not an engine**: it decides shape and delegates mechanism, exactly as the router does, one altitude up.
 
+**Read `templates.md` in this directory before you author any of the three contracts.** It carries the handoff, work-report and program-tracker skeletons with their required fields. This skill body *names* the fields in prose; `templates.md` *is* the skeleton, and a contract authored without it is missing fields the field record put there.
+
 The value it chases is **parallelism-without-blocking, human control, and human visibility**, in that spirit and not as labor-saving. The orchestration session stays unblocked while smaller units execute in parallel elsewhere; the operator keeps the ability to intervene when a unit stalls and stays conscious of each deliverable. If you find yourself optimizing for "dispatch more with less human attention," you have the wrong objective: that reframe drives every call below.
 
 ## vs the router: across sessions, not within one
@@ -75,7 +77,7 @@ The archetype is an adversarial critique, a read-only survey, or a scoped search
 
 ## The artifacts
 
-Three contracts carry the program; their skeletons live in `templates.md` in this directory, read on demand when you author one rather than loaded up front. The skeletons **prescribe the required fields and leave the layout free**: the fields are what made real handoffs work, and the formatting is yours to adapt, and to grow only when a section actually overflows (start flat).
+Three contracts carry the program; their skeletons live in `templates.md` in this directory. The skeletons **prescribe the required fields and leave the layout free**: the fields are what made real handoffs work, and the formatting is yours to adapt, and to grow only when a section actually overflows (start flat).
 
 - **Handoff** (outbound): mandate and why; the operator overrides already in force on the decomposition, so the worker inherits that calibration; premise-freshness freeze (the live heads/PR/branch state, read *now*); exact change and scope; gates to run; verification steps; the required WORK REPORT format; an explicit DO-NOT / out-of-scope list. The orchestration session **generates** most of this from a live-state read at dispatch time; only the genuine-judgment fields (the mandate, the scope DO-NOTs) are author-filled. A handoff must be resolvable by a session holding *only* the handoff (the same bar Rule 9 sets for shipped artifacts).
 - **Work report** (inbound): the new state (SHAs/heads); what changed; gate and test evidence; decisions and judgment calls made; an explicit "not done per dispatch" list.

@@ -195,6 +195,49 @@ def append_exemption(t, line):
 ONLY_14 = ("in play** \u2192 14 source-of-truth verification: confirm you are reading the "
            "canonical copy before judging it.")
 
+# --- Invariant 10: the companion pointer ---------------------------------
+
+case("reintroducing the pointer form measured not to fire", "companion",
+     lambda t: edit(t, f"{SK}/deliberate-engineering-conduct/SKILL.md",
+                    "**Read `templates.md` in this directory before you author the contract.**",
+                    "`templates.md` beside this skill is read on demand when you conduct."),
+     expect="producing no read")
+
+case("burying a companion pointer past the head of the body", "companion",
+     lambda t: edit(t, f"{SK}/deliberate-engineering-orchestrate/SKILL.md",
+                    "**Read `templates.md` in this directory before you author any of the three "
+                    "contracts.** It carries the handoff, work-report and program-tracker skeletons "
+                    "with their required fields. This skill body *names* the fields in prose; "
+                    "`templates.md` *is* the skeleton, and a contract authored without it is missing "
+                    "fields the field record put there.\n\n",
+                    ""),
+     expect="past the first")
+
+case("a companion file the skill never names", "companion",
+     lambda t: edit(t, f"{SK}/planning-strategy-selector/SKILL.md",
+                    "catalog.md", "the reference file", count=-1),
+     expect="never named in the body")
+
+case("a companion exemption with no reason", "companion",
+     lambda t: open(os.path.join(t, "scripts", "companion-exemptions.txt"), "a").write(
+         "\ndeliberate-engineering-conduct/templates.md:\n"),
+     expect="exempted with no reason")
+
+case("a companion exemption that points at nothing", "companion",
+     lambda t: open(os.path.join(t, "scripts", "companion-exemptions.txt"), "a").write(
+         "\ndeliberate-engineering-conduct/nonexistent.md: stale\n"),
+     expect="which is not a companion file")
+
+case("a companion exemption line in the wrong shape", "companion",
+     lambda t: open(os.path.join(t, "scripts", "companion-exemptions.txt"), "a").write(
+         "\ndeliberate-engineering-voice/contract.md\n"),
+     expect="is not '<dir>/<file>: <reason>'")
+
+accepts("a companion named at the last line of the head window",
+        lambda t: edit(t, f"{SK}/deliberate-engineering-conduct/SKILL.md",
+                       "**Read `templates.md` in this directory before you author the contract.**",
+                       "\n\n\n\n\n\n**Read `templates.md` in this directory before you author the contract.**"))
+
 accepts("the lens-N form routes",
         lambda t: edit(t, f"{SK}/review-strategy-selector/SKILL.md", ONLY_14,
                        "in play** \u2192 apply lens 14 before judging anything."))
