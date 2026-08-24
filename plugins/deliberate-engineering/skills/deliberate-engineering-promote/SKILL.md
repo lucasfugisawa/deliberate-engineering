@@ -29,7 +29,7 @@ The gate audits the candidate file only: it does not audit the catalog itself (t
 
 After the leak-audit gate passes, classify the candidate into one of two routes:
 
-**Isolated:** the candidate adds a new lens to an existing catalog, or modifies an existing lens in place. The catalog file structure, the numbering system, and the group divisions stay unchanged. This is the common case: one lens in, one lens out, append-only.
+**Isolated:** the candidate adds a new lens or composition pattern to an existing catalog, or modifies an existing one in place. Appending a numbered pattern to an appendix is an append-only edit in the pattern namespace, not a change to the numbering system, so it takes this route. The catalog file structure, the numbering system, and the group divisions stay unchanged. This is the common case: one lens in, one lens out, append-only.
 
 **Structural:** the candidate requires a new catalog file, a reorganization of an existing catalog, a change to the numbering or grouping system, or a modification to the standing rules. Structural changes touch the plugin's architecture, not just its content, and they demand a full design cycle (brainstorm, spec, plan, build).
 
@@ -91,7 +91,7 @@ For a structural candidate (one that requires a new catalog, a reorganization, a
 
 The candidate file stays pending. The author takes the recommendation, runs the design cycle, and manually applies the structural change (or decides to drop it). The promote skill does not touch the catalog on the structural route: it only provides the analysis and the recommendation.
 
-## The append-only invariant: never renumber existing lenses
+## The append-only invariant: never renumber existing lenses or patterns
 
 This is a hard invariant binding all catalog edits: **NEVER renumber an existing lens.** Lens numbers are stable-for-life identifiers. Adopters cite them in override files (e.g., `review #35: disable`), selectors cite them in session notes, and documentation links to them by number. Renumbering `### 35.` to `### 36.` would silently break every override, every citation, every link that references #35. This breakage is invisible and irreversible: the override file would disable the wrong lens, and the adopter would never know.
 

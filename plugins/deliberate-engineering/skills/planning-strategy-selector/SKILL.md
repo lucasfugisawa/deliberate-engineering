@@ -63,7 +63,7 @@ Open only the parts matching your non-trivial axes:
 
 **Entering here directly.** These lenses are the same whether you arrived through `/deliberate-engineering:start` or called this phase yourself, but four things the router would have carried do not come with a direct call, so carry them here. The nine standing rules in `deliberate-engineering-rules` hold regardless, including the human gate on anything irreversible or outward-facing. Write your place at each checkpoint through `deliberate-engineering-state` (Rule 6), so a compaction or a new session resumes from what happened rather than from recall. Re-classify out loud if the work turns out heavier or lighter than it looked, and say what moved. And when the next thing you produce is a communication rather than code, consult `communication-collaboration-selector` before writing it.
 
-**Operator overrides.** Before applying the selected lenses, consult `deliberate-engineering-overrides`: honor any override on a lens you selected (disable / modify), and ask it for any operator-authored `add:` entry for this catalog, which carries no shipped number and so is invisible to a lookup keyed on your selection. Declare every deviation in the Output.
+**Operator overrides.** Before applying the selected lenses, consult `deliberate-engineering-overrides`: honor any override on a lens you selected (disable / modify), and ask it for any operator-authored `add: <catalog>` lens entry for this catalog, which carries no shipped number and so is invisible to a lookup keyed on your selection. An `add: <catalog> pattern` entry is not one of these; it is honored where the patterns are composed. Declare every deviation in the Output.
 
 ## Step 4: Compose the plan
 
@@ -71,7 +71,7 @@ The composition patterns are numbered in the catalog's Appendix: **1** calibrate
 
 Five of them name the lenses they compose, in the Appendix itself: pattern 1 through lens 10, pattern 3 through lens 8, pattern 4 through lens 6, pattern 5 through lenses 11, 12 and 13, and pattern 6 through lens 14. Two are worth naming here because they decide how much of the catalog you open at all: pattern 1, which sets ceremony before anything else, and pattern 7, which is the licence to stop early and say so.
 
-**Operator overrides on patterns.** Before applying these, consult `deliberate-engineering-overrides` for any override on a composition pattern you are about to apply, addressed as `<catalog> pattern #N` and carrying `disable` or `modify` the same way a lens override does. A pattern override is honored here rather than at lens selection, because a pattern is applied to the lenses and not to the artifact. Declare every deviation in the Output.
+**Operator overrides on patterns.** Before composing, consult `deliberate-engineering-overrides` twice over: for any `disable` or `modify` on a composition pattern you are about to apply, addressed as `<catalog> pattern #N`; and for any `add: <catalog> pattern` entry, which carries no shipped number and so is invisible to a lookup keyed on what you selected. Both are honored here rather than at lens selection, because a pattern is applied to the lenses and not to the artifact. Declare every deviation in the Output.
 
 ## Step 5: Coexistence and precedence
 

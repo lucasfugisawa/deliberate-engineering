@@ -331,7 +331,7 @@ def check_section_refs():
 IDENTICAL_BLOCKS = [
     (
         "Operator overrides on patterns consult",
-        "**Operator overrides on patterns.** Before applying these",
+        "**Operator overrides on patterns.** Before composing",
         [
             "planning-strategy-selector", "review-strategy-selector",
             "verification-strategy-selector", "debug-operate-strategy-selector",
@@ -660,7 +660,7 @@ def check_pattern_reachability():
     parentheses, so there the two namespaces do not collide.
 
     This exists because all four sets were stated twice, in the catalog appendix
-    and in the selector, and all four had drifted: nine patterns were in an
+    and in the selector, and all four had drifted: eight patterns were in an
     appendix and absent from the selector that said it applied them.
     """
     before = len(failures)

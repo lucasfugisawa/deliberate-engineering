@@ -127,7 +127,7 @@ def drop_every_consult(t, relpath):
     guard instead. To test the consult check's own claim, both have to go.
     """
     for old in ("Before applying the selected lenses, consult `deliberate-engineering-overrides`",
-                "Before applying these, consult `deliberate-engineering-overrides`"):
+                "Before composing, consult `deliberate-engineering-overrides`"):
         edit(t, relpath, old, old.replace("consult `deliberate-engineering-overrides`", "think about it"))
 
 

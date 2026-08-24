@@ -34,7 +34,7 @@ When the file does not exist, this skill does nothing and says nothing. Override
 
 ## The override file
 
-The override file lives at `~/.claude/deliberate-engineering/overrides.md`. Each entry has a header in one of two forms (`<target>: <operation>` for a specific lens or rule, or `add: <catalog>` for an operator-authored strategy) followed by a body that depends on the operation.
+The override file lives at `~/.claude/deliberate-engineering/overrides.md`. Each entry has a header in one of three forms (`<target>: <operation>` for a specific lens, composition pattern or rule, `add: <catalog>` for an operator-authored lens, or `add: <catalog> pattern` for an operator-authored composition pattern) followed by a body that depends on the operation.
 
 ```markdown
 ## review #35: disable
@@ -67,10 +67,10 @@ The override file lives at `~/.claude/deliberate-engineering/overrides.md`. Each
 **Reading contract:**
 - Headers are `## <target>: <operation>` where target is `review #N`, `planning #N`, `verification #N` or `verify #N`, `debug-operate #N` or `debug #N`, `communication #N`, `<catalog> pattern #N` for a composition pattern, or `Rule N`, and operation is `disable`, `modify`, or `add`. A catalog may be cited by its catalog name or its command name (`verify` and `verification` mean the same catalog, as do `debug` and `debug-operate`), since this file is read by an agent, not a parser.
 - For an `add` that contributes a composition pattern rather than a lens, the header is `## add: <catalog> pattern`, and the body takes the same fields as a catalog `add`. For all other `add` entries, the header is `## add: <catalog>` where catalog is `review`, `planning`, `verification` or `verify`, `debug-operate` or `debug`, `communication`, or `rules`.
-- **disable** body: `**Why:**` (optional), the operator's note on why this lens is skipped.
-- **modify** body: `**Add:**` (required), the annotation to read alongside the shipped lens/rule text; the shipped text stays intact.
+- **disable** body: `**Why:**` (optional), the operator's note on why this lens, pattern or rule is skipped.
+- **modify** body: `**Add:**` (required), the annotation to read alongside the shipped lens, pattern or rule text; the shipped text stays intact.
 - **add** body: `**Name:**` (required), the strategy's name for reference; `**When:**` (required for a catalog `add`), when to apply this operator-authored lens; `**Apply:**` (required), the lens content itself.
-- **`add: rules` is the exception on `**When:**`**, and deliberately so: a standing rule holds unconditionally, the way the shipped nine do, so it has no when-condition to state. `**Name:**` and `**Apply:**` are required; `**When:**` is optional, and where an operator writes one it is read as *scope* (the environment or class of work the rule covers), never as a gate that must be satisfied before the rule counts. A missing `**When:**` on an `add: rules` entry is correct, not malformed, and must never be treated as an ambiguity to stop and ask about: this is the entry most likely to carry a safety instruction, and turning it into a question at session start would defeat the read.
+- **`add: <catalog> pattern` and `add: rules` are the exceptions on `**When:**`**, and deliberately so: a standing rule holds unconditionally, the way the shipped nine do, and a composition pattern holds unconditionally too, the way the shipped ones do (every compose step says to apply them, and not one of them states a when-condition). Neither has a when-condition to state. `**Name:**` and `**Apply:**` are required; `**When:**` is optional, and where an operator writes one it is read as *scope* (the environment or class of work the rule covers), never as a gate that must be satisfied before the rule counts. A missing `**When:**` on an `add: rules` entry is correct, not malformed, and must never be treated as an ambiguity to stop and ask about: this is the entry most likely to carry a safety instruction, and turning it into a question at session start would defeat the read.
 
 If the file does not exist, this skill is silent and does nothing. Override is opt-in.
 
@@ -100,7 +100,7 @@ The flow when this skill is invoked:
 
 1. The applier does its own work normally, using the shipped catalogs: a selector classifies and picks lenses, `conduct` authors its contract fields, `orchestrate` decomposes, the router sets the band. Not all of them are selectors, and not all of them "select": what they share is that they apply a numbered lens.
 2. The applier consults this skill. This skill reads the file if it exists.
-3. For each applied lens or pattern with an override, this skill applies the operation instead of the shipped content. Separately, and not conditioned on anything the applier selected, it offers every `add: <catalog>` entry for that catalog as an additional operator-authored lens, applied when its `**When:**` guidance fits the work. An `add` entry maps to no shipped number, so a consult that only looks up the selected lenses will never find one: look for them explicitly.
+3. For each applied lens or pattern with an override, this skill applies the operation instead of the shipped content. Separately, and not conditioned on anything the applier selected, it offers every `add: <catalog>` entry for that catalog as an additional operator-authored lens, and every `add: <catalog> pattern` entry as an additional composition pattern at the compose step, applied when its `**When:**` guidance fits the work. An `add` entry maps to no shipped number, so a consult that only looks up the selected lenses will never find one: look for them explicitly.
 4. This skill declares the deviation in the visible output: **always, never silent.** Every override that fires is reported.
 
 This skill does not re-run the applier's own judgment; it honors what the applier chose and applies the overrides to those choices. For `add` entries, the applier's existing classification (its own axes, whichever it uses, plus the lenses it applied) informs whether the `add` entry's `**When:**` guidance fits; this skill does not second-guess that judgment.
@@ -123,7 +123,7 @@ The boundary: honoring an override is not the same as treating it as routine. A 
 
 ## Ambiguity and conflict
 
-If an override is ambiguous, malformed, or contradicts another override, do not guess. Name the conflict, describe why it is undecidable, and ask one question with an embedded recommendation, the Rule 4 posture. Never silently skip an override because it is unclear; that would be the same as ignoring it, which defeats the purpose of having a durable override file. Examples of conflict: two `modify` entries for the same lens with contradictory `**Add:**` annotations; an `add: <catalog>` entry with no `**When:**` field, or any `add` entry with no `**Apply:**` field (a missing `**When:**` on `add: rules` is correct, not a conflict); a `disable` and a `modify` for the same target in the same file. Ask once, recommend a resolution, proceed when the operator clarifies.
+If an override is ambiguous, malformed, or contradicts another override, do not guess. Name the conflict, describe why it is undecidable, and ask one question with an embedded recommendation, the Rule 4 posture. Never silently skip an override because it is unclear; that would be the same as ignoring it, which defeats the purpose of having a durable override file. Examples of conflict: two `modify` entries for the same lens with contradictory `**Add:**` annotations; an `add: <catalog>` lens entry with no `**When:**` field, or any `add` entry with no `**Apply:**` field (a missing `**When:**` on `add: rules` is correct, not a conflict); a `disable` and a `modify` for the same target in the same file. Ask once, recommend a resolution, proceed when the operator clarifies.
 
 ## Coexistence and precedence
 
