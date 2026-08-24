@@ -459,24 +459,23 @@ def title_words(title):
 def routing_prose(sel_text):
     """The selector text a routing citation could live in.
 
-    Frontmatter is metadata, a heading routes nothing, and a code span, a URL,
-    a step or rule reference, or a citation of another catalog ("verification
-    #22") all carry digits that are not this catalog's lens numbers. Each of
-    those was demonstrated to route a lens that no step actually names.
+    Frontmatter is metadata, a heading routes nothing, and a code span, a URL, a
+    step or rule reference, or a citation of another catalog ("verification #22")
+    all carry digits that are not this catalog's lens numbers.
+
+    Block structure is deliberately NOT parsed. An earlier version stripped
+    fences, indented blocks, HTML and tables, and did more harm than good: a
+    four-backtick fence paired with the next ordinary one and erased twenty-eight
+    lenses, and a four-space list continuation read as a code block killed a real
+    citation. What survives that removal is a false negative, which is the safe
+    direction, and it is stated as a limit rather than papered over.
     """
     sel_text = re.sub(r"^---\n.*?\n---\n", "", sel_text, flags=re.S)
-    sel_text = re.sub(r"(?ms)^\s*(```|~~~).*?^\s*\1\s*$", " ", sel_text)
     sel_text = re.sub(r"`[^`\n]*`", " ", sel_text)
-    sel_text = re.sub(r"(?s)<!--.*?-->", " ", sel_text)
-    sel_text = re.sub(r"<[^>\n]+>", " ", sel_text)
-    sel_text = "\n".join(
-        " " if (l.startswith("    ") or l.lstrip().startswith((">", "|")) or re.match(r"\s*\[\^", l))
-        else l
-        for l in sel_text.split("\n"))
     sel_text = re.sub(r"https?://\S+", " ", sel_text)
-    sel_text = re.sub(r"(?i)\b(?:step|rule|axis|part)\s+\d+", " ", sel_text)
+    sel_text = re.sub(r"(?i)\b(?:step|rule|axis|part)[ \t]+\d+", " ", sel_text)
     sel_text = re.sub(
-        r"(?i)\b(?:review|verification|verify|planning|debug-operate|debug|communication)\s+#\d+",
+        r"(?i)\b(?:review|verification|verify|planning|debug-operate|debug|communication)[ \t]+#\d+",
         " ", sel_text)
     return "\n".join(l for l in sel_text.split("\n") if not l.lstrip().startswith("#"))
 
@@ -505,7 +504,7 @@ def routed_lenses(sel_text, lens_titles):
                 break
             # only up to the next digit: a neighbour's name must not vouch for this one
             after = re.split(r"\d", prose[m.end():m.end() + 60])[0].lower()
-            if words and any(w in after for w in words):
+            if words and any(re.search(r"\b%s\b" % re.escape(w), after) for w in words):
                 routed.add(n)
                 break
     return routed
@@ -579,7 +578,7 @@ def check_lens_reachability():
         cat = read(cat_path)
         titles, lens_part, cur = {}, {}, None
         for line in cat.splitlines():
-            if re.match(r"^#{2,6}\s*\d", line) and not re.match(r"^### \d+\. \S", line):
+            if re.match(r"^###\s*\d", line) and not re.match(r"^### [1-9]\d*\. \S", line):
                 fail("reachability",
                      f"{d}: {line.strip()!r} looks like a lens heading and does not match "
                      f"'### N. Title', so every count and every check reads it as absent")

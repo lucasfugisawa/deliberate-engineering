@@ -75,8 +75,14 @@ CASES = []
 ACCEPTS = []
 
 
-def case(name, check, mutate, needs_git=False):
-    CASES.append((name, check, mutate, needs_git))
+def case(name, check, mutate, needs_git=False, expect=None):
+    """expect: a substring the failure must contain.
+
+    Without it a control only proves that SOME check fired, which let six of these
+    pass on the reason gate rather than on the branch they name. Five fail() calls
+    could be deleted with the suite still green.
+    """
+    CASES.append((name, check, mutate, needs_git, expect))
 
 
 def accepts(name, mutate):
@@ -176,26 +182,26 @@ accepts("the number-beside-its-title-word form routes",
         lambda t: edit(t, f"{SK}/review-strategy-selector/SKILL.md", ONLY_14,
                        "in play** \u2192 14 source-of-truth checking."))
 
-case("a lens routed only inside a fenced code block", "reachability",
-     lambda t: edit(t, f"{SK}/review-strategy-selector/SKILL.md", ONLY_14,
-                    "in play** \u2192 see the example.\n\n```\n14 source-of-truth verification\n```"))
-
-case("a lens routed only inside an HTML comment", "reachability",
-     lambda t: edit(t, f"{SK}/review-strategy-selector/SKILL.md", ONLY_14,
-                    "in play** \u2192 check the canonical copy.\n\n<!-- 14 source-of-truth verification -->"))
-
 case("a lens heading that looks like a lens and is malformed", "reachability",
      lambda t: edit(t, f"{SK}/planning-strategy-selector/catalog.md",
                     "### 20.", "### 20"))
 
 case("an exemption duplicated with different whitespace", "reachability",
-     lambda t: append_exemption(t, "\nlens  review-strategy-selector  5: a second and contradictory reason for it.\n"))
+     lambda t: append_exemption(t, "\nlens  review-strategy-selector  5: a second and contradictory reason stated for the same lens.\n"),
+     expect="is exempted twice")
 
 case("a lens exemption for a lens its Part already blankets", "reachability",
-     lambda t: append_exemption(t, "\nlens review-strategy-selector 44: already inside the Part E blanket.\n"))
+     lambda t: append_exemption(t, "\nlens review-strategy-selector 44: this lens already sits inside the Part E blanket.\n"),
+     expect="already blanketed by")
 
 case("a covers range that runs backwards", "reachability",
-     lambda t: edit(t, "scripts/routing-exemptions.txt", "covers 37-41, 43-49.", "covers 41-37, 43-49."))
+     lambda t: edit(t, "scripts/routing-exemptions.txt", "covers 37-41, 43, 44, 47-49.",
+                    "covers 41-37, 43, 44, 47-49."),
+     expect="reversed, unbounded, or not numeric")
+
+case("a lens heading numbered with a leading zero", "reachability",
+     lambda t: edit(t, f"{SK}/review-strategy-selector/catalog.md", "### 27.", "### 07."),
+     expect="looks like a lens heading")
 
 case("an exemption whose reason is a token, not a reason", "reachability",
      lambda t: replace_line(t, "scripts/routing-exemptions.txt",
@@ -235,22 +241,28 @@ case("a group exemption with no reason", "reachability",
      lambda t: append_exemption(t, "\ngroup planning-strategy-selector Part C:\n"))
 
 case("a group exemption that names no covered set", "reachability",
-     lambda t: append_exemption(t, "\ngroup planning-strategy-selector Part C: opened whole.\n"))
+     lambda t: append_exemption(t, "\ngroup planning-strategy-selector Part C: this part is opened whole by the selector and never lens by lens.\n"),
+     expect="must open its reason with")
 
 case("a group exemption naming a Part its catalog does not have", "reachability",
-     lambda t: append_exemption(t, "\ngroup review-strategy-selector Part Q: covers 1. no such Part.\n"))
+     lambda t: append_exemption(t, "\ngroup review-strategy-selector Part Q: covers 1. there is no such part anywhere in this catalog.\n"),
+     expect="has no Part Q")
 
 case("a group exemption for a Part whose lenses are all routed", "reachability",
-     lambda t: append_exemption(t, "\ngroup planning-strategy-selector Part A: covers 1. all four already route.\n"))
+     lambda t: append_exemption(t, "\ngroup planning-strategy-selector Part A: covers 1. all four of these already route by number today.\n"),
+     expect="every lens in it is routed")
 
 case("an exemption for a directory that owns no catalog", "reachability",
-     lambda t: append_exemption(t, "\nlens deliberate-engineering-router 3: a skill with no catalog.\n"))
+     lambda t: append_exemption(t, "\nlens deliberate-engineering-router 3: this skill owns no catalog and routes nothing at all.\n"),
+     expect="owns no catalog")
 
 case("a lens exemption naming a lens that does not exist", "reachability",
-     lambda t: append_exemption(t, "\nlens review-strategy-selector 999: no such lens.\n"))
+     lambda t: append_exemption(t, "\nlens review-strategy-selector 999: there is no such lens in this catalog at all.\n"),
+     expect="has no lens 999")
 
 case("a lens exemption for a lens the selector does route", "reachability",
-     lambda t: append_exemption(t, "\nlens review-strategy-selector 25: it is routed, so this is dead.\n"))
+     lambda t: append_exemption(t, "\nlens review-strategy-selector 25: the selector routes this one already, so the entry is dead.\n"),
+     expect="but the selector routes it")
 
 case("an exemption stated twice", "reachability",
      lambda t: append_exemption(t, "\nlens review-strategy-selector 5: a contradictory second reason.\n"))
@@ -279,7 +291,7 @@ def main():
                 print(f"  FAIL: {name} -> the guard rejected a documented routing form")
                 failures.append(name)
 
-        for name, check, mutate, needs_git in CASES:
+        for name, check, mutate, needs_git, expect in CASES:
             tree = fresh_tree(stack)
             base = None
             if needs_git:
@@ -288,8 +300,13 @@ def main():
             mutate(tree)
             r = run_guard(tree, base=base)
             caught = r.returncode != 0 and re.search(rf"FAIL \[{re.escape(check)}\]", r.stdout)
-            if caught:
+            right_branch = expect is None or expect in r.stdout
+            if caught and right_branch:
                 print(f"  ok: {name} -> caught by [{check}]")
+            elif caught:
+                print(f"  FAIL: {name} -> caught by [{check}] but on the wrong branch "
+                      f"(expected {expect!r})")
+                failures.append(name)
             else:
                 print(f"  FAIL: {name} -> NOT caught (expected [{check}])")
                 failures.append(name)

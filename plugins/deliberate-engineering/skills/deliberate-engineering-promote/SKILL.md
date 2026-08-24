@@ -77,7 +77,7 @@ If the skill-reviewer rejects the edit or flags a quality issue, report the find
 
 ### Remove the candidate file atomically
 
-On skill-reviewer pass, and once the lens is routed or its exemption is stated, the final step of the isolated route is to remove the candidate file from `candidates/`. Do not remove it while the lens is still unrouted: an unreachable lens is not a promoted lens, and deleting the candidate is what makes the promotion look done. This is the atomic pair: the catalog edit AND the candidate removal happen together in the working tree, ready to be committed as one unit by the human. The candidate file is removed because it has been promoted: its content now lives in the catalog.
+On skill-reviewer pass, and once the lens is routed or its exemption is stated, the final step of the isolated route is to remove the candidate file from `candidates/`. Do not remove it while the lens is still unrouted: an unreachable lens is not a promoted lens, and deleting the candidate is what makes the promotion look done. This is the atomic set: the catalog edit, the routing edit AND the candidate removal happen together in the working tree, ready to be committed as one unit by the human. The candidate file is removed because it has been promoted: its content now lives in the catalog.
 
 On removal failure (permissions, file lock, anything), do NOT fail silently. Flag the half-applied state (the catalog edit succeeded, the candidate removal failed) and report both file paths so the author can remove the candidate manually. Never leave a half-applied state silently.
 
@@ -105,7 +105,7 @@ The promote skill edits the catalog, routes the lens from its selector, and remo
 
 The catalog edit, the routing edit and the candidate removal are **atomic in the working tree**: they happen together, ready to be committed as one unit. The candidate file is removed because its content has been promoted into the catalog: leaving it pending after a successful promotion would be a false signal. But the removal is reversible until the human commits (it is a working-tree deletion, not a pushed deletion), which is why removing the candidate before publication is safe.
 
-On the isolated route, the state transitions are: candidate `pending` in `candidates/` → (after promotion) candidate removed from `candidates/` AND lens added/modified in `catalog.md` AND routed from `SKILL.md` or stated in `routing-exemptions.txt`, both in the working tree → (after human commit) candidate gone, catalog published. On the structural route, the candidate stays `pending`: the promote skill does not touch it.
+On the isolated route, the state transitions are: candidate `pending` in `candidates/` → (after promotion) candidate removed from `candidates/` AND lens added/modified in `catalog.md` AND routed from `SKILL.md` or stated in `routing-exemptions.txt`, all three in the working tree → (after human commit) candidate gone, catalog published. On the structural route, the candidate stays `pending`: the promote skill does not touch it.
 
 ## Error handling
 
