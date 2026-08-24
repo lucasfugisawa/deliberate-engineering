@@ -2,6 +2,31 @@
 
 All notable changes to the `deliberate-engineering` plugin are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/), and the project aims at [Semantic Versioning](https://semver.org/) (pre-1.0: minor covers features and breaking changes, patch covers fixes).
 
+## [0.13.1] - 2026-08-24
+
+An audit ran the inverse of the one that shipped as 0.12.1. That one asked whether every claim the documentation makes is true. This one asked what the plugin can do that the documentation never mentions, and it had never been run.
+
+What it found is not a set of wrong claims; the earlier pass swept those. It is an asymmetry: the plugin documented what it **is** far better than what a person can **do with it**. Every gap below was a capability implemented, tested and usually guarded, sitting behind a document that described the architecture instead of the affordance.
+
+### Fixed
+- **A contributor who followed the documentation broke the build.** CI runs three checks; `CONTRIBUTING.md` said two and named two. The third, `scripts/test-check-invariants.py`, appeared in no contributor-facing file, and its controls anchor on literal repository text, so a correct contribution that edits one of those strings breaks a control. Reproduced by adding a thirteenth command and updating the README count in lockstep, exactly as documented: both named guards green, the third an `AssertionError` with no annotation and no remedy. It now reports that the control is what is stale and names the file to fix, and all three checks are documented with the invocation CI actually uses.
+- **`CONTRIBUTING.md` forbade the only path the project has ever used.** It read "you do not hand-edit a catalog and open a PR", while zero candidate files have ever been committed against thirty-six commits touching a catalog. Every lens and pattern in the plugin arrived by hand. That path is now documented as the ordinary one, with the obligations the guards enforce and the reason behind each: the lens shape, the communication catalog's flat form and its required `**Tags:**` bullet, the title-word requirement that makes a citation recognisable, append-only numbering, the routing obligation, the two exemption files, the counts that move together, the three byte-identical passages, and the command-file contract.
+- **A bare guard run reported success without checking the invariant that matters most.** `python3 scripts/check-invariants.py` with no `--base` printed a note about skipping append-only numbering and exited 0. It now says which invariant it did not check and why an operator's override file depends on it.
+- **One guard message did not name its own remedy** while its sibling did. Both now point at the file to edit.
+
+### Added
+- **The standing rules have an address book.** They are addressable as `Rule N`, and four of the nine appeared by number nowhere an adopter reads. The README now links the numbered list.
+- **The always-on block's real consequence.** It was framed as pure convenience. It is also what makes a standing rule in your override file reliable, because the rules skill is what reads it, so a session where that skill does not fire is a session where your rule goes unread.
+- **What a phase costs.** From the standard band up, review and verification dispatch a fresh-context subagent per lens, and the risky band fans out further. That is the largest cost multiplier in the product and it was invisible from anything an adopter could read. Named, with the lever that controls it.
+- **The override file's missing half.** The worked example showed `disable` and `add` and omitted `modify`, so the `**Add:**` annotation that is `modify`'s entire mechanism appeared nowhere adopter-facing. The example now covers all three operations, all three `add` header forms including `add: <catalog> pattern` and `add: rules`, and a composition-pattern target. Also stated: that a `modify` annotation governs where it conflicts with the shipped text, that a `disable` removes a method and never a required field, that contradictory entries are named and asked about rather than resolved silently, and that a direct instruction in the session beats the file.
+- **What uninstalling leaves behind**, and where, since removing the product does not remove the things it wrote for you.
+- **That the agent commits.** A commit on a local branch is ordinary work rather than a gated action; push, merge, tag and release all still stop for you. The disclosure section covered one instance of it and not the rule.
+- **The voice profile's other path and its export.** A profile can be hand-written against the contract in minutes, with a worked example to calibrate against, and `chat-prompt.md` carries it into any other tool. Register files are named by ISO 639-1 code, so a file named `english.md` silently never loads.
+- **The state note, opened up:** how its filename is derived, that it holds a decision log worth reading, that nothing prunes them, and that a tracker or `superpowers` changes what gets written.
+- **The composition-pattern namespace, defined** rather than only counted, along with the deliberate exception that the communication catalog has no pattern targets.
+- **What `capture` actually does:** how to widen it to a whole project, that it fans out over your own messages, and how it degrades when the session identifier is unavailable.
+- **The candidate file's frontmatter**, four of whose six fields had reached no contributor doc, and the CHANGELOG's real section vocabulary against the three headings `CONTRIBUTING.md` claimed.
+
 ## [0.13.0] - 2026-08-24
 
 Composition patterns were second-class by omission. The override skill's own section titled "What is a target, and what is architecture" enumerates both categories, and patterns appeared in neither: not declared content, not declared architecture. Answering that question turned up something larger underneath it.
