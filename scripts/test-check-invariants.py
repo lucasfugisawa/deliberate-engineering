@@ -464,7 +464,7 @@ case("an exemption that is neither a group nor a lens", "reachability",
 case("a composition appendix that states no count", "reachability",
      # anchored on the sentence shape, not on the number, so adding a pattern does not stale it
      lambda t: replace_all_lines(t, f"{SK}/review-strategy-selector/catalog.md",
-                                 r"This appendix contains \d+ composition patterns\. ", ""),
+                                 r"This appendix contains \d+ composition patterns\.?\s*", ""),
      expect="states no count")
 
 
