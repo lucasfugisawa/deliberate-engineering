@@ -368,6 +368,12 @@ def check_identical_blocks():
             if idx < 0:
                 fail("identical", f"{label}: {d} does not carry it at all")
                 continue
+            if text.count(anchor) > 1:
+                fail("identical", f"{label}: {d} carries it more than once, and only the first "
+                                  f"copy is compared, so a second one can contradict it unseen")
+            if text.count("```", 0, idx) % 2:
+                fail("identical", f"{label}: {d} carries it inside a code fence, where it reads "
+                                  f"as an example rather than as an instruction")
             end = text.find("\n\n", idx)
             block = text[idx:end if end > 0 else len(text)]
             seen.setdefault(hashlib.md5(block.encode()).hexdigest(), []).append(d)
@@ -611,6 +617,11 @@ def check_lens_reachability():
                 titles[int(m.group(1))] = m.group(2)
                 lens_part[int(m.group(1))] = cur
         real_parts = {p for p in lens_part.values() if p}
+        for num, title in sorted(titles.items()):
+            if not title_words(title):
+                fail("reachability",
+                     f"{d}: lens {num} is titled {title!r}, which yields no word distinctive "
+                     f"enough to identify a citation by, so no citation of it can be recognised")
         routed = routed_lenses(read(os.path.join(SKILLS, d, "SKILL.md")), titles)
         blanketed = set()
         for part, covered in sorted(groups.get(d, {}).items()):

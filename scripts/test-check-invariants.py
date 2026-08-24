@@ -329,6 +329,43 @@ case("a blanketed lens routed by number, leaving its pin stale", "reachability",
                     "- **Frontend / mobile / infra / data / experiments** \u2192"),
      expect="no longer needs it")
 
+case("a lens whose title carries no word a citation could name", "reachability",
+     lambda t: edit(t, f"{SK}/review-strategy-selector/catalog.md",
+                    "### 30. Observability review", "### 30. Own the why, not the how"),
+     expect="no word distinctive enough")
+
+def duplicate_pinned_block(t, relpath, anchor):
+    """Duplicate a pinned block verbatim.
+
+    Verbatim matters: an edited copy also diverges, and the divergence branch would
+    satisfy a control aimed at the duplicate branch. That is the wrong-branch defect
+    this file has now fixed three times.
+    """
+    p = os.path.join(t, relpath)
+    with open(p, encoding="utf-8") as fh:
+        s = fh.read()
+    i = s.index(anchor)
+    block = s[i:s.index("\n\n", i)]
+    with open(p, "w", encoding="utf-8") as fh:
+        fh.write(s[:i] + block + "\n\n" + s[i:])
+
+
+case("a pinned passage carried twice", "identical",
+     lambda t: duplicate_pinned_block(t, f"{SK}/review-strategy-selector/SKILL.md",
+                                      "**Operator overrides on patterns.** Before composing"),
+     expect="carries it more than once")
+
+case("a pinned passage wrapped in a code fence, where it is inert", "identical",
+     lambda t: edit(t, f"{SK}/planning-strategy-selector/SKILL.md",
+                    "**Operator overrides on patterns.** Before composing",
+                    "```text\n\n**Operator overrides on patterns.** Before composing"))
+
+case("the pattern consult diverging in one selector", "identical",
+     lambda t: edit(t, f"{SK}/verification-strategy-selector/SKILL.md",
+                    "Before composing, consult `deliberate-engineering-overrides` twice over",
+                    "Before composing, have a think about"),
+     expect="Operator overrides on patterns consult")
+
 case("a lens under a Part heading the guard does not recognize", "reachability",
      lambda t: edit(t, f"{SK}/review-strategy-selector/catalog.md",
                     "\n## Appendix: Composition Patterns",
@@ -366,6 +403,68 @@ case("a lens exemption for a lens the selector does route", "reachability",
 case("an exemption stated twice", "reachability",
      lambda t: append_exemption(t, "\nlens review-strategy-selector 5: a contradictory second reason stated for a lens that already has one.\n"),
      expect="is exempted twice")
+
+
+def delete_file(t, relpath):
+    os.remove(os.path.join(t, relpath))
+
+
+# Twelve branches that could be deleted with the suite green, measured by disarming each
+# fail() in turn. The file's own principle is that a check nobody has seen fail is not a check.
+
+case("a citation naming a catalog whose file is gone", "citations",
+     lambda t: delete_file(t, f"{SK}/review-strategy-selector/catalog.md"),
+     expect="but that catalog does not exist")
+
+case("a catalog the count harness lists and the tree no longer has", "catalog-coverage",
+     lambda t: delete_file(t, f"{SK}/communication-collaboration-selector/catalog.md"),
+     expect="which has no catalog.md")
+
+case("a consult exemption line with no colon at all", "consult",
+     lambda t: open(os.path.join(t, "scripts", "consult-exemptions.txt"), "a").write(
+         "\ndeliberate-engineering-conduct applies lenses and should consult\n"),
+     expect="is not '<skill-dir>: <reason>'")
+
+case("a command with no skill invocation line", "commands",
+     lambda t: edit(t, f"{CM}/plan.md", "Invoke the `planning-strategy-selector` skill",
+                    "Use the planning selector"),
+     expect="has no 'Invoke the `<skill>` skill' line")
+
+case("a command invoking a skill that does not exist", "commands",
+     lambda t: edit(t, f"{CM}/plan.md", "Invoke the `planning-strategy-selector` skill",
+                    "Invoke the `planning-strategy-chooser` skill"),
+     expect="which is not a skill directory")
+
+case("two commands invoking the same skill", "commands",
+     lambda t: edit(t, f"{CM}/plan.md", "Invoke the `planning-strategy-selector` skill",
+                    "Invoke the `review-strategy-selector` skill"),
+     expect="both invoke")
+
+case("the README dropping the command count this check pins", "commands",
+     lambda t: edit(t, "README.md", "plus twelve commands", "plus a dozen commands"),
+     expect="no longer states a command count")
+
+case("a README command count no reader can turn into a number", "commands",
+     lambda t: edit(t, "README.md", "plus twelve commands", "plus umpteen commands"),
+     expect="cannot read as a number")
+
+case("an unresolved conflict marker left in a shipped file", "artifacts",
+     lambda t: edit(t, "README.md", "plus twelve commands",
+                    "plus twelve commands\n\n<<<<<<< HEAD\n"),
+     expect="looks like an unresolved conflict marker")
+
+case("a routing exemption line with no colon at all", "reachability",
+     lambda t: append_exemption(t, "\nlens review-strategy-selector 9 no colon anywhere in this line\n"),
+     expect="is not '<kind> <dir> <target>: <reason>'")
+
+case("an exemption that is neither a group nor a lens", "reachability",
+     lambda t: append_exemption(t, "\nbanana review-strategy-selector 9: a kind that does not exist at all.\n"),
+     expect="is neither a group nor a lens exemption")
+
+case("a composition appendix that states no count", "reachability",
+     lambda t: edit(t, f"{SK}/review-strategy-selector/catalog.md",
+                    "This appendix contains 7 composition patterns. ", ""),
+     expect="states no count")
 
 
 def main():
