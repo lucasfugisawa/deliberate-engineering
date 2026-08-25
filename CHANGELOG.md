@@ -2,6 +2,13 @@
 
 All notable changes to the `deliberate-engineering` plugin are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/), and the project aims at [Semantic Versioning](https://semver.org/) (pre-1.0: minor covers features and breaking changes, patch covers fixes).
 
+## [0.16.1] - 2026-08-25
+
+### Fixed
+- **The point-of-no-return field's zero case was written for the wrong kind of zero.** It read "if nothing in the blast radius is unrecallable (a pure git cascade you can revert)", and the parenthetical is the tell: the zero case was written for a cluster that never had a point of no return, not for one whose correction removed it. Since 0.15.0 made correcting the plan an ordinary outcome rather than an exception, and since correcting a destructive plan is exactly what removes the PONR, that second case is now the common one. The agent who found it had to write against the field's grain: *"my honest answer was 'none in the corrected sequence, and here is what it was', which required writing against the field's grain."* The concept was already acknowledged one field earlier, in the verdict field's own prose, so the contract knew about this case and the field that should carry it did not.
+
+  The argument is what a reader can tell apart. A reviewer opening a conductor doc that says "no point of no return" cannot distinguish a cluster that was never destructive from one that was destructive until the conductor removed the destructive step, and the second rests on a correction the reviewer has not checked yet. The field now asks which kind of nothing it is, and when a correction removed it, what the point of no return was under the plan as handed over and what removed it.
+
 ## [0.16.0] - 2026-08-25
 
 The verification run for 0.15.0 produced three findings after its own task was done. Two of them turned out to be one defect seen from opposite ends, and it lived in two words.
