@@ -23,7 +23,7 @@ The orchestration session writes this; a fresh session executes from it holding 
 - Read at: <timestamp>            # if the premise has since moved, re-issue before dispatch
 
 ## Operator overrides in force        (author-filled: the judgment)
-<the lenses carrying an operator override that the decomposition already honored, and the operator's standing rules in force, both overrides of a shipped rule and rules the operator added themselves; with the operation applied to each, and "none" when there are none. The worker inherits this calibration rather than rediscovering it, which matters most for the added rules: a fresh worker session may never read the override file itself.>
+<the lenses carrying an operator override that the decomposition already honored, and the operator's standing rules in force, both overrides of a shipped rule and rules the operator added themselves; with the operation applied to each. **Three values, not two**: the list; "none" when there are none; and "unreadable" when the file could not be consulted, saying why and that every shipped rule was held in force. The worker inherits this calibration rather than rediscovering it, which matters most for the added rules: a fresh worker session may never read the override file itself. That is exactly why "none" must not stand in for unknown here, since the worker cannot check it and will act on it as fact.>
 
 ## Scope: exact change
 <the specific change to make, concretely: files, behavior, boundary>

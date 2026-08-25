@@ -2,6 +2,21 @@
 
 All notable changes to the `deliberate-engineering` plugin are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/), and the project aims at [Semantic Versioning](https://semver.org/) (pre-1.0: minor covers features and breaking changes, patch covers fixes).
 
+## [0.16.2] - 2026-08-25
+
+The unreadable-overrides branch shipped in 0.16.0 was tested for the first time, by installing a temporary override file and running a conduction scoped so it could not be read. The branch fired and the agent did the right thing: it declared the gap, held every shipped rule in force, and did not treat unavailable as absent. Then it said why that was luck:
+
+> I honored your instruction and defaulted to strict Rule 1, then declared it in the role-split field. **That worked, but only because I improvised the wording.** The contract's "Operator overrides in force" field is written assuming the answer is a list or "none". It has no vocabulary for "could not read, treated as none, so this run may be stricter than your actual calibration." That's a distinguishable third state and the field should name it, **the same way the PONR field already learned to distinguish "never had one" from "a correction removed one."**
+
+The 0.16.0 fix put the *behaviour* in `deliberate-engineering-overrides`, once, rather than in every caller. That was right. But the field that *records* the outcome lives in the contract, and it admitted two values where there are three.
+
+### Fixed
+- **The conductor's "Operator overrides in force" field now names three values**: the list, "none" when there are none, and "unreadable" when the file could not be consulted, saying why and that every shipped rule including Rule 1 was held in force. None means there is no calibration; unreadable means there may be one you did not see. The distinction is what stops a resumed session or a second operator from being handed a false clean.
+- **The same field in `orchestrate`'s handoff contract**, and there on stronger grounds than parity. Its own text already says the worker inherits this calibration and that *"a fresh worker session may never read the override file itself."* So an unreadable answer written as "none" does not sit still: it propagates into every dispatched handoff, to sessions that by construction cannot check it, and is acted on as fact.
+
+### Note on scope
+This is the second field in the same contract to need the same repair, after the point-of-no-return field's zero case in 0.16.1. Both offered a binary where the third state is the one carrying the risk. That pattern is worth watching for in the remaining fields rather than waiting for a run to trip over each one.
+
 ## [0.16.1] - 2026-08-25
 
 ### Fixed

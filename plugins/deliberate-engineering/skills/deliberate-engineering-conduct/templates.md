@@ -16,7 +16,7 @@ The contract has a **required core**, and two **bookend sections whose necessity
 ## Role split & standing approvals        (required)
 - **The agent conducts; the operator executes every irreversible action**: merge, release, deploy, data mutation, teardown. The agent prepares, re-derives, verifies, and queues; the human pulls each irreversible trigger (Rule 1).
 - Standing approvals this run holds: <what the operator pre-authorized, and its bound>
-- **Operator overrides in force**: <the lenses these fields cite that carry an operator override, plus the operator's standing rules in force for this session, both overrides of a shipped rule (Rule 1 included) and rules the operator added themselves; with the operation applied to each, and "none" when there are none>, so a resumed session or a second operator inherits the calibration rather than rediscovering it.
+- **Operator overrides in force**: <the lenses these fields cite that carry an operator override, plus the operator's standing rules in force for this session, both overrides of a shipped rule (Rule 1 included) and rules the operator added themselves; with the operation applied to each. **Three values, not two**: the list; "none" when there are none; and "unreadable" when the file could not be consulted, saying why and that every shipped rule including Rule 1 was held in force. None means there is no calibration; unreadable means there may be one you did not see>, so a resumed session or a second operator inherits the calibration rather than rediscovering it, and is not handed a false clean.
 - Legend: owner (who acts), status tokens; **last re-derivation**: <timestamp of the most recent world-state read>
 
 ## Never trust memory: re-derive before every gate        (required)
