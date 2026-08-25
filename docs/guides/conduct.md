@@ -12,7 +12,7 @@ Use it when a *cluster* of irreversible steps must fire in a fixed, gated order.
 
 ## The mental model
 
-A conduction has two beats. First the cluster gets its **contract**: a single CONDUCTOR doc that inventories the steps, fixes the order and why, places the gates, names the keystone and the point of no return, and declares the recovery path. Only then does conduction begin: step by step, world state re-derived before every gate (never trusted from memory), each irreversible action queued for you, each result verified against a stated expectation before the next step may fire. The conductor doc is the live cockpit until the cluster closes. There are no dispatched workers: one operator, one agent, one ordered cluster, usually one session.
+A conduction has two beats. First the cluster gets its **contract**: a single CONDUCTOR doc that inventories the steps, fixes the order and why, places the gates, names the keystone and the point of no return, and declares the recovery path. Authoring it includes a **verdict on the plan as handed over**, decided against the world state re-derived now rather than against the plan's own account of itself: run as given, run with these corrections, or do not run. A conduction whose first real finding is that the plan is wrong is not a failed conduction, and this is where that lands; the point of no return may be something that fires during the window without being a step you take, a scheduled job or an external consumer, not only a step in the runbook. Only once the plan is judged sound, as given or as corrected, does conduction begin: step by step, world state re-derived before every gate (never trusted from memory), each irreversible action queued for you, each result verified against a stated expectation before the next step may fire. The conductor doc is the live cockpit until the cluster closes. There are no dispatched workers: one operator, one agent, one ordered cluster, usually one session.
 
 ```mermaid
 sequenceDiagram
@@ -21,8 +21,9 @@ sequenceDiagram
 
     You->>C: describe the cluster
     C->>C: does this earn a conductor? author the CONDUCTOR doc
+    C->>You: verdict on the plan: run as given / with corrections / do not run
     C->>You: launch gate: go / no-go?
-    You->>C: verdict (and any standing approvals, with bounds)
+    You->>C: go / no-go (and any standing approvals, with bounds)
     loop each gated step
         C->>C: re-derive world state live
         C->>C: dry-run against a declared blast-radius bound
@@ -37,8 +38,8 @@ sequenceDiagram
 
 1. **[You]** Invoke `/deliberate-engineering:conduct` with the cluster ("the 4-repo deploy chain", "the user-table backfill"), or arrive here because the router or an orchestration handed the cluster over.
 2. **[Agent]** Judges whether the cluster earns a standalone conductor at all, and says so either way. A small cascade stays where it was: in the program tracker's queue if an orchestration carries it, or inline in your session with the ordinary gate on each step; no doc, no ceremony.
-3. **[Agent]** Authors the CONDUCTOR doc from the contract: the done inventory with keystone and point of no return, the gated groups with the reason the order is fixed, the verified recovery path and the emergency abort, the per-item station table (gate state lives in checkboxes, never in memory: in the field, the one gate kept only as a reminder is the one that slips).
-4. **[You]** Grant any standing approvals and their bounds ("you may rebase without asking; every merge is mine"), and give the launch-gate verdict: go / no-go. The launch gate is required once the cluster has a point of no return.
+3. **[Agent]** Authors the CONDUCTOR doc from the contract: the **verdict on the plan as handed over** (run as given, run with corrections, or do not run, decided against a live re-derivation, and any correction it makes owes the same dry-run and between-step checks as the step it replaces), the done inventory with keystone and point of no return, the gated groups with the reason the order is fixed, the verified recovery path and the emergency abort, the per-item station table (gate state lives in checkboxes, never in memory: in the field, the one gate kept only as a reminder is the one that slips).
+4. **[You]** Grant any standing approvals and their bounds ("you may rebase without asking; every merge is mine"), and give the launch-gate verdict: go / no-go. The launch gate is required once **anything in the blast radius is unrecallable**, which a correction that removes a destructive step does not switch off while a scheduled job or other unrecallable side effect is still in range.
 5. **[Agent]** Before each irreversible step: re-derives the world state live, runs the dry-run or shadow read against a pre-declared blast-radius bound with an abort threshold.
 6. **[Agent → You]** Queues the exact next action in the operator wave queue, with the division of labor inline ("I rebase, you merge"). **[You]** pull the trigger.
 7. **[Agent]** After the step: runs the between-step verification battery against expected values stated in advance (never a bare exit code), reads the post-state to confirm the write landed (core for a data mutation), and updates the station table. A check that misses its expected value stops the line: the verdict is recorded (pass / hold / fail), nothing advances, and the recovery path or the abort comes to you as the next queued decision.
