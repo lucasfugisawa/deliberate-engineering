@@ -2,6 +2,10 @@
 
 All notable changes to the `deliberate-engineering` plugin are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/), and the project aims at [Semantic Versioning](https://semver.org/) (pre-1.0: minor covers features and breaking changes, patch covers fixes).
 
+## [0.16.4] - 2026-08-25
+
+### Fixed
+- **The conductor's "Honest limitation" section made a claim that had become false.** It said the destructive hemisphere was "critique-derived, not piloted on a destructive cluster", which was true when written and stopped being true over the six releases from 0.14.1 to 0.16.3: those were exactly the pilot, ten agent runs of a destructive data mutation, and one agent's report said so outright ("This was a pilot, and that field held"). The section that exists to be trustworthy about what is tested was understating what is tested. It now says the destructive hemisphere has been piloted against one kind, a data mutation, names what those runs hardened, and names the three cluster shapes still unpiloted, an ordering cascade, a teardown with no recovery path, and a cross-session resumption, with the field each would press. The staleness erred safe (it under-claimed confidence rather than over-claiming it), which is why this rode a normal release rather than an urgent one, but a self-accurate limitation section is worth keeping accurate.
 ## [0.16.3] - 2026-08-25
 
 Two runs of the same scenario reached opposite verdicts on the station table: one called its shape wrong for a sequence, the other reported the field set fit without strain. Rather than run a third for a tie-breaker, the five conductor documents already on disk were measured for what each run actually put in the table.
