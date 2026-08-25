@@ -40,12 +40,12 @@ Before the gate table is fixed, say whether this cluster should run at all, agai
 - **Abort / halt**: the emergency stop, distinct from a hold: who may halt, on what signal, and the safe state a halt must leave the system in. A hold is a planned pause; an abort is "something is wrong, stop now, here is where it is safe to stop".
 
 ## Per-item station table: where the gates live        (required)
-Checkbox state, not memory or a prose note: in the field, the one gate recorded only as a reminder was the one that slipped. **Name the columns for the stations THIS cluster's items pass through.** One example set per cluster kind, not the schema:
+Checkbox state, not memory or a prose note: in the field, the one gate recorded only as a reminder was the one that slipped. **The rows are what advances through the stations, and the columns are the stations.** A row is a parallel item where the cluster is N of a kind (PRs, batches, resources) and an ordered step where the cluster is one artifact through a sequence (a deploy or migration chain). A destructive data cluster is usually the second, so label the first column `Item` or `Step` for whichever yours is rather than forcing steps under the word `Item`. **Name the columns for the stations THIS cluster passes through.** One example set per cluster kind, not the schema:
 - git rollout: `conflict-free / rebased / re-pinned / merged / deployed / verified`
 - data batch: `dry-run-reviewed / snapshot-taken / mutated / row-count-verified / re-run-safe`
 - teardown: `dependency-drained / snapshotted / deleted / confirmed-gone`
 
-| Item | <station 1> | <station 2> | <station 3> | <verified> |
+| Item / Step | <station 1> | <station 2> | <station 3> | <verified> |
 |------|-------------|-------------|-------------|------------|
 | <PR / batch / resource> | [ ] | [ ] | [ ] | [ ] |
 
