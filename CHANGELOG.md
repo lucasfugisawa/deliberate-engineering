@@ -2,6 +2,18 @@
 
 All notable changes to the `deliberate-engineering` plugin are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/), and the project aims at [Semantic Versioning](https://semver.org/) (pre-1.0: minor covers features and breaking changes, patch covers fixes).
 
+## [0.16.0] - 2026-08-25
+
+The verification run for 0.15.0 produced three findings after its own task was done. Two of them turned out to be one defect seen from opposite ends, and it lived in two words.
+
+### Fixed
+- **The point of no return is a point, not necessarily a step you take.** The field read "the step after which rollback is impossible", which indexes irreversibility to the inventory, so a hazard that is not a step was invisible to the field. In the test cluster the genuinely unrecallable action was a non-idempotent nightly payout job that had not yet run for the period: not a step anyone takes, but something that fires during the window and moves money that cannot be recalled. The agent found it by reading the service's stated invariants and said so plainly: *"the PONR field's framing pushes you to pick one row from the inventory, and the worst hazard wasn't in the inventory at all. I found it by reading the README's invariants, not by filling a field."* The field now asks for every unrecallable side effect in the blast radius, both the steps you run and the things that fire during the window without being steps: a scheduled job, an external consumer that has already read, a webhook already dispatched, a partner system you cannot un-tell.
+- **The launch gate is re-keyed as a consequence, not as a separate change.** It was "REQUIRED once the cluster has a point of no return", and the same agent showed why that trigger fails: correcting the plan removed the destructive migration, which removed the PONR, which made the gate optional, while the money path was untouched. Its own words: *"the trigger should be 'does anything here have an unrecallable side effect', not 'is there a step after which rollback is impossible'."* With the field reframed, the gate keys on the blast radius and a correction that makes the cluster safer no longer makes its safety gate optional.
+- **Absent and unreadable are not the same answer.** `deliberate-engineering-overrides` said what to do when the override file does not exist, and nothing about when it exists and cannot be read. Measured before writing: **no skill in the plugin** covered the unreadable case, so the fix is one sentence in `overrides` rather than one in every caller. Absent means there are no overrides and silence is correct; unreadable means there may be overrides you cannot see, and the skill now says to declare it, hold every shipped rule in force including Rule 1, and record that the calibration was unavailable rather than absent.
+
+### On the evidence behind that last one, stated rather than hidden
+It rests on a single run, under a scope constraint the test's own brief created, and the agent improvised the safe direction and declared it, so the system already degraded correctly. It ships because the cost is one sentence and the failure is asymmetric: an agent improvising the *unsafe* direction loosens a human gate silently, and this skill calls the consult "the one place where an unread loosening changes who pulls a trigger".
+
 ## [0.15.0] - 2026-08-25
 
 Two external runs of `conduct`, on different versions and by different agents, produced the same shape of result: the most valuable thing the conduction did was **reject and repair the runbook it was handed**, not sequence it. The contract had nowhere to put that.
