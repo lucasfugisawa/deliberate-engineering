@@ -22,6 +22,11 @@ The contract has a **required core**, and two **bookend sections whose necessity
 ## Never trust memory: re-derive before every gate        (required)
 Re-derive world state (git / gh / CLIs) immediately before each gate and again at every resumption; a gate never runs against cached or remembered state (Rule 3, premise-freshness). At a resume, before re-running any step whose completion is uncertain, confirm it is safe to re-run (see the station table's re-run column): a non-idempotent step re-run (a second `balance = balance + X`, a partial batch) is worse than a gap.
 
+## Verdict on the cluster as handed over        (required)
+Before the gate table is fixed, say whether this cluster should run at all, against the world state you just re-derived rather than against the plan's own account of itself. **Run as given / run with these corrections / do not run**, plus the evidence that produced the verdict and, when it is not run-as-given, what changed and why. A conduction whose first real finding is that the plan is wrong is not a failed conduction, and this is where that lands: the gate graph below sequences a plan this field has already judged.
+- **Corrections are cluster work, not preamble.** Anything you rewrote to make the plan runnable is new and unrehearsed, and it owes the same pre-write evidence, blast-radius bound and between-step checks as the steps it replaced. Carry it into the inventory below rather than treating it as done because you wrote it.
+- **A do-not-run verdict is an output, not a stall.** Record it here, hand the operator what you would run instead, and stop. Do not park it in the launch gate below: that gate asks whether you are ready to begin, and it stops being required precisely when correcting the plan removes the point of no return.
+
 ## Definition of done, keystone, and point of no return        (required)
 - **Inventory**: one row per remaining step, each with a concrete, verifiable done-condition. Done = every row checked.
 - **Keystone**: the step after which rollback gets harder or changes shape.
