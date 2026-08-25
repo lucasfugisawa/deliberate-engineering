@@ -2,6 +2,15 @@
 
 All notable changes to the `deliberate-engineering` plugin are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/), and the project aims at [Semantic Versioning](https://semver.org/) (pre-1.0: minor covers features and breaking changes, patch covers fixes).
 
+## [0.16.3] - 2026-08-25
+
+Two runs of the same scenario reached opposite verdicts on the station table: one called its shape wrong for a sequence, the other reported the field set fit without strain. Rather than run a third for a tie-breaker, the five conductor documents already on disk were measured for what each run actually put in the table.
+
+### Fixed
+- **The station table's rows may be ordered steps, not only parallel items.** All five runs put ordered steps in the rows; three kept the template's placeholder word "Item" above them and two renamed the column to "Step". The run that reported *no* strain was one of the two that renamed it, so its report and its own artifact disagreed: friction that costs nothing to route around gets routed around silently, and a friction report structurally cannot surface it. The field's prescription ("name the columns for the stations this cluster passes through") was sound; the noun was not. It now says the rows are whatever advances through the stations, a parallel item for an N-of-a-kind cluster and an ordered step for one artifact through a sequence, and labels the first column `Item / Step`. The skill's own honest-limitation note predicted this: the field set was seeded from multi-repo git rollouts, and a migration or deploy chain is the more common conductor shape.
+
+### Method note
+This is the first finding this cycle settled by measuring artifacts rather than by running another arm. The contradiction was between two agents' *reports*; the resolution was in what both agents *did*, which agreed with neither report exactly. Behaviour beat opinion, and it cost five greps instead of a subagent.
 ## [0.16.2] - 2026-08-25
 
 The unreadable-overrides branch shipped in 0.16.0 was tested for the first time, by installing a temporary override file and running a conduction scoped so it could not be read. The branch fired and the agent did the right thing: it declared the gap, held every shipped rule in force, and did not treat unavailable as absent. Then it said why that was luck:
