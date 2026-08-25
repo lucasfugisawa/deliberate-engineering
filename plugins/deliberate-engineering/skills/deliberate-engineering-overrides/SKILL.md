@@ -32,6 +32,8 @@ Two kinds of content, reached two different ways, because they fail in opposite 
 
 When the file does not exist, this skill does nothing and says nothing. Override is opt-in.
 
+**Absent and unreadable are not the same answer.** Absent means there are no overrides, and silence is correct. Unreadable means there may be overrides you cannot see: the session is scoped to a repository while the file lives under `~/.claude/`, or the read fails for any other reason. Say so out loud, hold every shipped rule in force including Rule 1, and record that the calibration was unavailable rather than absent, so a resumed session does not inherit the silence as a clean read.
+
 ## The override file
 
 The override file lives at `~/.claude/deliberate-engineering/overrides.md`. Each entry has a header in one of three forms (`<target>: <operation>` for a specific lens, composition pattern or rule, `add: <catalog>` for an operator-authored lens, or `add: <catalog> pattern` for an operator-authored composition pattern) followed by a body that depends on the operation.

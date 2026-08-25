@@ -30,7 +30,7 @@ Before the gate table is fixed, say whether this cluster should run at all, agai
 ## Definition of done, keystone, and point of no return        (required)
 - **Inventory**: one row per remaining step, each with a concrete, verifiable done-condition. Done = every row checked.
 - **Keystone**: the step after which rollback gets harder or changes shape.
-- **Point of no return (PONR)**: the step after which rollback is *impossible* (a hard delete, a destroyed snapshot, an external side effect that cannot be recalled). Name it, what makes it irreversible, and the last safe abort point before it. If the cluster has no PONR (a pure git cascade you can revert), say so explicitly: that is what makes its launch gate optional.
+- **Point of no return (PONR)**: the point after which rollback is *impossible*. It is a point, not necessarily a step you take: name every unrecallable side effect anywhere in this cluster's blast radius, both the steps you run (a hard delete, a destroyed snapshot) and the things that fire during the window without being steps at all (a scheduled job that pays out or emails, an external consumer that has already read, a webhook already dispatched, a partner system you cannot un-tell). For each, what makes it unrecallable and the last safe abort point before it. If nothing in the blast radius is unrecallable (a pure git cascade you can revert), say so explicitly: that is what makes its launch gate optional.
 
 ## Gated groups: order, gates, recovery, holds, abort        (required)
 - **Step order**: the fixed sequence and why (planning #12: sequence so no intermediate state breaks; #13: the old code must survive each deploy). Examples: merge/deploy order; "batch A verified complete before B starts"; "drain traffic before deleting the load balancer".
@@ -72,8 +72,8 @@ The live state the re-derivation last read, the exact next action, any half-take
 ## Closure marker        (required at completion)
 A frozen banner ("CLUSTER COMPLETE, <date>; this doc is closed"), confirmation that the closeout obligations were discharged (verify #24), and, if a program tracker handed the baton, the baton returned to it.
 
-## Launch gate: pre-flight go / no-go        (REQUIRED once the cluster has a point of no return; optional otherwise)
-The gate to begin at all: every precondition that must hold before the first irreversible step. For a reversible cascade this is optional (you can start and stop freely); for a teardown or a hard-delete batch it is *the* safety gate and is mandatory.
+## Launch gate: pre-flight go / no-go        (REQUIRED once anything in the blast radius is unrecallable; optional otherwise)
+The gate to begin at all: every precondition that must hold before the first irreversible step. For a reversible cascade this is optional (you can start and stop freely); for a teardown or a hard-delete batch it is *the* safety gate and is mandatory. Key it on the PONR field above: removing a destructive step from the plan does not make this gate optional while anything else in the blast radius is still unrecallable.
 | Precondition | Holds? |
 |--------------|--------|
 | <recovery path verified; blast radius bounded; abort owner named; dry-run reviewed; CI green; flag in safe default> | [ ] |
