@@ -4,7 +4,7 @@ The one contract that carries an irreversibility cluster, read from `SKILL.md` b
 
 One contract, rewritten as the cluster advances. The agent **generates** the world-state fields from a live read (git / gh / the relevant CLIs) and hand-writes the judgment fields; the operator executes every irreversible action.
 
-The contract has a **required core**, and two **bookend sections whose necessity depends on the cluster's nature**: a pre-flight launch gate (required once the cluster has a point of no return, optional otherwise) and a post-state check (required for a data mutation, a lighter watch for a reversible rollout). The whole field set was seeded from a field record of *reversible* multi-repo git rollouts, one kind of cluster, and then hardened, by adversarial critique standing in for a pilot on a different kind, against the destructive hemisphere it originally missed; treat a field that does not fit your cluster as a prompt to generalize it, not a mandate.
+The contract has a **required core**, and two **bookend sections whose necessity depends on the cluster's nature**: a pre-flight launch gate (required once the cluster has a point of no return, optional otherwise) and a post-state check (required for a data mutation, a lighter watch for a reversible rollout). Both are listed last below and **render first and last**, the launch gate opening the document and the post-state check closing it: the order here is the order they are explained, not the order they are read. The whole field set was seeded from a field record of *reversible* multi-repo git rollouts, one kind of cluster, and then hardened, by adversarial critique standing in for a pilot on a different kind, against the destructive hemisphere it originally missed; treat a field that does not fit your cluster as a prompt to generalize it, not a mandate.
 
 ---
 
@@ -14,9 +14,9 @@ The contract has a **required core**, and two **bookend sections whose necessity
 # Conductor: <one-line cluster title>
 
 ## Role split & standing approvals        (required)
-- **The agent conducts; the operator executes every irreversible action**: merge, release, deploy, data mutation, teardown. The agent prepares, re-derives, verifies, and queues; the human pulls each irreversible trigger (Rule 1).
+- **The agent conducts; the operator executes every irreversible action**: merge, release, deploy, data mutation, teardown. The agent prepares, re-derives, verifies, and queues; the human pulls each irreversible trigger (Rule 1). **An edit to a file that is itself the running artifact is a deploy.** Where a script, config or query runs straight from the checkout with no build or release step in between, saving the edit *is* the outward-facing action, so the prepare-then-execute line this split assumes does not exist there. Say which files in this cluster are like that, and put landing them on the operator's side with every other deploy.
 - Standing approvals this run holds: <what the operator pre-authorized, and its bound>
-- **Operator overrides in force**: <the lenses these fields cite that carry an operator override, plus the operator's standing rules in force for this session, both overrides of a shipped rule (Rule 1 included) and rules the operator added themselves; with the operation applied to each, and "none" when there are none>, so a resumed session or a second operator inherits the calibration rather than rediscovering it.
+- **Operator overrides in force**: <the lenses these fields cite that carry an operator override, plus the operator's standing rules in force for this session, both overrides of a shipped rule (Rule 1 included) and rules the operator added themselves; with the operation applied to each. **Three answers, not two**: the list; "none" when there are none; and "unreadable" when the file could not be consulted, saying why and that every shipped rule including Rule 1 was held in force. None means there is no calibration; unreadable means there may be one you did not see>, so a resumed session or a second operator inherits the calibration rather than rediscovering it, and is not handed a false clean.
 - Legend: owner (who acts), status tokens; **last re-derivation**: <timestamp of the most recent world-state read>
 
 ## Never trust memory: re-derive before every gate        (required)
@@ -55,6 +55,8 @@ Checkbox state, not memory or a prose note: in the field, the one gate recorded 
 
 ## Between-step verification battery: after each step        (required)
 After each step and before the next, run these and record the result against its expected value; do not advance on a bare exit code (verify #17: annotate every verification with its expected value; #18: one change at a time, with named watch-fors; #3: name what would refute it, so the check can actually fail; #22: its breadth must cover the claim it backs). Escalate the staged-promotion and kill-switch checks where the cluster crosses environments (#11, #14), and run the final confidence check before the irreversible production action (#15). For a data mutation, **post-state verification is core, not optional**: a bad silent write is invisible until read back (verify #20).
+**Expected is authored; Observed and Verdict are filled at execution**, by whoever runs the step. A table shipped with Expected complete and Observed empty is a finished deliverable, not an unfinished one, and the same holds for the post-state table below.
+
 | After step | Check / metric | Expected | Observed | Verdict |
 |------------|----------------|----------|----------|---------|
 | <step>     | <the exact check or query> | <the value that means healthy> | <read now> | pass / hold / fail |
@@ -67,7 +69,7 @@ The next irreversible actions, each as the exact action plus the inline division
 The conduction-specific slice, not general note-taking: **Deferred** (work pushed past this hot cluster, named so it is not forgetting), **Unverified** (hypotheses not yet confirmed; do not treat as fact mid-cluster), **Radar** (findings to keep watching that are not yet action).
 
 ## Session residue        (required on interruption)
-The live state the re-derivation last read, the exact next action, any half-taken step, and its **re-run safety** (safe to re-run, or must be reconciled by hand?), so a fresh session resumes the cockpit without trusting memory.
+The live state the re-derivation last read, the exact next action, any half-taken step, and its **re-run safety**, so a fresh session resumes the cockpit without trusting memory. **Three answers, not two**: safe to re-run; must be reconciled by hand; or fails safe, meaning re-running errors harmlessly and the check is to read the current state first rather than to reconcile anything. A schema migration is usually the third, and collapsing it into either of the others costs a resumed session either a needless reconciliation or a wrongly confident retry.
 
 ## Closure marker        (required at completion)
 A frozen banner ("CLUSTER COMPLETE, <date>; this doc is closed"), confirmation that the closeout obligations were discharged (verify #24), and, if a program tracker handed the baton, the baton returned to it.
