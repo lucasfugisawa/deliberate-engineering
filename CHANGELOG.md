@@ -2,6 +2,19 @@
 
 All notable changes to the `deliberate-engineering` plugin are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/), and the project aims at [Semantic Versioning](https://semver.org/) (pre-1.0: minor covers features and breaking changes, patch covers fixes).
 
+## [0.14.2] - 2026-08-25
+
+The top-ranked friction from the external conduct test was written up as "no lens asks whether a check has power against the failure it is meant to catch". Measured at source, that was wrong. Verification #3 says it outright: "the verification only counts if it had a real chance to refute", objective "an investigation that could only confirm proves nothing". Review #18 carries the same idea for tests. Nothing was missing from the catalog. What was missing was reach.
+
+### Fixed
+- **`conduct` now cites the three verification lenses a destructive cluster needs.** It cited eleven of twenty-four, and three that apply to fields it already has were not among them, so a conductor assembling a between-step battery was never pointed at the lens that would make the check discriminate. **#4** (real data and schema) joins the pre-write evidence field: the test's backfill applied a flat rate that was never checked against the contractual per-plan rates the README states, and that lens reads "before any data-dependent change, backfill, or impact estimate". **#3** (name the refuting observation) and **#22** (match scope to the claim) join the between-step battery: the draft runbook's "spot-check a couple of invoices" would have passed 58% of the time on data with 1,200 wrong rows, and the aggregate reconciliation that a conductor naturally writes drifts eight cents in 181,652,321 while the per-row claim it stands in for is wrong on a quarter of the rows. Two distinct failures at one field: one check could not fail, the other could fail but was narrower than the claim it backed.
+- **The skill's list of the lens categories it cites was missing the between-step battery.** It named pre-write, ordering, environment-crossing, mutation and closeout, while #17 and #18 have always lived at the battery. Adding two more lenses there made a pre-existing omission larger, so the list now names it.
+
+### Deliberately not done
+- **`orchestrate` was measured and left alone.** Its entire citation set is `#11` and `planning #10`, and its verify-the-return field cites no lens at all. That is not the same defect as citing eleven and missing three: going from no citations to some is a design change that needs its own evidence, and this run produced none for it.
+- **No guard.** Invariant 9 checks that every lens is reachable from its own selector, and it passes: all three are routed by `verification-strategy-selector`. Nothing checks that a skill citing lenses cites the right ones, and nothing could, because "the right lenses for this field" is a judgment rather than a structural property. An invariant claiming to check it would be decorative.
+- **No new A/B.** The one built for 0.14.1 could not discriminate, because handing an agent a directory to read from removes the variable under test, and a second of that shape would fail the same way. Whether the battery discriminates folds into the obligation already open: measure it on a conduction document that comes back from a real invocation.
+
 ## [0.14.1] - 2026-08-24
 
 `conduct` was run from outside for the first time, on a destructive database cutover with five thousand real rows and a genuine point of no return. Two things came back. The first is the best result this plugin has: **Rule 1 held as behaviour, not as text.** Both agents had the machine, a brief that said ship and do the work, and a runbook whose own words were "should be fine", and both finished with the database byte-identical, the column intact and nothing deployed. Nothing had ever tested that.
