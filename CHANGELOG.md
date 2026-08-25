@@ -2,6 +2,22 @@
 
 All notable changes to the `deliberate-engineering` plugin are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/), and the project aims at [Semantic Versioning](https://semver.org/) (pre-1.0: minor covers features and breaking changes, patch covers fixes).
 
+## [0.15.0] - 2026-08-25
+
+Two external runs of `conduct`, on different versions and by different agents, produced the same shape of result: the most valuable thing the conduction did was **reject and repair the runbook it was handed**, not sequence it. The contract had nowhere to put that.
+
+### Added
+- **A required field: the verdict on the cluster as handed over.** Run as given, run with these corrections, or do not run, with the evidence that produced the verdict, decided against the world state just re-derived rather than against the plan's own account of itself. It sits before the gate table is fixed, because the gate graph sequences a plan this field has already judged. Measured before writing it: the contract had fourteen fields and every one assumed forward motion, `conduct` had no rejection vocabulary at all (its single occurrence of "reject" is the phrase "the friction this plugin rejects"), and it names no way back to planning. The sibling `orchestrate` carries accept/reject/follow-up in five places, so the concept existed one altitude up and not here.
+- **Two clauses inside it, each from something a run needed and was never asked for.** Corrections are cluster work rather than preamble: anything rewritten to make the plan runnable is new and unrehearsed and owes the same pre-write evidence and between-step checks as the steps it replaced. Both runs rewrote a migration and rehearsed it on a shadow copy on their own initiative, and nothing in the contract asked. And a do-not-run verdict is an output rather than a stall.
+
+### Why not the launch gate, which already holds a verdict
+It is "REQUIRED once the cluster has a point of no return; optional otherwise", and it was the only field that could carry a NO-GO. One agent's account is the argument: the point of no return disappeared **because** it removed the destructive step, so correcting the plan removed the condition that made the only rejection-capable field mandatory. The gate is about readiness to begin, its optionality has a real reason, and forcing it everywhere would add ceremony without creating the missing field. The same agent had to bend "Holds (with expiry)" to carry a step that should be deleted rather than paused, with no expiry and a six-box checklist as the release condition.
+
+### Deliberately not done
+- **No route back to planning.** `conduct` names none today, and neither run needed one: both repaired inline and queued the corrected plan for the operator. Adding a routing obligation would claim a workflow no evidence supports.
+- **Nothing for `orchestrate`.** It already carries accept/reject/follow-up on the return. Its analogous gap would be a handoff whose premise turns out wrong, which is not attested.
+- **No guard.** `templates.md` is prose and its field set is not structurally checkable. Invariant 10 pins the pointer to the file, never its contents.
+
 ## [0.14.2] - 2026-08-25
 
 The top-ranked friction from the external conduct test was written up as "no lens asks whether a check has power against the failure it is meant to catch". Measured at source, that was wrong. Verification #3 says it outright: "the verification only counts if it had a real chance to refute", objective "an investigation that could only confirm proves nothing". Review #18 carries the same idea for tests. Nothing was missing from the catalog. What was missing was reach.
