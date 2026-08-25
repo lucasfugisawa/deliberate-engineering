@@ -14,8 +14,16 @@ The 0.16.0 fix put the *behaviour* in `deliberate-engineering-overrides`, once, 
 - **The conductor's "Operator overrides in force" field now names three values**: the list, "none" when there are none, and "unreadable" when the file could not be consulted, saying why and that every shipped rule including Rule 1 was held in force. None means there is no calibration; unreadable means there may be one you did not see. The distinction is what stops a resumed session or a second operator from being handed a false clean.
 - **The same field in `orchestrate`'s handoff contract**, and there on stronger grounds than parity. Its own text already says the worker inherits this calibration and that *"a fresh worker session may never read the override file itself."* So an unreadable answer written as "none" does not sit still: it propagates into every dispatched handoff, to sessions that by construction cannot check it, and is acted on as fact.
 
-### Note on scope
-This is the second field in the same contract to need the same repair, after the point-of-no-return field's zero case in 0.16.1. Both offered a binary where the third state is the one carrying the risk. That pattern is worth watching for in the remaining fields rather than waiting for a run to trip over each one.
+- **Re-run safety is not a binary either.** The session-residue field asked "safe to re-run, or must be reconciled by hand?" and a run hit the case that is neither: `ALTER TABLE ADD COLUMN` re-run **errors harmlessly**, and the check is to read the current state rather than to reconcile anything. The agent wrote prose into the cell and said so: *"which works but makes the column ragged."* The field now names three answers, and says what collapsing the third into either of the others costs a resumed session: a needless reconciliation, or a wrongly confident retry.
+
+### Also fixed
+- **A command with no argument no longer renders a dangling sentence.** All twelve read `Invoke the <skill> skill against $ARGUMENTS.`, which becomes "against ." when the operator describes the job in prose rather than passing an argument, and `review` became "against the current change ." The argument now sits on its own line, so it degrades cleanly whether present or absent. It is the first text the skill produces, which is why a cosmetic defect there is worth the twelve-file edit.
+- **The template's two bookend sections are listed last and render first and last**, and now say so. A run followed template order faithfully and produced a document where the closure marker precedes the pre-flight launch gate, then reported it was still not confident it had chosen right. The order in the template is the order the sections are explained; the launch gate opens the document and the post-state check closes it.
+
+### Note on scope, and on a sweep that found nothing
+This is the third field in the same contract to offer a binary where a third state carries the risk, after the point-of-no-return zero case in 0.16.1 and the overrides field above. All three were found by agents tripping over them in a live run.
+
+A deliberate sweep for a fourth found none. It also found none of the three, because it searched for the phrasing of the instances already fixed rather than for the shape, which is the same error this project keeps recording in other forms. The one candidate reasoning produced, the recovery-path field's explicit collapse of "untested" into "not a recovery path", is contradicted by the evidence: five conductor docs from five runs all drilled the path or queued the drill, and none collapsed the states. It is not built, and the reasoning that produced it is recorded rather than acted on.
 
 ## [0.16.1] - 2026-08-25
 

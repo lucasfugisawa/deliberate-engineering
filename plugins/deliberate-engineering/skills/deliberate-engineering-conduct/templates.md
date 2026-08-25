@@ -4,7 +4,7 @@ The one contract that carries an irreversibility cluster, read from `SKILL.md` b
 
 One contract, rewritten as the cluster advances. The agent **generates** the world-state fields from a live read (git / gh / the relevant CLIs) and hand-writes the judgment fields; the operator executes every irreversible action.
 
-The contract has a **required core**, and two **bookend sections whose necessity depends on the cluster's nature**: a pre-flight launch gate (required once the cluster has a point of no return, optional otherwise) and a post-state check (required for a data mutation, a lighter watch for a reversible rollout). The whole field set was seeded from a field record of *reversible* multi-repo git rollouts, one kind of cluster, and then hardened, by adversarial critique standing in for a pilot on a different kind, against the destructive hemisphere it originally missed; treat a field that does not fit your cluster as a prompt to generalize it, not a mandate.
+The contract has a **required core**, and two **bookend sections whose necessity depends on the cluster's nature**. They are listed last below and **render first and last**: the launch gate opens the document, the post-state check closes it. The order here is the order they are explained, not the order they are read. The two are a pre-flight launch gate (required once the cluster has a point of no return, optional otherwise) and a post-state check (required for a data mutation, a lighter watch for a reversible rollout). The whole field set was seeded from a field record of *reversible* multi-repo git rollouts, one kind of cluster, and then hardened, by adversarial critique standing in for a pilot on a different kind, against the destructive hemisphere it originally missed; treat a field that does not fit your cluster as a prompt to generalize it, not a mandate.
 
 ---
 
@@ -67,7 +67,7 @@ The next irreversible actions, each as the exact action plus the inline division
 The conduction-specific slice, not general note-taking: **Deferred** (work pushed past this hot cluster, named so it is not forgetting), **Unverified** (hypotheses not yet confirmed; do not treat as fact mid-cluster), **Radar** (findings to keep watching that are not yet action).
 
 ## Session residue        (required on interruption)
-The live state the re-derivation last read, the exact next action, any half-taken step, and its **re-run safety** (safe to re-run, or must be reconciled by hand?), so a fresh session resumes the cockpit without trusting memory.
+The live state the re-derivation last read, the exact next action, any half-taken step, and its **re-run safety**, so a fresh session resumes the cockpit without trusting memory. **Three answers, not two**: safe to re-run; must be reconciled by hand; or fails safe, meaning re-running errors harmlessly and the check is to read the current state first rather than to reconcile anything. A schema migration is usually the third, and collapsing it into either of the others costs a resumed session either a needless reconciliation or a wrongly confident retry.
 
 ## Closure marker        (required at completion)
 A frozen banner ("CLUSTER COMPLETE, <date>; this doc is closed"), confirmation that the closeout obligations were discharged (verify #24), and, if a program tracker handed the baton, the baton returned to it.
