@@ -80,3 +80,5 @@ When the profile did not fire because the directory is absent, say nothing at al
 ## Output
 
 When the profile fired, report the one-line declaration alongside whatever the selector was already reporting, plus the conflict clause if one applied. When no profile directory exists, report nothing: this skill is silent by default and speaks only when it changed how something sounds.
+
+On the direct path (reached with no selector phase behind it), when voice is the last layer on a structured draft the operator will paste verbatim, deliver it as the single self-contained copyable block the communication selector prescribes, not as inline prose.
