@@ -2,6 +2,13 @@
 
 All notable changes to the `deliberate-engineering` plugin are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/), and the project aims at [Semantic Versioning](https://semver.org/) (pre-1.0: minor covers features and breaking changes, patch covers fixes).
 
+## [0.16.6] - 2026-08-25
+
+### Fixed
+- **A drafted communication the operator pastes verbatim is now delivered as one copyable block, when it is a structured artifact.** This is the wider half of 0.16.5, applied to the operator's most frequent paste: a PR description, a design doc, a long email. The communication selector's hand-over gate now says that a draft the operator pastes into a field that renders markdown, one carrying its own headings, code fences or a `suggestion` block, is emitted as a single self-contained block fenced deep enough to survive any inner fence (four backticks where it holds three-backtick fences), holding the draft and nothing else, so it copies in one action rather than being disentangled from the agent's commentary first.
+- **The rule is conditional, on purpose.** A one-line DM or channel post is not a structured artifact: plain text is the right delivery and a fence would be ceremony. The test is whether the reader pastes it verbatim into a markdown field, not how long the message is. This condition is the whole reason this shipped separately from the orchestrate handoff and work report, which are always structured and never need it.
+- **The direct-to-voice path carries it too.** When `deliberate-engineering-voice` is reached with no selector phase behind it and is the last layer on a structured draft going out, it defers to the same one-block delivery rather than emitting inline prose.
+- **`deliberate-engineering-capture` states the principle explicitly now.** It already presented "the block to append"; it now says that block is a single copyable fence, deep enough to survive any inner fence, which for a fence-free override entry is the plain triple fence. Behavior unchanged; the convention now has a consistent statement across the three skills that produce a copy-me artifact.
 ## [0.16.5] - 2026-08-25
 
 ### Fixed

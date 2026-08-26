@@ -103,7 +103,7 @@ For each candidate, present:
 
 1. The observed signal: e.g., "you skipped review #35 twice, both times noting that a separate simplification pass handles that."
 2. The target and operation: e.g., "review #35: disable."
-3. The **exact markdown block** that would be appended to the override file, in the format the override read side expects.
+3. The **exact markdown block** that would be appended to the override file, in the format the override read side expects, presented as a single copyable fenced block, fenced deep enough to survive any inner fence (a plain triple fence here, since an override entry carries none), so the operator pastes it in one action.
 
 A `disable` candidate looks like this (it removes a lens entirely):
 
