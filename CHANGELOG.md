@@ -2,6 +2,13 @@
 
 All notable changes to the `deliberate-engineering` plugin are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/), and the project aims at [Semantic Versioning](https://semver.org/) (pre-1.0: minor covers features and breaking changes, patch covers fixes).
 
+## [0.16.5] - 2026-08-25
+
+### Fixed
+- **A handoff or work report emitted into the conversation is now delivered as one copyable block.** Both are carried by a human, the handoff to a fresh worker session and the work report back to the orchestration session, and the contract prescribed their fields but said nothing about the delivery envelope. So an agent could emit a handoff as prose interleaved with its own commentary, which the operator then has to disentangle before pasting. The templates now say: when you deliver one into the conversation (rather than writing it straight to a file in the tracker's repo), emit it as a single self-contained block fenced with **four** backticks, holding the contract and nothing else, so it copies in one action and the three-backtick command and code fences inside it survive rather than closing the block early. Written to a file, no wrapper is needed. This is a delivery rule, not an internal-structure one: the headings and prose inside stay the author's to adapt.
+
+### Not in this release, recorded so it is not lost
+The same shape appears wider. A drafted communication (a PR description, a design doc, a structured email) is the operator's most frequent paste and carries the same markdown-nesting problem, and `deliberate-engineering-capture` already presents "the block to append" but fences it with three backticks, which is safe only because its content has no inner fence. The general principle, that an artifact produced for a human to copy verbatim is emitted as one self-contained block fenced deep enough to survive any inner fence, is a separate cycle: it spans a different skill and needs a condition that exempts a one-line message from the ceremony.
 ## [0.16.4] - 2026-08-25
 
 ### Fixed

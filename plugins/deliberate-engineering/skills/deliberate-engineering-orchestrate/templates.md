@@ -4,6 +4,8 @@ The three contracts that carry a program, read from `SKILL.md` before you author
 
 Two of these are per-dispatch (handoff, work report); the tracker is per-program and rewritten on every disposition. The orchestration session **generates** the mechanical fields from a live-state read at dispatch and hand-writes only the judgment fields (marked below); a worker fills the whole work report.
 
+**The two per-dispatch contracts are carried by a human**: the handoff to a fresh worker session, the work report back to the orchestration session. When you deliver one into the conversation for the operator to copy, rather than writing it straight to a file in the tracker's repo, emit it as a single self-contained block fenced with **four** backticks, holding the contract and nothing else (no preamble, no commentary inside the fence), so it copies in one action and the three-backtick command and code fences inside it survive rather than closing the block early. Written to a file instead, it needs no wrapper. This is delivery, not internal structure: the headings and prose inside stay yours to adapt.
+
 ---
 
 ## 1. Handoff (outbound contract)
