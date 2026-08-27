@@ -2,6 +2,12 @@
 
 All notable changes to the `deliberate-engineering` plugin are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/), and the project aims at [Semantic Versioning](https://semver.org/) (pre-1.0: minor covers features and breaking changes, patch covers fixes).
 
+## [0.17.0] - 2026-08-26
+
+### Added
+- **Verification lens 25: name the trust level of a claim you relay (verified, attested, corroborated).** The verify catalog had three lenses on the claim-evidence relationship (1 live-canonical-source, 2 no-guessing provenance, 22 match-scope-to-claim), and all three assume you go to the source yourself. None gave a vocabulary for the opposite and more common case: a claim you relay or act on that you did **not** verify yourself, a worker's report, an agent's summary, a colleague's "done". Lens 25 makes you label it, verified (you reached the primary source, at lens-22 scope), attested (claimed, not re-checked, a hypothesis until verified), or corroborated (an independent signal agrees), and forbids the label from outrunning the evidence. It pairs with 22: 22 is the breadth of the evidence, 25 is the directness of its source.
+  - **Origin:** `iops-practices/project-control`'s D4 discipline, whose own authors earmarked it to promote into deliberate-engineering. Machinery stays in that pack; this one piece is judgment and belongs in the verify catalog, so it moved. Confirmed absent before adding.
+  - **Not verified by a run.** This is a judgment lens; its firing is an agent labelling a relayed claim, not a measurable artifact. It ships backed by three things instead: the earmark, the confirmed gap, and its being the exact error that recurred through this project's own recent work, where "I measured it" got confused with "the agent said it" more than once. Exercising it needs the verify layer run from outside, which folds into the standing external-run obligation.
 ## [0.16.6] - 2026-08-25
 
 ### Fixed
