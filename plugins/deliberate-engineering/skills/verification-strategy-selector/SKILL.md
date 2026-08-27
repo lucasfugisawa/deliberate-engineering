@@ -58,7 +58,7 @@ The two classifications are **orthogonal**: the *evidence type* route-selector p
 
 Open only the parts matching your classification:
 
-- **Verifying a claim / number / assumption** (Part A) → 1 live-canonical-source, 2 no-guessing provenance, 4 real-data-and-schema, 22 match-verification-scope-to-the-claim (don't let a narrow check back a broad claim); add 3 name-the-refuting-observation if you have a stake; close with 5 second-pass.
+- **Verifying a claim / number / assumption** (Part A) → 1 live-canonical-source, 2 no-guessing provenance, 4 real-data-and-schema, 22 match-verification-scope-to-the-claim, 25 name-the-trust-level of a claim you relay (verified / attested / corroborated) (don't let a narrow check back a broad claim); add 3 name-the-refuting-observation if you have a stake; close with 5 second-pass.
 - **Getting a change ready to merge** (Part B) → 6 calibrate-local-trust, 7 mirror-CI aggregate check, 8 dry-run (if it touches data), 9 validation-methodology (if it affects others/performance), 10 reproduce-then-confirm (if it's a fix), 23 differential-verification (if it must preserve behavior, a refactor, migration, or optimization: run old and new on the same inputs and diff).
 - **Promoting across environments** (Part C) → 11 promotion gates, 12 red-CI-is-a-stop / flaky-vs-real, 13 deploy-ordering, 14 kill-switch, 15 final-confidence-check.
 - **Confirming after deploy** (Part D) → 16 runtime evidence, 17 annotate-expected-values, 18 one-change-at-a-time + named watch-fors, 19 re-run-over-time / absence-is-signal, 24 closeout-obligations-discharged (for a flagged / staged / temporary change with cleanup that outlives the deploy).

@@ -1,6 +1,6 @@
 # Verification Strategy Catalog
 
-This catalog contains 24 verification strategies organized into five groups plus composition patterns. Each strategy is a way to establish that something is *actually* true: by confronting it with reality (a run, a query, the live system) rather than by reading the artifact and judging it plausible. The selector skill references these by number to build a verification plan tuned to what is being verified and how irreversible the consequence of being wrong is.
+This catalog contains 25 verification strategies organized into five groups plus composition patterns. Each strategy is a way to establish that something is *actually* true: by confronting it with reality (a run, a query, the live system) rather than by reading the artifact and judging it plausible. The selector skill references these by number to build a verification plan tuned to what is being verified and how irreversible the consequence of being wrong is.
 
 Strategy **numbers are stable identifiers, not reading order**: a strategy keeps its number for life, and a new one is appended with the next free number and *placed* under the group it belongs to. So a group may run out of numeric sequence (Part D ends with 24). This is deliberate: it keeps every published number citable (e.g. by an override) without renumbering.
 
@@ -37,6 +37,12 @@ The review catalog's Part B (empirical validation, real-data validation, source-
 - **How it works:** Before vouching, compare the *breadth* of what you verified against the *breadth* of what you are about to claim. A pass on one environment does not support a claim about another; one case passing does not support "all cases"; a sampled check does not support a statement about the whole population. If the claim is wider than the evidence, either narrow the claim to exactly what was verified, or widen the verification until it covers the claim.
 - **Objective:** Close the gap between calibrating verification *depth* (matching rigor to irreversibility, covered elsewhere in this catalog) and calibrating *breadth*: the scope of verification must be at least the scope of the claim.
 - **When most valuable:** Any "it works / it's safe / it's done" statement that generalizes beyond what was directly observed, especially local-vs-production and one-case-vs-all-cases.
+
+### 25. Name the trust level of a claim you relay: verified, attested, corroborated
+
+- **How it works:** Before you trust, relay, or act on a claim, label how you know it, and never let the label outrun the evidence. **Verified**: you went to the primary source yourself, lens 1 for a behavioral claim or lens 2 for a quantity, at lens-22 scope. **Attested**: someone or something claimed it and you did not re-check; it stays a hypothesis until a verified pass replaces it. **Corroborated**: you did not reach the primary source, but an independent signal agrees. Carry the label into the disposition or the writeup, and never pass an attested claim on as if it were verified.
+- **Objective:** Stop the recurring error of relaying an attestation as a fact. Naming the level forces the question "did I check this, or was I told?", which forces the check before the claim is trusted.
+- **When most valuable:** Dispositioning a worker's or an agent's report; relaying any second-hand claim into a decision, a review comment, or a writeup; any multi-party or cross-session work where most claims arrive from someone else. (Pairs with #22: #22 is the *breadth* of your evidence, this is the *directness* of its source; together they are the two axes of whether your evidence is good enough for the claim.)
 
 ### 3. Name the refuting observation, then go run it
 
