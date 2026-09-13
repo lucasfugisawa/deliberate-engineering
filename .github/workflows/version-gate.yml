@@ -18,12 +18,15 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
   version-gate:
     runs-on: ubuntu-latest
     steps:
       - name: Check out with history
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
