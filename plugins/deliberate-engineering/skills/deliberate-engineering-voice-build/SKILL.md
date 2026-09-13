@@ -1,9 +1,11 @@
 ---
 name: deliberate-engineering-voice-build
-description: "Use on demand to build an operator's voice profile from scratch: the collection-and-extraction on-ramp for the voice layer. It walks the operator from raw writing samples to a profile that satisfies the voice contract (core, registers, archetypes). It helps the operator identify their own communication archetypes, collects samples typed by archetype and language, runs the analysis and an adversarial recount, drives a findings-based self-interview (human), synthesizes the profile files, then calibrates them against a blind A/B (human), delegating the method to the voice skill's bootstrap.md. This is the BUILD side; applying an existing profile to a draft is deliberate-engineering-voice, not this. The corpus and the finished profile are kept local, out of every repository, by a best-effort check this skill runs rather than by a guarantee it can enforce. Stays silent unless invoked, via /deliberate-engineering:voice-build or an explicit request to build, create, or bootstrap a voice profile."
+description: "Use on demand to build an operator's voice profile from scratch: the collection-and-extraction on-ramp for the voice layer. It walks the operator from raw writing samples to a profile that satisfies the voice contract (core, registers, archetypes). It helps the operator identify their own communication archetypes, collects samples typed by archetype and language, runs the analysis and an adversarial recount, drives a findings-based self-interview (human), synthesizes the profile files, then calibrates them against a blind A/B (human), delegating the method to the voice skill's bootstrap.md. This is the BUILD side; applying an existing profile to a draft is deliberate-engineering-voice, not this. The corpus and the finished profile are kept local, out of every repository, by a best-effort check this skill runs rather than by a guarantee it can enforce. Stays silent unless invoked through the host-native voice-build entry point or an explicit request to build, create, or bootstrap a voice profile."
 ---
 
 # Deliberate Engineering Voice Build
+
+Consult `deliberate-engineering-host-context` first. Use its `data_root` for the default working directory and finished profile; never write them under another host's data root.
 
 The build side of the voice layer. Where `deliberate-engineering-voice` reads a finished profile and applies it as the surface layer over a draft, this skill helps the operator *produce* that profile in the first place: it turns `bootstrap.md`, the method written as prose to run by hand, into a guided, resumable flow. It assists the expensive mechanical steps and keeps the two steps that must stay human.
 
@@ -13,7 +15,7 @@ It delegates the method to `bootstrap.md` and the output format to `contract.md`
 
 - **vs `deliberate-engineering-voice` (the apply side)**: that skill reads a profile at draft time and applies it; this skill builds the profile. Opposite directions on the same artifact. Applying a profile is not this skill's job, and building one is not that skill's.
 - **vs the capture-back extension (future, not this)**: folding a rejected draft or a style correction back into an *existing* profile over time is the incremental path, a separate future write target for `deliberate-engineering-capture`. This is the *initial* path from nothing to a first profile. Keep them separate; neither absorbs the other.
-- **On demand only**: never self-triggers. Runs via `/deliberate-engineering:voice-build` or an explicit request to build, create, or bootstrap a voice profile. No invocation, total silence.
+- **On demand only**: never self-triggers. Runs via the host-native `voice-build` entry point or an explicit request to build, create, or bootstrap a voice profile. No invocation, total silence.
 
 ## What this is, and what it costs
 
@@ -23,7 +25,7 @@ This skill is a state machine. At every moment it knows which phase it is in, an
 
 ## Phase 0: Frame and set up
 
-Confirm the operator understands the shape (a multi-session project) and the privacy stance (the corpus is the most sensitive artifact in the whole process, more than the profile). Create a **local working directory** for the corpus and the intermediate analysis, outside any repository. Default it to `~/.claude/deliberate-engineering/voice-build/`, the operator's own space alongside the profile and state directories and not a repository, unless the operator names another location. Before writing anything into it, run the safety check on that exact directory (see "Keeping it out of every repository") and confirm it is not a tracked path. Ask which languages the profile must cover; each language is collected and analyzed on its own.
+Confirm the operator understands the shape (a multi-session project) and the privacy stance (the corpus is the most sensitive artifact in the whole process, more than the profile). Create a **local working directory** for the corpus and the intermediate analysis, outside any repository. Default it to `<data_root>/voice-build/`, the operator's own space alongside the profile and state directories and not a repository, unless the operator names another location. Before writing anything into it, run the safety check on that exact directory (see "Keeping it out of every repository") and confirm it is not a tracked path. Ask which languages the profile must cover; each language is collected and analyzed on its own.
 
 ## Phase 1: Identify the archetype set (teach, then discover)
 
@@ -71,7 +73,7 @@ Fix the scenario count and the pass bar before the first round, and expect a fir
 
 ## Phase 8: Install and keep alive
 
-Place the finished profile at `~/.claude/deliberate-engineering/voice/`, the operator's own space. Handle the corpus per privacy: delete it, or retain it locally only if a later calibration genuinely needs it, never committing it anywhere. Point at the keep-alive path: the cheapest signal is the edits the operator makes to drafts before sending, folded back on the next pass (that fold-back is the separate capture-back extension, not this skill).
+Place the finished profile at `<data_root>/voice/`, the operator's own space for the current host. Handle the corpus per privacy: delete it, or retain it locally only if a later calibration genuinely needs it, never committing it anywhere. Point at the keep-alive path: the cheapest signal is the edits the operator makes to drafts before sending, folded back on the next pass (that fold-back is the separate capture-back extension, not this skill).
 
 ## Durable state (split by kind)
 

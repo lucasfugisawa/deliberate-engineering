@@ -4,7 +4,7 @@
      scaffolding, not profile content: left in place they load on every single
      draft and compete with the rules you actually wrote.
 
-     Copy this directory to ~/.claude/deliberate-engineering/voice/ and fill it in.
+     Copy this directory to <host data root>/voice/ and fill it in.
      See ../contract.md, "Getting started", for the copy-paste commands.
      core.md loads on every communication, so it holds only what is true of your
      writing regardless of language and artifact type. If a rule would have to be

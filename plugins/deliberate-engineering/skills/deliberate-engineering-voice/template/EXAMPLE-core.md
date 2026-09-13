@@ -1,6 +1,6 @@
 # EXAMPLE: a filled-in core.md (fabricated)
 
-**This persona is invented. Every rule, count, sample id and example below was made up to illustrate the format.** No corpus was measured and no real person writes this way. It is here so you can see what "about 1,000 words of rules" looks like on the page, how specific a rule has to be to survive contact with a draft, and where the citations go. Read it, then write your own from your own corpus. Copying it into `~/.claude/deliberate-engineering/voice/` would give you the voice of someone who does not exist.
+**This persona is invented. Every rule, count, sample id and example below was made up to illustrate the format.** No corpus was measured and no real person writes this way. It is here so you can see what "about 1,000 words of rules" looks like on the page, how specific a rule has to be to survive contact with a draft, and where the citations go. Read it, then write your own from your own corpus. Copying it into `<host data root>/voice/` would give you the voice of someone who does not exist.
 
 **The persona:** a staff data engineer on an internal data platform team. Writes only in English, so this profile has one register. Most of the output is code review, work items, incident channel updates and DMs to two or three regular collaborators. Terse to the point of being blunt, and cheerful about it.
 

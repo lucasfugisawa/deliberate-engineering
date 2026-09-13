@@ -18,6 +18,8 @@ name: consistency
 # No judgment, no version decision: pure invariants (Rule 1 stays the
 # maintainer's). Runnable locally: ./scripts/check-consistency.sh and
 # python3 scripts/check-invariants.py
+# python3 scripts/check-host-compatibility.py
+# python3 scripts/test-host-compatibility.py
 
 on:
   pull_request:
@@ -40,3 +42,7 @@ jobs:
           python3 scripts/check-invariants.py ${base:+--base "$base"}
       - name: Prove the guards still catch what they claim
         run: python3 scripts/test-check-invariants.py
+      - name: Validate the Claude Code and Codex host adapters
+        run: python3 scripts/check-host-compatibility.py
+      - name: Exercise host resolution and transcript extraction
+        run: python3 scripts/test-host-compatibility.py

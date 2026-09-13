@@ -30,7 +30,13 @@ Ask for something risky and it sizes the work *before* diving in. For "implement
 
 For a typo fix it does the opposite, and says so: "trivial and safe, single phase, no ceremony." Calibration runs both ways; the point is that the depth is a deliberate, visible decision, not an autopilot default.
 
-## Install
+## Installation
+
+Deliberate Engineering is one methodology with native adapters for Claude Code and Codex. Either host installs it directly from this repository; neither installation depends on the other.
+
+The verified host versions are Claude Code 2.1.247 and Codex 0.154.0. Python 3 is required for host-local path resolution and session capture. Any Codex capture whose retained lineage includes a compressed rollout needs the `zstd` executable; project-wide capture is more likely to encounter one. Installation and command discovery were exercised on macOS; Windows runtime paths have not been validated.
+
+### Claude Code
 
 Inside Claude Code:
 ```claude
@@ -45,7 +51,7 @@ claude plugin marketplace add lucasfugisawa/deliberate-engineering
 claude plugin install deliberate-engineering@deliberate-engineering
 ```
 
-### Keeping it up to date
+#### Update
 
 New lenses, rules, and fixes ship as version bumps. To receive them automatically, enable auto-update for the marketplace. Auto-update is a property of the *marketplace* (not the individual plugin), and for third-party (non-official) marketplaces Claude Code leaves it **off by default**, by design: it never updates third-party code without your consent. Turn it on once:
 
@@ -53,11 +59,35 @@ New lenses, rules, and fixes ship as version bumps. To receive them automaticall
 
 With auto-update off, you can still update manually from the same `/plugin` menu whenever a new version is available.
 
-**Recommended companion:** install [`superpowers`](https://github.com/obra/superpowers) (Jesse Vincent) alongside it. `deliberate-engineering` owns the *judgment* and delegates the *method* (TDD, systematic debugging, plan execution) to whatever workflow engine you have; `superpowers` is the one I recommend. With no dedicated engine the judgment layer still works: it classifies the work, calibrates the ceremony, and applies the rules and lenses, then delegates execution to whatever is present, down to Claude Code's built-in abilities.
+### Codex
+
+The native Codex adapter is verified against Codex CLI 0.154.0. From a terminal:
+
+```bash
+codex plugin marketplace add lucasfugisawa/deliberate-engineering
+codex plugin add deliberate-engineering@deliberate-engineering
+codex plugin list --json
+```
+
+The first command registers the repository's native `.agents/plugins/marketplace.json`; the second installs the plugin described by `.codex-plugin/plugin.json`. Claude Code does not need to be installed or configured.
+
+To refresh a Git marketplace and reinstall the current release:
+
+```bash
+codex plugin marketplace upgrade deliberate-engineering
+codex plugin remove deliberate-engineering@deliberate-engineering
+codex plugin add deliberate-engineering@deliberate-engineering
+```
+
+In Codex desktop and the interactive Codex CLI, run `/skills` and choose the command shown as `<command> (deliberate-engineering)`, or invoke it directly as `$deliberate-engineering:<command>`. Codex 0.154 does not register a direct `/deliberate-engineering:<command>` alias. `codex exec` has no interactive composer, so use the namespaced skill form in its prompt, for example `codex exec '$deliberate-engineering:plan shape this migration'`.
+
+Codex capture validates the active thread store and the complete retained rollout lineage before extracting anything. Older rollouts that lack structural `user.text` provenance cannot safely distinguish operator text from host-generated continuations, so capture reports that limitation and falls back to the live context instead of returning a partial corpus. Project-wide capture is all-or-nothing. Any capture that traverses a compressed retained segment additionally requires `zstd`.
+
+**Recommended companion:** install [`superpowers`](https://github.com/obra/superpowers) (Jesse Vincent) alongside it. `deliberate-engineering` owns the *judgment* and delegates the *method* (TDD, systematic debugging, plan execution) to whatever workflow engine you have; `superpowers` is the one I recommend. With no dedicated engine the judgment layer still works: it classifies the work, calibrates the ceremony, and applies the rules and lenses, then delegates execution to whatever the host provides.
 
 ### Optional: make the deliberate layer always-on
 
-Skills load when the model judges them relevant to the task. If you want the layer engaged on *every* engineering session (routing through `/deliberate-engineering:start` with the standing rules underneath, the way I run it), add a short block to your personal `~/.claude/CLAUDE.md`. Append it idempotently from your shell (bash/zsh, macOS/Linux); it's safe to run more than once and won't duplicate the block:
+Skills load when the model judges them relevant to the task. If you want the layer engaged on *every* engineering session, put the following policy in the host's global instruction file: `~/.claude/CLAUDE.md` for Claude Code, or `$CODEX_HOME/AGENTS.md` when `CODEX_HOME` is set and `~/.codex/AGENTS.md` otherwise. The Claude Code snippet below appends it idempotently; for Codex, paste the same block into `AGENTS.md` and replace the command invocation with “invoke `$deliberate-engineering:start`.”
 
 ```bash
 grep -q 'deliberate-engineering:begin' ~/.claude/CLAUDE.md 2>/dev/null || cat >> ~/.claude/CLAUDE.md <<'EOF'
@@ -84,7 +114,7 @@ non-technical work.
 EOF
 ```
 
-**Prefer to paste it by hand?** Copy everything from `<!-- deliberate-engineering:begin -->` through `<!-- deliberate-engineering:end -->` in the block above into your `~/.claude/CLAUDE.md`. **Already have an older block?** The snippet is guarded on that begin marker, so it appends nothing when a block is already present: it will not update one. If your file carries an earlier version, replace the content between the two markers by hand.
+**Prefer to paste it by hand?** Copy everything from `<!-- deliberate-engineering:begin -->` through `<!-- deliberate-engineering:end -->` in the block above into the current host's global instruction file. **Already have an older block?** The snippet is guarded on that begin marker, so it appends nothing when a block is already present: it will not update one. If your file carries an earlier version, replace the content between the two markers by hand.
 
 This is your machine's choice, never a requirement of the plugin: it only changes *when* the router and rules fire on your machine. One consequence worth knowing before you skip it: a standing rule you wrote in your override file is read by the rules skill, so a session where that skill does not fire is a session where your rule may go unread. Two backstops exist, a conduction takes the standing rules itself and the override layer can fire on its own description, but neither is a guarantee. If you keep standing rules, the always-on block is what makes them reliable rather than occasional. To undo it, see [Uninstall](#uninstall).
 
@@ -92,7 +122,9 @@ The nine rules are the small always-on core, joined by your own standing rules i
 
 ## Getting started
 
-Not sure where to begin? Run `/deliberate-engineering:start` and describe the work: it's the front door. It classifies the work, names the phases and the ceremony they earn, and routes you to the right phase. When you already know where you are, call a phase directly: `:plan`, `:review`, `:verify`, `:debug`.
+Not sure where to begin? In Claude Code, run `/deliberate-engineering:start`; in Codex, select `start (deliberate-engineering)` through `/skills` or type `$deliberate-engineering:start`. Describe the work in the same request. The front door classifies it, names the phases and the ceremony they earn, and routes you to the right phase. When you already know where you are, call `plan`, `review`, `verify`, or `debug` directly through the same host-native form.
+
+The same 12 command names are available in both interactive hosts: lifecycle (`start`, `plan`, `review`, `verify`, `debug`), scale and delivery (`orchestrate`, `conduct`, `communicate`), personal adaptation (`capture`, `voice-build`), and catalog authorship (`contribute`, `promote`). Their thin host entry points dispatch to the same shared workflows. The author commands operate on a clone of this repository; `promote` requires a fresh-context subagent review before it removes a candidate, using either host's native subagent mechanism. See [CONTRIBUTING](CONTRIBUTING.md).
 
 ### Documentation map
 
@@ -191,7 +223,7 @@ The walkthrough is the **[capture guide](docs/guides/capture.md)**; the exact ov
 
 ## Sound like yourself
 
-The lenses tune a message to its reader. What they can't do is make it sound like *you*: by default every PR description, review comment, ticket, message and email comes out in the same LLM register. An optional voice profile at `~/.claude/deliberate-engineering/voice/` helps it sound a lot more like you, and it's opt-in exactly the way overrides are: no directory, no change in behavior.
+The lenses tune a message to its reader. What they can't do is make it sound like *you*: by default every PR description, review comment, ticket, message and email comes out in the same LLM register. An optional voice profile at `<host data root>/voice/` helps it sound a lot more like you, and it's opt-in exactly the way overrides are: no directory, no change in behavior. The host data roots are documented under [What the plugin writes](#what-the-plugin-writes).
 
 The profile is a small directory of your own writing patterns, not a prompt. It shapes only the *surface*, how the message sounds, never what a lens decided the message must accomplish; where the two meet, the lens wins on substance and the profile on voice.
 
@@ -205,13 +237,13 @@ Nothing personal ships here. The plugin carries the mechanism, the contract, the
 
 So it does not carry domain-specific knowledge: API design, data modeling, performance tuning, observability, security hardening, mobile, front-end, and the rest. At the edge where that depth matters, it does the honest thing: it names what it doesn't carry and points you to bring your own domain expertise, rather than fake a competence it doesn't have. That is the same discipline the rules ask of the agent (Rule 7: name the edge of what you know), turned on the plugin itself.
 
-The same honesty applies to its platform reach: it ships as a Claude Code plugin, and that is the honest scope today. It doesn't claim to run on other agents or IDEs, and it removes nothing, coexisting with whatever review and workflow tooling you already run.
+The same honesty applies to its platform reach: Claude Code 2.1.247 and Codex 0.154.0 are the verified hosts. The methodology is shared, while thin command entry points, manifests, marketplace discovery, personal data roots, and transcript extraction follow each host's native contract. Other agents and IDEs are not claimed as supported.
 
 ### What the plugin writes
 
 Nothing in your source. Everything else it writes, in full:
 
-- **A working-note**, to keep its place across context boundaries on multi-phase or multi-session work: `.deliberate/state/` in the repository root when it can confirm that path is ignored by your VCS, and `~/.claude/deliberate-engineering/state/` otherwise. **Confirming that can mean adding a `.deliberate/` line to your `.gitignore`**, which is a tracked file, so that is the only pre-existing tracked file it ever edits in your project; everything below is a file it creates. It says which location it chose every time it reads or writes a note.
+- **A working-note**, to keep its place across context boundaries on multi-phase or multi-session work: `.deliberate/state/` in the repository root when it can confirm that path is ignored by your VCS, and the current host's Deliberate Engineering data root otherwise. **Confirming that can mean adding a `.deliberate/` line to your `.gitignore`**, which is a tracked file, so that is the only pre-existing tracked file it ever edits in your project; everything below is a file it creates. It says which location it chose every time it reads or writes a note.
 - **A conductor doc**, only during a conduction, which you start with `/deliberate-engineering:conduct` or which the router or an orchestration hands over: the cockpit for that cluster of irreversible steps, written beside the work it conducts and committed with the tracker when one is in play.
 
 It also commits. A commit on a local branch nobody else has is treated as ordinary work rather than a gated action, on the reasoning that the gate exists for what leaves your machine or cannot be undone, and such a commit is neither. The push, the pull request, the merge, the tag and the release all stop for you. If you would rather it did not commit at all, say so in the session or write it as a standing rule.
@@ -219,18 +251,19 @@ It also commits. A commit on a local branch nobody else has is treated as ordina
 - **A program tracker**, only during an orchestration, which you start with `/deliberate-engineering:orchestrate` or which the router hands over: it commits an update as each unit is dispositioned, so a fresh session can resume.
 - **Handoff and report files**, only during an orchestration, which you start with `/deliberate-engineering:orchestrate` or which the router hands over: one handoff per unit dispatched and one report per unit returned, written beside the tracker so the program has an audit trail rather than a chat log.
 - **A temporary copy of your typed messages**, only when you run `/deliberate-engineering:capture`: it extracts them from the session transcript into a temp directory to mine them, and does not delete it afterwards.
-- **Your own files under `~/.claude/deliberate-engineering/`**: the override file, the voice profile, and, while you run `/deliberate-engineering:voice-build`, a working directory holding the writing samples you supplied. That corpus is the most sensitive thing the plugin ever touches, and the check that keeps it out of a repository is best-effort: it declines to write where it cannot confirm the path is out of a repository, and it cannot enforce that: an agent can ignore an instruction and nothing outside it blocks the write.
+- **Your own host-local files**: Claude Code uses `~/.claude/deliberate-engineering/`; Codex uses `$CODEX_HOME/deliberate-engineering/` when `CODEX_HOME` is set and `~/.codex/deliberate-engineering/` otherwise. Each holds that host's override file, voice profile, fallback state, and voice-build working directory. One host never reads the other's directory automatically. The host-context contract creates these directories as `0700` and files as `0600`, and refuses a host-local write inside a repository. The writing corpus is the most sensitive thing the plugin touches; these checks reduce accidental disclosure but cannot protect a file after another process or user changes its permissions.
 
 The author tools (`/deliberate-engineering:contribute` and `/deliberate-engineering:promote`) write only inside a clone of this plugin, never in your project.
 
 ## Uninstall
 
-Both steps are independent, and neither touches your source:
+Removing one host's plugin does not affect the other:
 
-1. **Disable or remove the plugin** via `/plugin`: that's the whole product.
-2. **If** you added the optional always-on block to your personal `~/.claude/CLAUDE.md`, delete it: everything from `<!-- deliberate-engineering:begin -->` through `<!-- deliberate-engineering:end -->`, inclusive. Removing it is unrelated to disabling the plugin; the router and rules then load only on description match, like any normal skill.
+- Claude Code: remove `deliberate-engineering@deliberate-engineering` through `/plugin` or `claude plugin uninstall deliberate-engineering@deliberate-engineering`.
+- Codex: run `codex plugin remove deliberate-engineering@deliberate-engineering`. Remove the marketplace separately with `codex plugin marketplace remove deliberate-engineering` only if you no longer want it registered.
+- If you added the optional always-on block, delete everything from `<!-- deliberate-engineering:begin -->` through `<!-- deliberate-engineering:end -->` in that host's global instruction file.
 
-**What stays on disk, on purpose.** Removing the plugin removes the product, not the things it wrote for you, because those are yours and a reinstall should find them. If you want them gone too: `~/.claude/deliberate-engineering/` holds your override file, your voice profile, any state notes taken outside a repository, and the voice-build working directory unless you named another location; `.deliberate/state/` holds the notes inside each repository you worked in, alongside any conductor doc, program tracker or handoff a session wrote there. Two are worth a deliberate look: the voice-build working directory, if it still holds the writing corpus you assembled rather than one you already deleted, and the temporary copy of your typed messages that a capture pass extracts and does not remove.
+**What stays on disk, on purpose.** Removing the plugin leaves your files so a reinstall can find them: the current host's Deliberate Engineering data root, `.deliberate/state/` in repositories, conductor docs, program trackers, handoffs, and capture scratchpads. Delete those separately only after inspecting them, especially any voice-build corpus.
 
 ## License
 

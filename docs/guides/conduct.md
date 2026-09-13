@@ -2,6 +2,8 @@
 
 # Conduct: run an irreversibility cluster
 
+**Command notation.** `/deliberate-engineering:conduct` is the Claude Code form. In Codex 0.154, choose `conduct (deliberate-engineering)` through `/skills` or type `$deliberate-engineering:conduct`.
+
 `/deliberate-engineering:conduct` is for the moment irreversibility concentrates: a merge cascade, a deploy chain, a batch of production data mutations, a teardown. Steps that must fire in a fixed order, each gated behind a verification of the last, where the cost of a slipped gate is real. The agent conducts; **you pull every irreversible trigger**.
 
 ## When to reach for it, and when not

@@ -45,7 +45,7 @@ plan (the orchestration session, in-session via the router + selectors)
  -> DISPOSITION: accept / reject / follow-up
  -> TRACKER: self-audit + read-back-after-write on this disposition checkpoint (Rule 6)
  -> COMMIT the disposition (its git history is the audit trail); the operator triggers anything outward (Rule 1)
- -> CAPTURE any operator-caught gap back into overrides/catalog (/deliberate-engineering:capture and :contribute)
+ -> CAPTURE any operator-caught gap back into overrides/catalog (the host-native `capture` and `contribute` entry points)
 The worker is now done. A follow-up is a NEW self-contained handoff, never a kept-alive session.
 ```
 

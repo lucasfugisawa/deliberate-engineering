@@ -1,19 +1,21 @@
 ---
 name: deliberate-engineering-overrides
-description: "Use at the start of an engineering session to pick up the operator's standing-rule overrides, and again whenever any deliberate-engineering lens is about to be applied. Reads ~/.claude/deliberate-engineering/overrides.md, honors disable/modify/add overrides on lenses, composition patterns and standing rules, offers operator-authored lenses alongside the shipped ones, and declares each deviation. Stays silent when no override file exists or no override matches."
+description: "Use at the start of an engineering session to pick up the operator's standing-rule overrides, and again whenever any deliberate-engineering lens is about to be applied. Reads the current host's Deliberate Engineering override file, honors disable/modify/add overrides on lenses, composition patterns and standing rules, offers operator-authored lenses alongside the shipped ones, and declares each deviation. Stays silent when no override file exists or no override matches."
 ---
 
 # Deliberate Engineering Overrides
+
+Consult `deliberate-engineering-host-context` first. Read `overrides.md` below the returned `data_root`; never look in another host's data root when it is absent.
 
 The deliberate layer of *your practice takes precedence*. Where the shipped skills carry judgment, this skill lets an operator's own practice override that content, wherever it is applied. It reads and honors overrides from a personal file (disabling lenses, appending to them, or injecting operator-authored strategies) and declares the deviation out loud.
 
 ## vs the runtime precedence that already exists
 
-The harness and the rules skill already establish a precedence order: explicit user instruction beats a rule (CLAUDE.md > skills > system). That runtime precedence governs the **one-off**: an instruction in the current session overrides the default. This skill is the **declarative, addressable, persistent** form, for what the operator wants held across sessions. Rather than restating "ship it without stopping for approval" every time, the operator writes `Rule 1: modify` once, with a `**Add:**` annotation scoping the loosening to a named environment, and this skill applies it on every relevant session. This makes the runtime precedence durable, not a replacement for it.
+The host's instruction hierarchy and the rules skill already distinguish explicit current-session direction from durable defaults. That runtime precedence governs the **one-off**: an applicable explicit user instruction overrides a stored preference, while host system and safety instructions remain authoritative. This skill is the **declarative, addressable, persistent** form, for what the operator wants held across sessions. Rather than restating "ship it without stopping for approval" every time, the operator writes `Rule 1: modify` once, with a `**Add:**` annotation scoping the loosening to a named environment, and this skill applies it on every relevant session. This makes the operator preference durable, not a replacement for the host's instruction hierarchy.
 
 ## vs the write side
 
-This skill is the **read side** of the override layer. It consults the file, honors the overrides, and declares them. Growing the file from observed practice (noticing that an operator routinely overrides planning #12, offering to persist that preference, and writing the entry) is the **write side**, a separate capability owned by the `deliberate-engineering-capture` skill (invoked on demand via `/deliberate-engineering:capture`). The boundary holds regardless: *this* skill only reads and applies overrides; it never writes them. The capture skill writes only on demand, only with approval, and only by appending, never by editing what is already there.
+This skill is the **read side** of the override layer. It consults the file, honors the overrides, and declares them. Growing the file from observed practice (noticing that an operator routinely overrides planning #12, offering to persist that preference, and writing the entry) is the **write side**, a separate capability owned by the `deliberate-engineering-capture` skill and invoked on demand through the current host's `capture` entry point. The boundary holds regardless: *this* skill only reads and applies overrides; it never writes them. The capture skill writes only on demand, only with approval, and only by appending, never by editing what is already there.
 
 ## What is a target, and what is architecture
 
@@ -32,11 +34,11 @@ Two kinds of content, reached two different ways, because they fail in opposite 
 
 When the file does not exist, this skill does nothing and says nothing. Override is opt-in.
 
-**Absent and unreadable are not the same answer.** Absent means there are no overrides, and silence is correct. Unreadable means there may be overrides you cannot see: the session is scoped to a repository while the file lives under `~/.claude/`, or the read fails for any other reason. Say so out loud, hold every shipped rule in force including Rule 1, and record that the calibration was unavailable rather than absent, so a resumed session does not inherit the silence as a clean read.
+**Absent and unreadable are not the same answer.** Absent means there are no overrides, and silence is correct. Unreadable means there may be overrides you cannot see: the session cannot access the current host's data root, or the read fails for any other reason. Say so out loud, hold every shipped rule in force including Rule 1, and record that the calibration was unavailable rather than absent, so a resumed session does not inherit the silence as a clean read.
 
 ## The override file
 
-The override file lives at `~/.claude/deliberate-engineering/overrides.md`. Each entry has a header in one of three forms (`<target>: <operation>` for a specific lens, composition pattern or rule, `add: <catalog>` for an operator-authored lens, or `add: <catalog> pattern` for an operator-authored composition pattern) followed by a body that depends on the operation.
+The override file lives at `<data_root>/overrides.md`, where `data_root` comes from `deliberate-engineering-host-context`. Each entry has a header in one of three forms (`<target>: <operation>` for a specific lens, composition pattern or rule, `add: <catalog>` for an operator-authored lens, or `add: <catalog> pattern` for an operator-authored composition pattern) followed by a body that depends on the operation.
 
 ```markdown
 ## review #35: disable
@@ -95,7 +97,7 @@ The flow when this skill is invoked:
 **For standing rules, once per session:**
 
 1. The rules skill consults this skill at the start of an engineering session, before any work is classified. `deliberate-engineering-conduct` does the same as it authors a contract, since a conduction can be invoked without the rules skill having run and is where an unread loosening changes who pulls a trigger.
-2. This skill reads `~/.claude/deliberate-engineering/overrides.md` if it exists and returns the standing-rule entries: `Rule N` overrides and `add: rules` entries. Catalog-lens entries are left for their appliers.
+2. This skill reads `<data_root>/overrides.md` if it exists and returns the standing-rule entries: `Rule N` overrides and `add: rules` entries. Catalog-lens entries are left for their appliers.
 3. Those entries are held for the session alongside the shipped nine, and declared when they change behavior.
 
 **For catalog lenses, per applier:**

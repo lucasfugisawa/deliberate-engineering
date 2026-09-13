@@ -2,6 +2,22 @@
 
 All notable changes to the `deliberate-engineering` plugin are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/), and the project aims at [Semantic Versioning](https://semver.org/) (pre-1.0: minor covers features and breaking changes, patch covers fixes).
 
+## [0.18.0] - 2026-09-12
+
+Deliberate Engineering is now one shared methodology with native Claude Code and Codex host adapters. The Codex distribution no longer relies on Claude-compatible discovery or any Claude installation at runtime.
+
+### Added
+- **Native Codex plugin and marketplace metadata.** `.codex-plugin/plugin.json` and `.agents/plugins/marketplace.json` expose twelve native command skills and the shared methodology through Codex's plugin loader.
+- **A host-context boundary for personal data and transcripts.** The new `deliberate-engineering-host-context` skill resolves Claude Code and Codex roots without cross-host fallback. Capture understands both Claude Code transcripts and Codex rollout JSONL, follows bounded fork/revert lineages across active, archived, plain, and compressed storage, and emits only structurally proven operator messages. Provenance-less older Codex rollouts degrade explicitly rather than entering a partial corpus.
+- **Multi-host contract tests.** A dedicated checker and negative-control suite validate metadata parity, paired command dispatch, resource reachability, host isolation, adapter context-preservation instructions, active-rollout selection, and transcript extraction. It specifically rejects `$ARGUMENTS` in Codex adapters because Codex 0.154 silently omits such migrated commands.
+
+### Changed
+- **Host-sensitive workflows now use the shared boundary.** Overrides, state, capture, voice, and voice-build keep personal data below the active host's own root. Existing Claude Code data remains where it was; Codex uses its own `$CODEX_HOME` or `~/.codex` root.
+- **Installation and architecture documentation now describe both hosts.** Claude Code keeps its existing commands and marketplace contract; Codex gets native install, update, uninstall, command-surface, and `codex exec` guidance.
+- **Release metadata is gated across both hosts.** The Claude manifest, Codex manifest, and version-bearing Claude marketplace entry move in lockstep.
+
+**A note on the version.** Native first-class support for a second host adds an installation surface and a host adapter, so this is a pre-1.0 minor release rather than a patch.
+
 ## [0.17.0] - 2026-08-26
 
 ### Added
@@ -452,4 +468,3 @@ The coherence release: the outcome of a full architectural review of the plugin 
 [0.2.0]: https://github.com/lucasfugisawa/deliberate-engineering/releases/tag/v0.2.0
 
 <!-- 0.1.0 predates tagged releases (v0.2.0 is the first git tag), so it has no release link. -->
-

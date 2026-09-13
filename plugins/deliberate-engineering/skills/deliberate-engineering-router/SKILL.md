@@ -1,6 +1,6 @@
 ---
 name: deliberate-engineering-router
-description: "Use at the start of an engineering task when you're not sure which phase you're in, or for broad or multi-phase work: building a feature, changing a live system, chasing an incident, reviewing a diff, or shaping a design. It classifies the work, names the phase sequence and ceremony band, and routes to the matching selector (plan / review / verify / debug-operate), or, above them, to deliberate-engineering-orchestrate when the work outgrows one session and deliberate-engineering-conduct when irreversibility concentrates into a cluster. It conducts between phases and stops at the irreversible action. At each phase transition it writes a short live note through deliberate-engineering-state, which lands in the repository under .deliberate/state/ (and may add that path to .gitignore) or under ~/.claude/ when it cannot. Skip for research, prose, and ad-hoc analysis."
+description: "Use at the start of an engineering task when you're not sure which phase you're in, or for broad or multi-phase work: building a feature, changing a live system, chasing an incident, reviewing a diff, or shaping a design. It classifies the work, names the phase sequence and ceremony band, and routes to the matching selector (plan / review / verify / debug-operate), or, above them, to deliberate-engineering-orchestrate when the work outgrows one session and deliberate-engineering-conduct when irreversibility concentrates into a cluster. It conducts between phases and stops at the irreversible action. At each phase transition it writes a short live note through deliberate-engineering-state. Skip for research, prose, and ad-hoc analysis."
 ---
 
 # Deliberate Engineering Router
@@ -21,7 +21,7 @@ A workflow engine such as `superpowers`/Workflow owns the *execution mechanism*:
 - When a request is broad or spans multiple phases (e.g. "ship feature X").
 - When intent is unclear and no single phase is obviously implied.
 
-It is triggered three ways: `/deliberate-engineering:start` at the start of a task (primary); by description as a safety net, when a request is broad or ambiguous and no phase is obviously implied; and optionally always-on, via the README recipe, for adopters who want it on every engineering session. Skip it for research, prose, and ad-hoc analysis. See "Ambiguity and edge cases."
+It is triggered three ways: through the host-native `start` entry point at the start of a task (primary); by description as a safety net, when a request is broad or ambiguous and no phase is obviously implied; and optionally always-on, via the README recipe, for adopters who want it on every engineering session. Skip it for research, prose, and ad-hoc analysis. See "Ambiguity and edge cases."
 
 ## What it will and will not name
 

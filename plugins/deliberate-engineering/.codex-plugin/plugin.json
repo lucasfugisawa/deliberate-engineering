@@ -1,0 +1,42 @@
+{
+  "name": "deliberate-engineering",
+  "version": "0.18.0",
+  "description": "Engineering discipline for AI-assisted development: risk-calibrated planning, review, verification, debugging, operations, and delivery.",
+  "author": {
+    "name": "Lucas Fugisawa",
+    "url": "https://github.com/lucasfugisawa"
+  },
+  "homepage": "https://github.com/lucasfugisawa/deliberate-engineering",
+  "repository": "https://github.com/lucasfugisawa/deliberate-engineering",
+  "license": "MIT",
+  "keywords": [
+    "engineering",
+    "review",
+    "verification",
+    "planning",
+    "debugging",
+    "operations",
+    "methodology"
+  ],
+  "skills": [
+    "./skills/",
+    "./codex/commands/"
+  ],
+  "interface": {
+    "displayName": "Deliberate Engineering",
+    "shortDescription": "Risk-calibrated engineering judgment",
+    "longDescription": "A shared engineering methodology that classifies work by risk, reversibility, clarity, and reach, then selects proportionate planning, review, verification, debugging, operations, communication, and delivery practices.",
+    "developerName": "Lucas Fugisawa",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/lucasfugisawa/deliberate-engineering",
+    "defaultPrompt": [
+      "Classify this engineering task and route it through the proportionate Deliberate Engineering workflow"
+    ],
+    "screenshots": []
+  }
+}

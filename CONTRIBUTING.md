@@ -20,25 +20,27 @@ Each lens in a catalog follows a consistent three-part structure:
 2. **Objective**: the engineering goal this lens achieves.
 3. **When most valuable**: the contexts where this lens provides the most signal.
 
-**One external dependency, and it blocks.** `/deliberate-engineering:promote` invokes the `plugin-dev:skill-reviewer` agent on the edited catalog and treats an unavailable reviewer as a rejection, so promotion cannot finish without the `plugin-dev` plugin installed. Install it before promoting, or expect the flow to stop and say so.
+**Fresh-context review blocks promotion.** The `promote` workflow dispatches a separate reviewer through the active host's native subagent mechanism and treats an unavailable reviewer as a rejection. A specialized reviewer may be used when installed, but no second plugin is required. If the host cannot dispatch a fresh context, promotion stops before deleting the candidate.
 
 **Two naming families, on purpose.** A skill that owns a catalog of numbered lenses is named for the job it does (`review-strategy-selector`, `planning-strategy-selector`, `verification-strategy-selector`, `debug-operate-strategy-selector`, `communication-collaboration-selector`), because that name is what an agent matches when it needs that kind of judgment. Everything else carries the `deliberate-engineering-` prefix, because those skills are mechanism rather than method and the prefix keeps them from colliding with anything else installed. A new skill takes whichever family fits what it is; do not rename an existing one, since a skill name is an address that override files and other skills cite.
 
-Counts and versions are mechanically enforced: `scripts/check-consistency.sh` checks the catalog lens counts and the counts the README and the architecture doc state about them, and a CI gate requires a version bump in both manifests for any change under `plugins/deliberate-engineering/` (see the Releasing section for exactly what it checks). Three checks run locally, all from the repo root and all again in CI: `scripts/check-consistency.sh` for the counts (it needs bash 4 or newer) and `python3 scripts/check-invariants.py --base origin/main` for the structural invariants, which is the one that proves no lens number was renumbered and that every lens is reachable from its selector. Run all three before opening a PR.
+Counts, structure, host compatibility, and versions are mechanically enforced: `scripts/check-consistency.sh` checks catalog counts; `scripts/check-invariants.py` checks the shared methodology; `scripts/check-host-compatibility.py` checks both host adapters; and the CI version gate keeps the three version-bearing metadata entries in lockstep (see *Releasing*). Run the full local suite below before opening a PR.
 
-**Three checks run in CI, and you should run all three locally.** From the repo root:
+**Five checks run in CI, and you should run all five locally.** From the repo root:
 
 ```
 ./scripts/check-consistency.sh
 python3 scripts/check-invariants.py --base origin/main
 python3 scripts/test-check-invariants.py
+python3 scripts/check-host-compatibility.py
+python3 scripts/test-host-compatibility.py
 ```
 
 The first needs bash 4 or newer. macOS ships bash 3.2 as `/bin/bash`, so if that is the only bash on your machine the script stops and tells you; install a newer one and invoke it directly, for example `/opt/homebrew/bin/bash scripts/check-consistency.sh`.
 
 **`--base` is not optional in practice.** Without it the second check prints `skipped: append-only numbering` and still exits 0, so it reports success without having checked whether a published lens number moved, which is the one invariant an operator's override file depends on.
 
-**The third check tests the checks, not your change.** It copies the repository, breaks one invariant at a time and asserts the right check fails, because a check nobody has watched fail is not a check. Its controls anchor on literal text in the repository, so a correct contribution that edits one of those strings makes a control stale. When that happens it says so and names the file to fix; the control is what is out of date, not your change.
+**The third and fifth checks test the checks, not your change.** They exercise negative controls, because a guard nobody has watched fail is not a guard. Their controls anchor on repository contracts; when a correct contribution changes one of those contracts, update the corresponding control rather than weakening the production check.
 
 This structure makes lenses composable and context-aware: a selector reasons about which lenses a specific change calls for by matching the change's characteristics to each lens's *when most valuable* clause. A lens should teach a deliberate practice, not provide a static checklist: composable (rotate the lens each pass; find → verify; close with fresh eyes), context-aware (selected by the classification its own selector runs: risk, reversibility, requirement clarity, and reach for planning and review; evidence type and irreversibility for verification; the expectation gate for debug; audience and artifact for communication), and empirically grounded (validate claims rather than assume them).
 
@@ -63,6 +65,8 @@ This structure makes lenses composable and context-aware: a selector reasons abo
 
 **Two paths, and both are real.** The assisted path has never actually been used: no candidate file has ever been committed, and candidates are removed on promotion, so the queue is empty either way; what is certain is that the catalogs grew across thirty-odd direct commits. Hand-editing is the ordinary path and the rules for it are below. The assisted path exists because it carries a leak-audit gate and does the bookkeeping for you. Run the author tools from a local clone of this repository (they operate on the repo's own catalogs and `candidates/` queue):
 
+**Command notation.** The slash forms below are Claude Code commands. In Codex 0.154, choose `contribute (deliberate-engineering)` or `promote (deliberate-engineering)` through `/skills`, or invoke `$deliberate-engineering:contribute` or `$deliberate-engineering:promote` directly.
+
 - `/deliberate-engineering:contribute` turns a session's generalizable judgment into a `pending` candidate (generalizing at capture: extracting the employer-neutral principle and discarding the specifics). A candidate targets one of the catalogs (`review`, `verify`, `planning`, `debug`, `communication`) or, for a standing-rule change, `rules`.
 - `/deliberate-engineering:promote` drives a candidate into the catalog through a blocking leak-audit, an append-only edit, and the routing that makes the new lens reachable, and stops before commit/PR/push: publication is your decision.
 
@@ -76,11 +80,11 @@ A release is any change to the shipped plugin that reaches adopters. The version
 
 When publishing a release:
 
-1. **Bump the version in lockstep**: `plugins/deliberate-engineering/.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` must carry the **same** version. Pre-1.0: a new skill, command, catalog, lens, or composition pattern is a **minor** (`0.x.0`); a pure fix is a **patch** (`0.x.y`). So is anything that makes shipped content addressable that was not, since an adopter gains something they could not write before. The override-file relocation in 0.2.0 was technically breaking, but pre-1.0 minor already covers that. The client offers an update only when the version *string* changes: without a bump, adopters never see the release.
+1. **Bump the version in lockstep**: `plugins/deliberate-engineering/.claude-plugin/plugin.json`, `plugins/deliberate-engineering/.codex-plugin/plugin.json`, and the Deliberate Engineering entry in `.claude-plugin/marketplace.json` must carry the **same** version. The Codex marketplace schema has no version field. Pre-1.0: a new skill, command, catalog, lens, or composition pattern is a **minor** (`0.x.0`); a pure fix is a **patch** (`0.x.y`). So is anything that makes shipped content addressable that was not, since an adopter gains something they could not write before. The override-file relocation in 0.2.0 was technically breaking, but pre-1.0 minor already covers that. Claude Code offers an update only when the version *string* changes. Codex also uses the manifest version as the installed release identity and cache path, even though Codex 0.154 refreshes a Git marketplace and release by marketplace upgrade followed by remove/add.
 2. **Update `CHANGELOG.md`**: a new section for the version, newest first, opening with a short prose paragraph saying what the release is about. The headings in use are Added, Changed, Fixed, Removed, Tooling and Documentation; a release whose version needed a judgment call also carries a short `**A note on the version.**` block saying why.
 3. **Tag the release**: annotated tag `vX.Y.Z` on the release commit, pushed alongside `main`.
 
-The CI workflow `.github/workflows/version-gate.yml` enforces two of these: it fails if the two manifests disagree (Check A), and if anything under `plugins/deliberate-engineering/**` changed without a version bump (Check B). On a pull request these block the merge; on a push to `main` they flag the commit. They do not check the changelog or the tag: those stay your discipline.
+The CI workflow `.github/workflows/version-gate.yml` enforces two of these: it fails if the three version-bearing metadata entries disagree (Check A), and if the shipped payload or either root marketplace manifest changed without a version bump (Check B). On a pull request these block the merge; on a push to `main` they flag the commit. They do not check the changelog or the tag: those stay your discipline.
 
 ## Questions?
 

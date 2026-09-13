@@ -1,9 +1,11 @@
 ---
 name: deliberate-engineering-voice
-description: "Use as the LAST layer over a communication that is already drafted and going out in the operator's name, whether or not it concerns engineering work: it shapes how the text sounds, never what it must accomplish. For a communication that arises from engineering work, `communication-collaboration-selector` runs first and decides the substance, then reaches this skill; come here directly only for a one-off draft with no phase behind it. Examples, not an exhaustive list: a PR/MR title or description, a review comment or a reply to one, a work item title, description or comment, a chat message such as a DM or a channel post, an email, a calendar invite, a design doc or a comment on one, a post, an article, a personal note to someone outside work. Reads the operator's voice profile from ~/.claude/deliberate-engineering/voice/ and applies it as the surface layer, loading only core.md plus the register for the language the communication will be written in and the archetype for the artifact type. Consulted by communication-collaboration-selector after its lenses are chosen, and reachable on its own when no deliberate-engineering phase was ever entered. Stays silent when no profile directory exists. Do not load it for the agent's own replies to the operator: those follow the rules skill's authoring convention instead."
+description: "Use as the LAST layer over a communication that is already drafted and going out in the operator's name, whether or not it concerns engineering work. For engineering communication, `communication-collaboration-selector` runs first; come here directly only for a one-off draft with no phase behind it. Examples include a PR/MR description, review comment, work item, DM, channel post, email, calendar invite, design doc, post, article, or personal note. Reads the operator's voice profile from the current host's Deliberate Engineering data root. Stays silent when no profile exists. Do not load it for the agent's own replies to the operator."
 ---
 
 # Deliberate Engineering Voice
+
+Consult `deliberate-engineering-host-context` first. The profile is `<data_root>/voice/`; never discover it in another host's data root.
 
 The deliberate layer of *sounding like yourself*. Where the communication selector ships generalizable judgment about what a message must accomplish, this skill applies operator-specific personalization about how that message sounds. It reads a personal voice profile, loads only the parts the artifact at hand needs, and applies them as the last layer over whatever the selector already decided.
 
@@ -11,7 +13,7 @@ The deliberate layer of *sounding like yourself*. Where the communication select
 
 The selector decides **which lenses this artifact and this audience call for**: the case for the change rather than its changelog, invite rather than command, speak the reader's language, no unresolvable context. This skill decides **how this particular operator sounds** while doing that. Two different axes, deliberately kept in two skills.
 
-Folding the profile into the selector would mix shipped, generalizable judgment with operator-specific content inside one skill, which is exactly the separation the override layer already established. The precedent is close enough to be worth naming: `deliberate-engineering-overrides` is a read-side skill, reads from `~/.claude/deliberate-engineering/`, is invoked by a one-line pointer from each selector, does nothing and says nothing when its file is absent, and declares itself when it fires. This skill is the same shape aimed at a different target. An adopter who understands one understands the other.
+Folding the profile into the selector would mix shipped, generalizable judgment with operator-specific content inside one skill, which is exactly the separation the override layer already established. The precedent is close enough to be worth naming: `deliberate-engineering-overrides` is a read-side skill, reads from the same host-local `data_root`, is invoked by a one-line pointer from each selector, does nothing and says nothing when its file is absent, and declares itself when it fires. This skill is the same shape aimed at a different target. An adopter who understands one understands the other.
 
 The boundary holds in both directions: the selector never reads the profile, and this skill never re-decides which lenses apply. It receives a message that has already been shaped for its reader and changes its surface.
 
@@ -60,9 +62,9 @@ The order of application: the selector's lenses decide what the message must acc
 
 ## Silent when absent
 
-If `~/.claude/deliberate-engineering/voice/` does not exist, this skill does nothing and says nothing. Personalization is opt-in, exactly as override is.
+If `<data_root>/voice/` does not exist, this skill does nothing and says nothing. Personalization is opt-in, exactly as override is.
 
-An absent profile is not an error and mid-draft is not the moment to build one. If the operator asks how, the guided path is `deliberate-engineering-voice-build` (the `/deliberate-engineering:voice-build` command), which walks the build and resumes across sessions; `bootstrap.md` in this directory is the underlying method it runs, and `template/` is the skeleton.
+An absent profile is not an error and mid-draft is not the moment to build one. If the operator asks how, the guided path is the host-native `voice-build` entry point backed by `deliberate-engineering-voice-build`, which walks the build and resumes across sessions; `bootstrap.md` in this directory is the underlying method it runs, and `template/` is the skeleton.
 
 ## The declaration protocol
 

@@ -1,21 +1,23 @@
 ---
 name: deliberate-engineering-capture
-description: "Use on demand to capture what you did this session into durable overrides. Observes the full session transcript on disk (operator-typed messages only, extracted to a temporary working directory that it does not delete, then mined via subagent fan-out) for deviations (you corrected/skipped a catalog lens, composition pattern or rule), patterns (recurring practice the catalog lacks), and calibration adjustments (recurring ceremony heavier/lighter than the default for a class of work), discusses candidates, and on approval appends disable/modify/add entries to ~/.claude/deliberate-engineering/overrides.md. This is the adopter's write side: it grows YOUR personal override file. It is not the author contribution tools (contribute/promote), which propose lenses for the shared catalog. Stays silent unless invoked."
+description: "Use on demand to capture what you did this session into durable overrides. Observes the current host's full retained session history when resolvable (operator-typed messages only) for deviations from catalog content, recurring practices the catalog lacks, and recurring ceremony adjustments, discusses candidates, and on approval appends them to the current host's personal override file. This is the adopter's write side, not the author contribution tools. Stays silent unless invoked."
 ---
 
 # Deliberate Engineering Capture
 
-The adopter write side of the override layer. Where `deliberate-engineering-overrides` reads the personal override file and honors it at runtime, this skill helps you grow that file from what you actually did. It watches for three signals, deviations from the catalog (you skipped or corrected a lens, pattern or rule), patterns beyond it (you brought a recurring practice the catalog lacks), and calibration adjustments (you repeatedly ran a class of work heavier or lighter than the recommended ceremony), proposes override entries, and on approval appends them to `~/.claude/deliberate-engineering/overrides.md`.
+Consult `deliberate-engineering-host-context` first. It owns the host-local `data_root`, session identity, transcript root, and operator-message extractor used below.
+
+The adopter write side of the override layer. Where `deliberate-engineering-overrides` reads the personal override file and honors it at runtime, this skill helps you grow that file from what you actually did. It watches for three signals, deviations from the catalog (you skipped or corrected a lens, pattern or rule), patterns beyond it (you brought a recurring practice the catalog lacks), and calibration adjustments (you repeatedly ran a class of work heavier or lighter than the recommended ceremony), proposes override entries, and on approval appends them to `<data_root>/overrides.md`.
 
 ## Boundaries
 
 - **vs `deliberate-engineering-overrides` (the read side)**: that skill consults the file and honors overrides at runtime; this skill *proposes and appends* entries from observed signals. Different directions, same file.
-- **vs `contribute`/`promote` (the author tools)**: those grow the *shared, shipped* catalog (a product act, with leak audit); this grows your *personal, private* override file at `~/.claude/deliberate-engineering/overrides.md`. Opposite targets.
-- **On demand only**: never self-triggers; runs only via `/deliberate-engineering:capture` or an explicit request (e.g. "capture what we did as an override," "add this to my overrides"). No invocation → total silence; it never proposes overrides unprompted.
+- **vs `contribute`/`promote` (the author tools)**: those grow the *shared, shipped* catalog (a product act, with leak audit); this grows your *personal, private* override file at `<data_root>/overrides.md`. Opposite targets.
+- **On demand only**: never self-triggers; runs only via the host-native `capture` entry point or an explicit request (e.g. "capture what we did as an override," "add this to my overrides"). No invocation → total silence; it never proposes overrides unprompted.
 
 ## What it observes
 
-Three signals, all drawn from the **full session transcript on disk** (see "Where it reads from: the session transcript"), not the live context window:
+Three signals, all drawn from the **full retained session history on disk when resolvable** (see "Where it reads from: the session transcript"), not the live context window:
 
 1. **Deviations**: a catalog lens, composition pattern or standing rule was applicable, and you corrected it, skipped it, or contradicted it. The lens said one thing; you did another, with signs of intent (not a one-off accident). Candidate for `disable` if you rejected the lens outright, or `modify` if you used it with a recurring adjustment.
 
@@ -27,64 +29,52 @@ What does NOT produce a signal: a behavior seen once with no sign of intent, or 
 
 ## Where it reads from: the session transcript
 
-The signals are drawn from the **full session transcript on disk**, not the live context window. The live window shrinks and compacts as you work; the transcript is durable. Reading from disk means capture sees the whole session even when invoked late, and compacting the live context never harms it. (This is why capture needs no "compact first" ritual: the raw material lives on disk, and the heavy reading is offloaded to subagents.)
+The signals are drawn from the **full retained session history on disk when resolvable**, not the live context window. The live window shrinks and compacts as you work; retained transcript history is durable. Reading from disk means capture sees the retained session even when invoked late, while reverted ranges stay absent by design and any resolution failure is declared through Degradation. Compacting the live context does not harm the on-disk history. (This is why capture needs no "compact first" ritual: the raw material lives on disk, and the heavy reading is offloaded to subagents.)
 
 **Scope.** By default, read only the **current session**. Widen to the whole project only when the operator explicitly asks (e.g., "capture across all my sessions on this project"). Never widen without an explicit request.
 
-**Step 1: Resolve the transcript.** The current session id is in `CLAUDE_CODE_SESSION_ID`. Find the transcript by searching for that filename. Do NOT reconstruct the encoded project-dir path (it replaces both `/` and `.` with `-` and is fragile):
+**Step 1: Resolve the host and transcript.** Run the host-context resolver and parse its JSON object as data; never `source` or `eval` it. Use the directory containing that loaded skill's `SKILL.md` to locate its scripts. Create a private scratchpad for selection and extraction:
 
 ```bash
-TRANSCRIPT=$(find ~/.claude/projects -name "$CLAUDE_CODE_SESSION_ID.jsonl" -not -path "*/subagents/*" | head -1)
-```
-
-Compaction appends to the same file, so this one file holds the full history. For project scope, gather all `*.jsonl` directly under the project's `~/.claude/projects/<encoded>` directories (there may be several, one per worktree), excluding `subagents/`. If `$TRANSCRIPT` comes back empty, stop here and follow **Degradation** below instead of proceeding to Step 2.
-
-**Step 2: Filter to the operator's voice.** Keep only the operator's typed messages; drop agent output, tool-results, and harness-injected messages. Establish a scratchpad directory for the intermediate artifacts (create one if you don't already have a session scratchpad):
-
-```bash
+umask 077
 SCRATCH=$(mktemp -d)
 ```
 
-Then write the result to a scratchpad file:
+For the current session, search only within the returned managed transcript roots:
+
+- Claude Code: find the regular file named exactly `<session_id>.jsonl`, excluding `subagents/`.
+- Codex: require `session_id`, `thread_store`, and `archive_root`, then run `select-codex-rollouts.py --transcript-root <transcript_root> --archive-root <archive_root> --thread-store <thread_store> --session-id <session_id> > "$SCRATCH/codex-lineages.json"`. Require one thread entry. This follows Codex's active pointer and reconstructs its bounded `history_base` lineage, including replacement rollouts created by revert, rather than guessing from a filename or reading only the post-revert segment.
+
+Require exactly one current-session match. For project scope, widen only on explicit request: Claude Code gathers direct project transcripts excluding `subagents/`; Codex runs the same selector with `--project-root <absolute-project-root>` instead of `--session-id`. The selector reads current rollout pointers, includes active or archived and plain or compressed representations, preserves only the retained prefix of every revert lineage, and excludes subagent, guardian-review, internal, and other non-root threads even when their `cwd` matches. Never infer project membership from an encoded directory name. Compressed history requires `zstd`. If identity or the Codex thread store is absent, selection returns nothing or fails, `zstd` is needed but unavailable, or a transcript is unreadable, follow **Degradation** instead of proceeding to Step 2.
+
+**Step 2: Filter to the operator's voice.** Keep only the operator's typed messages; drop agent output, tool results, metadata, and harness-injected messages. Run the shared extractor shipped by `deliberate-engineering-host-context` and write its NUL-delimited output to the scratchpad. For Claude Code, pass the resolved transcript directly:
 
 ```bash
-python3 - "$TRANSCRIPT" > "$SCRATCH/operator_messages.txt" <<'PY'
-import json, sys, re
-WRAPPER_RE = re.compile(r'<(command-name|command-message|command-args|local-command-stdout|system-reminder)>.*?</\1>', re.DOTALL)
-def extract_text(content):
-    if isinstance(content, str): return content
-    if isinstance(content, list):
-        return '\n'.join(b.get('text','') for b in content if isinstance(b, dict) and b.get('type')=='text')
-    return ''
-for line in open(sys.argv[1]):
-    line = line.strip()
-    if not line: continue
-    try: o = json.loads(line)
-    except Exception: continue
-    if o.get('type') != 'user': continue
-    if o.get('isMeta') or o.get('isSidechain'): continue
-    origin = o.get('origin')
-    if isinstance(origin, dict) and origin.get('kind') not in (None, 'human'): continue
-    c = o.get('message', {}).get('content')
-    if isinstance(c, list) and any(isinstance(b, dict) and b.get('type')=='tool_result' for b in c): continue
-    t = WRAPPER_RE.sub('', extract_text(c)).strip()
-    if not t: continue
-    print(t)
-    print("\x00", end="")   # NUL record separator between messages
-PY
+python3 "<host-context-skill-dir>/scripts/extract-operator-messages.py" \
+  --host claude --transcript-root "<transcript_root>" \
+  --session-id "<session_id>" "<transcript>" > "$SCRATCH/operator_messages.txt"
 ```
 
-The predicate: `type == "user"`, `origin.kind` is `human` (harness-injected messages like task-notifications carry a different `origin.kind` and are dropped; older transcripts without an `origin` field fall through this check), textual content (not a `tool_result`), `isMeta` false, `isSidechain` false, with `<command-*>`/`<local-command-stdout>`/`<system-reminder>` wrappers stripped and now-empty messages dropped. Agent output, tool-results, and harness notifications never pass.
+For Codex, pass the selector's lineage manifest so the extractor honors every retained ordinal bound:
+
+```bash
+python3 "<host-context-skill-dir>/scripts/extract-operator-messages.py" \
+  --host codex --transcript-root "<transcript_root>" --archive-root "<archive_root>" \
+  --session-id "<session_id>" --lineage-manifest "$SCRATCH/codex-lineages.json" \
+  > "$SCRATCH/operator_messages.txt"
+```
+
+Omit `--session-id` only for an explicitly requested project-wide manifest. The extractor validates the complete manifest before writing output and holds the host-specific schema. Claude Code keeps human `type == "user"` text, rejects tool results, metadata and sidechains, and strips command/system wrappers. Codex input passes only when structural `content_item_kinds` provenance marks the matching block as `user.text`. A role-shaped record with missing provenance, including an older rollout whose schema predates provenance, stops the entire extraction rather than producing a partial, unsound corpus. Agent output and tool results never pass either branch.
 
 **Step 3: Chunk to scratchpad.** Split `operator_messages.txt` (on the NUL separator) into chunk files small enough to fit a subagent context (on the order of a few hundred messages per chunk, fewer if messages run long), e.g. `$SCRATCH/chunk_001.txt`, `chunk_002.txt`, …. Keep only the chunk paths and message counts in your own context; never load the raw operator text into the main thread.
 
-**Step 4: Fan-out mine and consolidate.** Dispatch one subagent per chunk (Task tool). Give each the chunk-file path and this brief:
+**Step 4: Fan-out mine and consolidate.** Dispatch one fresh-context subagent per chunk using the current host's subagent mechanism. Give each the chunk-file path and this brief:
 
 > Read these operator-typed messages. Identify three kinds of signal: (a) **deviations**: a catalog lens, composition pattern or standing rule was applicable and the operator corrected, skipped, or contradicted it, with signs of recurring intent (not a one-off); (b) **patterns**: a recurring practice or strategy the operator brought that the catalog lacks; and (c) **calibration adjustments**: for a recognizable class of work, the operator repeatedly chose a ceremony depth heavier or lighter than the plugin's recommendation, with intent (e.g. consistently skipping a phase, or demanding full depth on a routine change). Return ONLY structured candidates. For each: the signal (one sentence), the supporting quoted operator lines, and the kind (deviation | pattern | calibration). Return nothing for one-off noise with no sign of intent.
 
 Collect every subagent's returned candidates and **deduplicate** overlapping signals across chunks before triage.
 
-**Degradation.** If `CLAUDE_CODE_SESSION_ID` is unset, the transcript is not found, or it cannot be read, fall back to observing the live context (the pre-refactor behavior) and **say so explicitly** in the output. Never fail silently.
+**Degradation.** If the host/session identity is unset or ambiguous, the transcript is not uniquely found, or it cannot be read, fall back to observing the live context and **say so explicitly** in the output. Never search another host's transcript store and never fail silently.
 
 ## Triage and mapping
 
@@ -93,7 +83,7 @@ For each observed signal, identify the addressable target and the operation:
 - **Targets** use the canonical form: `review #N`, `verify #N`, `planning #N`, `debug #N`, `communication #N`, `<catalog> pattern #N` for a composition pattern, which exists for `review`, `planning`, `verify` and `debug` but not for `communication`, whose catalog has a prose composition note and no numbered patterns, `Rule N` for specific lenses/rules; or `add: <catalog>` for operator-authored strategies where catalog is `review`, `planning`, `verify`, `debug`, `communication`, or `rules`.
 - **Operations** are `disable`, `modify`, or `add`.
 - **A calibration adjustment** maps to `planning #10: modify` (annotate the recurring ceremony adjustment for that class of work) or `add: rules`. It never targets the router's classification axes (clarity / risk / reversibility / reach) **or its genre to phase-sequence mapping**: both are the plugin's architecture, not overridable content, so an override may make a phase lighter but never removes one from the sequence. The override rides on the *ceremony lens*, not on the classifier and not on the sequence.
-- **A pattern that would generalize past you** (it holds beyond this employer, codebase, and stack, carries no private context, and has a lens's shape) is *also* a candidate for the shared catalog. Propose the `add` override as usual, and in the same breath say it looks contributable and that `/deliberate-engineering:contribute` is the path if the operator wants it shared. The two are not exclusive: the override is theirs today, the contribution is a separate, operator-approved act, and this skill never files one. Say nothing of the sort for a signal that is employer-specific or a personal preference: that is an override and only an override.
+- **A pattern that would generalize past you** (it holds beyond this employer, codebase, and stack, carries no private context, and has a lens's shape) is *also* a candidate for the shared catalog. Propose the `add` override as usual, and in the same breath say it looks contributable and that the host-native `contribute` entry point is the path if the operator wants it shared. The two are not exclusive: the override is theirs today, the contribution is a separate, operator-approved act, and this skill never files one. Say nothing of the sort for a signal that is employer-specific or a personal preference: that is an override and only an override.
 
 If a signal has no clear target (ambiguous lens number, or a practice that does not fit any catalog), ask rather than force a wrong number, and ask with your own pick embedded (Rule 4): name the target you would use, or the `add` entry you would propose, and why, so the operator confirms a proposal instead of answering an open question. Drop candidates with no clear target or that are one-session noise: this skill does NOT propose an override of something seen once without a sign of recurring intent.
 
@@ -200,7 +190,7 @@ The four worked candidates above all target catalog lenses, so they take the ord
 
 ## The append-only write
 
-For each approved candidate, **append** the block to `~/.claude/deliberate-engineering/overrides.md`. If the file does not exist, create it with this header:
+For each approved candidate, **append** the block to `<data_root>/overrides.md`. Apply the host-context private-file contract first: the Deliberate Engineering directory is `0700`, the override file is `0600`, and the creation mask is `077`. If the file does not exist, create it with this header:
 
 ```markdown
 # Deliberate Engineering Overrides
@@ -230,7 +220,7 @@ Report:
 
 1. The candidates shown: target, operation, and the signal that produced each.
 2. Which candidates were approved, edited, or rejected.
-3. What was appended: for each approved candidate, state the target, the operation, and confirm it was written to `~/.claude/deliberate-engineering/overrides.md`.
+3. What was appended: for each approved candidate, state the target, the operation, and confirm it was written to `<data_root>/overrides.md` for the current host.
 4. If no candidates were identified, state that explicitly.
 
 The contract: the caller knows what was observed, what was discussed, and exactly what was written to the file (or that nothing was written).

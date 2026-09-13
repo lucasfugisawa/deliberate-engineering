@@ -1,11 +1,11 @@
 # The voice profile directory contract
 
-What a voice profile may contain, what gets loaded when, and how big each file should be. The profile lives at `~/.claude/deliberate-engineering/voice/`, in the operator's own space, alongside `overrides.md` and `state/`. Nothing here ships with the plugin: the plugin ships the mechanism, this contract, a template, and a method. Every profile is private to its author.
+What a voice profile may contain, what gets loaded when, and how big each file should be. The profile lives at `<host data root>/voice/`, in the operator's own space, alongside `overrides.md` and `state/`. Resolve that root through `deliberate-engineering-host-context`: Claude Code uses `~/.claude/deliberate-engineering/`; Codex uses `$CODEX_HOME/deliberate-engineering/` when set and `~/.codex/deliberate-engineering/` otherwise. Nothing here ships with the plugin: the plugin ships the mechanism, this contract, a template, and a method. Every profile is private to its author.
 
 ## Layout
 
 ```
-~/.claude/deliberate-engineering/voice/
+<host data root>/voice/
 ├── core.md                  # always loaded
 ├── registers/
 │   ├── en.md                # loaded when writing in English
@@ -18,20 +18,20 @@ What a voice profile may contain, what gets loaded when, and how big each file s
 
 ## Getting started
 
-The plugin ships a skeleton at `template/`, next to this file. A marketplace-installed plugin lives at a path you should not have to go hunting for, so the structure is faster to create than to find:
+The plugin ships a skeleton at `template/`, next to this file. A marketplace-installed plugin lives at a path you should not have to go hunting for. First resolve the active host's data root through `deliberate-engineering-host-context`, assign the absolute `voice/` path it returns to `DE_VOICE_ROOT`, then create the structure:
 
 ```bash
-mkdir -p ~/.claude/deliberate-engineering/voice/registers
-mkdir -p ~/.claude/deliberate-engineering/voice/archetypes
-cd ~/.claude/deliberate-engineering/voice
+umask 077
+install -d -m 700 "$DE_VOICE_ROOT" "$DE_VOICE_ROOT/registers" "$DE_VOICE_ROOT/archetypes"
+cd "$DE_VOICE_ROOT"
 touch core.md registers/en.md archetypes/dm.md
 ```
 
-Rename `en.md` to a language you actually write in and `dm.md` to a communication type you actually produce. Then paste the template bodies in, or ask Claude to fetch them for you:
+Rename `en.md` to a language you actually write in and `dm.md` to a communication type you actually produce. Then paste the template bodies in, or ask the host agent to fetch them for you:
 
-> Copy the `template/` directory from the `deliberate-engineering-voice` skill into `~/.claude/deliberate-engineering/voice/`.
+> Copy the `template/` directory from the `deliberate-engineering-voice` skill into the active host's Deliberate Engineering `voice/` directory.
 
-Claude can resolve the installed skill path when you cannot. Either way the files arrive empty of rules, and the profile changes nothing until there are some: an empty `core.md` is an unwritten profile, not a broken one. `bootstrap.md` is the method for filling it (and `deliberate-engineering-voice-build`, the `/deliberate-engineering:voice-build` command, is the guided flow that runs that method for you), and `template/EXAMPLE-core.md` is a worked `core.md` for an invented persona, there to calibrate density, specificity and citation style. Do not copy that file into your profile; it describes someone who does not exist.
+The host agent can resolve the installed skill path when you cannot. Either way the files arrive empty of rules, and the profile changes nothing until there are some: an empty `core.md` is an unwritten profile, not a broken one. `bootstrap.md` is the method for filling it (and the host-native `voice-build` entry point backed by `deliberate-engineering-voice-build` is the guided flow that runs that method), and `template/EXAMPLE-core.md` is a worked `core.md` for an invented persona, there to calibrate density and citation style. Do not copy that file into your profile; it describes someone who does not exist.
 
 **Expect "no archetype matched", and expect it often at first.** A fresh copy of the template carries a single archetype, so nearly every draft falls back to core plus register and says so. That is the supported state described below, not a fault: each declaration names the artifact type that had no archetype, which is exactly the queue for which one to write next.
 

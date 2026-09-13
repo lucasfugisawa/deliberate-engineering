@@ -9,4 +9,4 @@ Invoke the `deliberate-engineering-promote` skill.
 
 $ARGUMENTS
 
-Take a pending candidate from `candidates/`. First run the leak-audit gate: on any surviving specific, stop and edit nothing. Then classify: isolated (add or modify a single lens) → edit the catalog append-only (never renumber existing lenses), run the skill-reviewer, and remove the candidate; structural (new catalog, reorg, rule change) → do not edit, recommend the proper brainstorm/spec/plan/build cycle. Always stop before commit, PR, or push. Publication is yours.
+Take a pending candidate from `candidates/`. First run the leak-audit gate: on any surviving specific, stop and edit nothing. Then classify: isolated (add or modify a single lens) → edit the catalog append-only (never renumber existing lenses), run a fresh-context review, and remove the candidate; structural (new catalog, reorg, rule change) → do not edit, recommend the proper brainstorm/spec/plan/build cycle. Always stop before commit, PR, or push. Publication is yours.

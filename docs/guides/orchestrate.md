@@ -2,6 +2,8 @@
 
 # Orchestrate: run a program across sessions
 
+**Command notation.** `/deliberate-engineering:orchestrate` is the Claude Code form. In Codex 0.154, choose `orchestrate (deliberate-engineering)` through `/skills` or type `$deliberate-engineering:orchestrate`.
+
 `/deliberate-engineering:orchestrate` is for a program genuinely too large for one context: the work gets decomposed into self-contained units, each unit executes in its own fresh session, and one orchestration session keeps the judgment and the record. What it buys is parallelism without blocking, human control, and human visibility, not labor saving: you stay in the loop as the relay between sessions, on purpose.
 
 ## When to reach for it, and when not

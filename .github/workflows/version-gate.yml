@@ -4,13 +4,14 @@ name: version-gate
 # judgment is the maintainer's (Rule 1). They only fail loudly when a release
 # step was forgotten, so a forgotten bump can't reach an adopter silently.
 #
-# Check A (lockstep): the plugin manifest and the marketplace manifest must
-#   always carry the same version. Pure invariant, no false positives.
-# Check B (bump-on-content-change): if anything under the plugin source
-#   directory changed versus the base, the version must have changed too.
-#   Scoped to plugins/, so root-only edits (README, docs, this workflow) never
-#   demand a bump, and a second plugin added later is gated from the day it
-#   lands rather than silently exempt.
+# Check A (lockstep): both host manifests and the version-bearing Claude
+#   marketplace entry must always carry the same version. Pure invariant,
+#   no false positives. The Codex marketplace schema has no version field.
+# Check B (bump-on-distribution-change): if the shipped plugin payload or
+#   either root marketplace manifest changed versus the base, the version must
+#   have changed too. Repository-only docs and workflow edits do not demand a
+#   bump, and a second plugin added later is gated from the day it lands rather
+#   than silently exempt.
 
 on:
   pull_request:
@@ -26,17 +27,19 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Check A (manifests are in lockstep)
+      - name: Check A (host metadata is in lockstep)
         run: |
-          plugin_ver=$(jq -r '.version' plugins/deliberate-engineering/.claude-plugin/plugin.json)
+          claude_ver=$(jq -r '.version' plugins/deliberate-engineering/.claude-plugin/plugin.json)
+          codex_ver=$(jq -r '.version' plugins/deliberate-engineering/.codex-plugin/plugin.json)
           market_ver=$(jq -r '.plugins[] | select(.name=="deliberate-engineering") | .version' .claude-plugin/marketplace.json)
-          echo "plugin.json:      $plugin_ver"
-          echo "marketplace.json: $market_ver"
-          if [ "$plugin_ver" != "$market_ver" ]; then
-            echo "::error::Version mismatch: plugin.json ($plugin_ver) and marketplace.json ($market_ver) must be in lockstep. Bump both to the same value."
+          echo "Claude plugin:     $claude_ver"
+          echo "Codex plugin:      $codex_ver"
+          echo "Claude marketplace: $market_ver"
+          if [ "$claude_ver" != "$codex_ver" ] || [ "$claude_ver" != "$market_ver" ]; then
+            echo "::error::Version mismatch: Claude plugin ($claude_ver), Codex plugin ($codex_ver), and Claude marketplace ($market_ver) must be in lockstep."
             exit 1
           fi
-          echo "Lockstep OK ($plugin_ver)."
+          echo "Lockstep OK ($claude_ver)."
 
       - name: Determine base ref
         id: base
@@ -66,13 +69,13 @@ jobs:
             echo "Base ref $base not present, skipping content/bump comparison."
             exit 0
           fi
-          changed_plugin=$(git diff --name-only "$base" HEAD -- plugins/ | grep -v '\.claude-plugin/plugin.json$' || true)
+          changed_plugin=$(git diff --name-only "$base" HEAD -- plugins/deliberate-engineering/ .claude-plugin/marketplace.json .agents/plugins/marketplace.json || true)
           ver_now=$(jq -r '.version' plugins/deliberate-engineering/.claude-plugin/plugin.json)
           ver_base=$(git show "$base:plugins/deliberate-engineering/.claude-plugin/plugin.json" 2>/dev/null | jq -r '.version' 2>/dev/null || echo "")
           echo "version base=$ver_base now=$ver_now"
           if [ -n "$changed_plugin" ] && [ "$ver_now" = "$ver_base" ]; then
-            echo "::error::Plugin content under plugins/deliberate-engineering/ changed but version stayed $ver_now. Bump plugin.json AND marketplace.json (see CONTRIBUTING.md → Releasing)."
-            echo "Changed files:"; echo "$changed_plugin" | sed 's/^/  /'
+            echo "::error::Plugin payload or marketplace metadata changed but version stayed $ver_now. Bump both plugin manifests and the Claude marketplace entry (see CONTRIBUTING.md → Releasing)."
+            printf 'Changed files:\n  %s\n' "${changed_plugin//$'\n'/$'\n  '}"
             exit 1
           fi
           echo "Bump check OK."

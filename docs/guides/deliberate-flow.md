@@ -2,6 +2,8 @@
 
 # The deliberate flow
 
+**Command notation.** This guide shows Claude Code's `/deliberate-engineering:<command>` form. In Codex 0.154, open `/skills` and choose `<command> (deliberate-engineering)`, or type `$deliberate-engineering:<command>` with the request in the same prompt.
+
 The everyday path: how a piece of engineering work travels through the plugin in a normal session. Unlike [orchestrate](orchestrate.md) and [conduct](conduct.md), this is not a flow you have to drive: most of it fires itself. What this guide gives you is the journey (so you recognize what is happening and why) and the map (so you know when to call a phase directly).
 
 ## When you don't need this guide
@@ -37,7 +39,7 @@ Two rules of thumb the plugin holds throughout: **risk and uncertainty set the d
 
 ## What runs underneath
 
-The nine standing rules hold under every phase (the human gate, verify-before-endorse, recommend-with-rationale, checkpoint durable state, and the rest); your [overrides](capture.md) take precedence over any shipped lens, composition pattern or rule; and `deliberate-engineering-state` keeps a working-note so the phase sequence and pendings survive across sessions, written to `.deliberate/state/` in the repository root when it can confirm that directory is ignored by your VCS and to `~/.claude/deliberate-engineering/state/` otherwise, saying which it used each time: all consulted automatically, none of them yours to drive.
+The nine standing rules hold under every phase (the human gate, verify-before-endorse, recommend-with-rationale, checkpoint durable state, and the rest); your [overrides](capture.md) take precedence over any shipped lens, composition pattern or rule; and `deliberate-engineering-state` keeps a working-note so the phase sequence and pendings survive across sessions, written to `.deliberate/state/` in the repository root when it can confirm that directory is ignored by your VCS and to `<host data root>/state/` otherwise, saying which it used each time: all consulted automatically, none of them yours to drive.
 
 ## Where to go next
 
