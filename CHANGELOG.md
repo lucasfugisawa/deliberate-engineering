@@ -7,6 +7,7 @@ All notable changes to the `deliberate-engineering` plugin are recorded here. Th
 ### Fixed
 - **Public release narratives are employer-neutral and reader-resolvable.** Unresolvable internal source labels and unsupported external-scenario specifics were generalized while preserving attribution and the technical lessons each release established.
 - **The `conduct` pilot's Honest limitation now separates evidence levels.** The point-of-no-return reframe remains verified by the pilot; the launch-gate re-key is identified as motivated but not discriminated or verified; and the other field and station-table changes are bounded to the evidence those data-mutation runs supplied.
+- **Publication guidance now checks every narrative surface.** Maintainer guidance explicitly reviews CHANGELOG entries, release notes, origin notes, examples, and other explanatory prose for employer neutrality and public reader resolvability before publication, using contextual categories rather than a list of sensitive values.
 
 **A note on the version.** This is a patch because it corrects public documentation and evidence labeling in an existing shipped skill without adding or breaking behavior.
 
