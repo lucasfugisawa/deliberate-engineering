@@ -2,6 +2,14 @@
 
 All notable changes to the `deliberate-engineering` plugin are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/), and the project aims at [Semantic Versioning](https://semver.org/) (pre-1.0: minor covers features and breaking changes, patch covers fixes).
 
+## [0.18.1] - 2026-09-13
+
+### Fixed
+- **Public release narratives are employer-neutral and reader-resolvable.** Unresolvable internal source labels and unsupported external-scenario specifics were generalized while preserving attribution and the technical lessons each release established.
+- **The `conduct` pilot's Honest limitation now separates evidence levels.** The point-of-no-return reframe remains verified by the pilot; the launch-gate re-key is identified as motivated but not discriminated or verified; and the other field and station-table changes are bounded to the evidence those data-mutation runs supplied.
+
+**A note on the version.** This is a patch because it corrects public documentation and evidence labeling in an existing shipped skill without adding or breaking behavior.
+
 ## [0.18.0] - 2026-09-12
 
 Deliberate Engineering is now one shared methodology with native Claude Code and Codex host adapters. The Codex distribution no longer relies on Claude-compatible discovery or any Claude installation at runtime.
