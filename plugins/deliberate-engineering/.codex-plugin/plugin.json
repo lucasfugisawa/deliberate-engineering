@@ -1,6 +1,6 @@
 {
   "name": "deliberate-engineering",
-  "version": "0.18.0",
+  "version": "0.18.1",
   "description": "Engineering discipline for AI-assisted development: risk-calibrated planning, review, verification, debugging, operations, and delivery.",
   "author": {
     "name": "Lucas Fugisawa",
