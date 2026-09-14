@@ -24,7 +24,7 @@ Each lens in a catalog follows a consistent three-part structure:
 
 **Two naming families, on purpose.** A skill that owns a catalog of numbered lenses is named for the job it does (`review-strategy-selector`, `planning-strategy-selector`, `verification-strategy-selector`, `debug-operate-strategy-selector`, `communication-collaboration-selector`), because that name is what an agent matches when it needs that kind of judgment. Everything else carries the `deliberate-engineering-` prefix, because those skills are mechanism rather than method and the prefix keeps them from colliding with anything else installed. A new skill takes whichever family fits what it is; do not rename an existing one, since a skill name is an address that override files and other skills cite.
 
-Counts, structure, host compatibility, and versions are mechanically enforced: `scripts/check-consistency.sh` checks catalog counts; `scripts/check-invariants.py` checks the shared methodology; `scripts/check-host-compatibility.py` checks both host adapters; and the CI version gate keeps the three version-bearing metadata entries in lockstep (see *Releasing*). Run the full local suite below before opening a PR.
+The checks mechanically validate catalog counts, represented structural and host-compatibility contracts, and lockstep across the three current version-bearing metadata entries. The historical version comparison is conditional; see its exact coverage and pass-through cases under *Releasing*. Run the full local suite below before opening a PR.
 
 **Five checks run in CI, and you should run all five locally.** From the repo root:
 
@@ -76,7 +76,7 @@ A **new catalog**, a reorganization, or a change to the standing rules is a *str
 
 ## Releasing (maintainer)
 
-A release is any change to the shipped plugin that reaches adopters. The version is decided by a human: the CI gate only checks that the step was not forgotten; it never picks or applies a number for you.
+A release is any change to the shipped plugin that reaches adopters. The version is decided by a human. CI checks current metadata lockstep and, when it has a usable base commit and readable base version, rejects represented distribution changes whose version string stayed equal; it never chooses a number or proves a semantic increase for you.
 
 When publishing a release:
 
