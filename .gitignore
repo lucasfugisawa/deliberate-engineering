@@ -8,5 +8,6 @@
 
 # SDD scratch (build journal, must never reach the public repo)
 .superpowers/
+docs/superpowers/
 __pycache__/
 *.pyc
